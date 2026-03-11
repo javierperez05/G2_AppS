@@ -7,6 +7,12 @@ plugins {
 
     alias(libs.plugins.googleService)
     alias(libs.plugins.crashlytics)
+
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+
+    //safe args
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -49,6 +55,9 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
 
 
     implementation(libs.androidx.core.ktx)
