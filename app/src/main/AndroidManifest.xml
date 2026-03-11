@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.COSMOS">
         <activity
+            android:name=".ui.LogIn.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.HUD.NavigationHUD"
             android:exported="false" />
         <activity
