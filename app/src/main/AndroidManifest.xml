@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.COSMOS">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.HUD.NavigationHUD"
+            android:exported="false" />
+        <activity
+            android:name=".CosmosApp"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

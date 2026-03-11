@@ -9,6 +9,9 @@ appcompat = "1.7.1"
 material = "1.13.0"
 activity = "1.12.3"
 constraintlayout = "2.2.1"
+fireBaseBom = "34.3.0"
+service = "4.4.3"
+crashlytics = "3.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -20,7 +23,18 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
+firebase-bom = {module= "com.google.firebase:firebase-bom", version.ref="fireBaseBom"}
+firebase-crashlytics = {module = "com.google.firebase:firebase-crashlytics"}
+firebase-auth = {module = "com.google.firebase:firebase-auth" }
+firebase-firestore = {module="com.google.firebase:firebase-firestore"}
+
 [plugins]
+
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+googleService = {id="com.google.gms.google-services", version.ref="service"}
+crashlytics = {id= "com.google.firebase.crashlytics", version.ref = "crashlytics"}
+
+
 
