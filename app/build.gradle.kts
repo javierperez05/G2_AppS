@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.firebase.firestore)
 
     implementation("com.google.dagger:hilt-android:2.48")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     kapt("com.google.dagger:hilt-compiler:2.48")
 
 
