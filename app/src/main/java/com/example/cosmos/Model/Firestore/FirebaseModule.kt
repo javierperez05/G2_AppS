@@ -1,12 +1,31 @@
 package com.example.cosmos.Model.Firestore
 
-object FirebaseModule {
-    val firestore by lazy {
-        com.google.firebase.firestore.FirebaseFirestore.getInstance()
-    }
+import com.google.firebase.firestore.FirebaseFirestore
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-    // Colecciones de COSMOS
-    val usersCollection = firestore.collection("users")
-    val eventsCollection = firestore.collection("events")
-    val groupsCollection = firestore.collection("groups")
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseModule {
+
+    // ── Hilt providers ────────────────────────────────────────────────────────
+    // Los repositorios reciben estas instancias por constructor injection.
+
+    @Provides
+    @Singleton
+    fun provideFirestore(): FirebaseFirestore =
+        FirebaseFirestore.getInstance()
+
+
+
+    // ── Acceso estático — para código que aún no está migrado ─────────────────
+    // No rompe nada existente. Puedes eliminarlas cuando todo esté migrado.
+
+    val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    val usersCollection  get() = firestore.collection("users")
+    val eventsCollection get() = firestore.collection("events")
+    val groupsCollection get() = firestore.collection("groups")
 }

@@ -1,41 +1,72 @@
 package com.example.cosmos.Model.Firestore.Repositories
 
-import com.example.cosmos.Model.Firestore.FirebaseModule
 import com.example.cosmos.Model.Users.User
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserRepository {
-    private val db = FirebaseModule.usersCollection
+@Singleton
+class UserRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
+    private val db get() = firestore.collection("users")
 
-    // Registro manual
-    fun registerUser(user: User, onResult: (Boolean, String?) -> Unit) {
-        // Buscamos si el email ya existe antes de crear
-        db.whereEqualTo("email", user.email).get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    val newId = db.document().id
-                    val userWithId = user.copy(id = newId)
+    // ── Obtener usuario por ID ────────────────────────────────────────────────
 
-                    db.document(newId).set(userWithId)
-                        .addOnSuccessListener { onResult(true, "Usuario creado") }
-                        .addOnFailureListener { onResult(false, it.message) }
-                } else {
-                    onResult(false, "El email ya está registrado")
-                }
+    fun getUserById(userId: String, onResult: (User?) -> Unit) {
+        db.document(userId).get()
+            .addOnSuccessListener { doc ->
+                onResult(doc.toObject(User::class.java))
             }
+            .addOnFailureListener { onResult(null) }
     }
 
-    // Login manual
-    fun loginUser(email: String, pass: String, onResult: (User?) -> Unit) {
-        db.whereEqualTo("email", email)
-            .whereEqualTo("password", pass) // Muy básico, idealmente sería con hash
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val user = documents.documents[0].toObject(User::class.java)
-                    onResult(user)
-                } else {
-                    onResult(null)
+    // ── Obtener amigos ────────────────────────────────────────────────────────
+    // Paso 1: saca la lista de IDs del campo friends del usuario.
+    // Paso 2: whereIn para convertir IDs en objetos User.
+    // Si la lista está vacía devuelve emptyList() directamente
+    // (whereIn falla con lista vacía en Firestore).
+
+    fun getFriends(userId: String, onResult: (List<User>) -> Unit) {
+        db.document(userId).get()
+            .addOnSuccessListener { doc ->
+                val friendIds = doc.get("friends") as? List<String> ?: emptyList()
+
+                if (friendIds.isEmpty()) {
+                    onResult(emptyList())
+                    return@addOnSuccessListener
                 }
+
+                // Firestore whereIn soporta máximo 30 elementos
+                val safeIds = friendIds.take(30)
+                db.whereIn("id", safeIds).get()
+                    .addOnSuccessListener { snapshot ->
+                        onResult(snapshot.toObjects(User::class.java))
+                    }
+                    .addOnFailureListener { onResult(emptyList()) }
             }
+            .addOnFailureListener { onResult(emptyList()) }
+    }
+
+    // ── Obtener usuarios por lista de IDs (para detalle de grupo) ─────────────
+
+    fun getUsersByIds(userIds: List<String>, onResult: (List<User>) -> Unit) {
+        if (userIds.isEmpty()) { onResult(emptyList()); return }
+        val safeIds = userIds.take(30)
+        db.whereIn("id", safeIds).get()
+            .addOnSuccessListener { snapshot ->
+                onResult(snapshot.toObjects(User::class.java))
+            }
+            .addOnFailureListener { onResult(emptyList()) }
+    }
+
+    // ── Crear usuario ─────────────────────────────────────────────────────────
+
+    fun createUser(user: User, onResult: (Boolean) -> Unit) {
+        val id = user.id ?: db.document().id
+        db.document(id).set(user.copy(id = id))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 }

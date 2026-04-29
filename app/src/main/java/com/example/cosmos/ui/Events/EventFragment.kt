@@ -1,18 +1,26 @@
 package com.example.cosmos.ui.Events
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentEventBinding
 import com.example.cosmos.ui.Events.rvEvents.EventAdapter
+import com.example.cosmos.ui.Events.rvEvents.EventUiState
 import com.example.cosmos.ui.Events.rvEvents.EventViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class EventFragment : Fragment() {
 
     private var _binding: FragmentEventBinding? = null
@@ -20,9 +28,15 @@ class EventFragment : Fragment() {
 
     private val viewModel: EventViewModel by viewModels()
 
+    private val eventAdapter = EventAdapter { event ->
+        viewModel.selectEvent(event)
+        findNavController().navigate(R.id.action_eventFragment_to_eventDetailFragment)
+    }
+
+    // ── Ciclo de vida ─────────────────────────────────────────────────────────
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEventBinding.inflate(inflater, container, false)
         return binding.root
@@ -31,39 +45,48 @@ class EventFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
-        initData()
-    }
+        initListeners()
+        observeViewModel()
 
-    private fun initUI() {
-        // Configuramos el clic para ir a la pantalla de creación
-
-        binding.btnCreateEvent.setOnClickListener {
-            // Navegamos al fragmento de creación usando el Navigation Component
-            findNavController().navigate(R.id.action_profileFragment_to_configFragment)
-        }
-    }
-
-    private fun initData() {
-        // 1. Configurar el RecyclerView
-        val adapter = EventAdapter(emptyList())
-        binding.rvEvents.adapter = adapter
-        binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
-
-        // 2. Observar el LiveData
-        viewModel.events.observe(viewLifecycleOwner) { listaDeEventos ->
-            adapter.updateData(listaDeEventos)
-        }
-
-        // 3. Obtener el ID del usuario logueado desde la Activity
         val userId = activity?.intent?.getStringExtra("USER_ID") ?: ""
-
-        if (userId.isNotEmpty()) {
-            viewModel.fetchEvents(userId)
-        }
+        viewModel.loadEvents(userId)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+
+    private fun initUI() {
+        binding.rvEvents.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = eventAdapter
+        }
+    }
+
+    private fun initListeners() {
+        binding.fabCreateEvent.setOnClickListener {
+            findNavController().navigate(R.id.action_eventFragment_to_createEventFragment)
+        }
+    }
+
+    // ── Observadores ──────────────────────────────────────────────────────────
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.progressBar.isVisible = state is EventUiState.Loading
+                    binding.layoutEmpty.isVisible  = state is EventUiState.Empty
+                    binding.rvEvents.isVisible     = state is EventUiState.Success
+
+                    if (state is EventUiState.Success) {
+                        eventAdapter.submitList(state.events)
+                    }
+                }
+            }
+        }
     }
 }

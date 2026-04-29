@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_accent_rounded.xml -->
+<!-- Color se sobreescribe desde el adapter con setBackgroundColor() -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="4dp" />
+    <solid android:color="@color/app_color" />
+
+</shape>
