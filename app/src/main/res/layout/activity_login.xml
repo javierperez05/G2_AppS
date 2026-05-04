@@ -1,112 +1,302 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/background">
-
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:text="COSMOS."
-    android:textColor="#FFFFFF"
-    android:textSize="32sp"
-    android:textStyle="bold"
-    android:layout_gravity="center"
-    android:layout_marginBottom="32dp"/>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/authTabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabTextColor="#88FFFFFF"
-        app:tabSelectedTextColor="#FFFFFF"
-        app:tabIndicatorColor="@color/app_color"
-        android:background="@android:color/transparent">
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Entrar" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Registro" />
-    </com.google.android.material.tabs.TabLayout>
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp">
+        android:layout_height="match_parent">
 
+        <!-- Nebulosa fondo arriba izquierda -->
+        <View
+            android:layout_width="280dp"
+            android:layout_height="220dp"
+            android:layout_gravity="top|start"
+            android:layout_marginTop="-40dp"
+            android:layout_marginStart="-40dp"
+            android:background="@drawable/bg_nebula_purple" />
+
+        <!-- Nebulosa fondo arriba derecha -->
+        <View
+            android:layout_width="200dp"
+            android:layout_height="180dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="-60dp"
+            android:background="@drawable/bg_nebula_blue" />
+
+        <!-- Contenido principal -->
         <LinearLayout
-            android:id="@+id/loginContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/loginEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress" />
-
-            <EditText
-                android:id="@+id/loginPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Contraseña"
-                android:inputType="textPassword"
-                android:layout_marginTop="12dp" />
-
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Iniciar Sesión"
-                android:backgroundTint="@color/app_color"
-                android:layout_marginTop="24dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/registerContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:padding="28dp"
+            android:gravity="center_horizontal">
 
-            <EditText
-                android:id="@+id/regUsername"
+            <!-- Título COSMOS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COSMOS."
+                android:textColor="#FFFFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.18"
+                android:layout_marginTop="60dp"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXPLORE THE UNIVERSE"
+                android:textColor="#55FFFFFF"
+                android:textSize="11sp"
+                android:letterSpacing="0.20"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="44dp"
+                android:layout_gravity="center_horizontal" />
+
+            <!-- Tabs -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_tab_container"
+                android:padding="3dp"
+                android:layout_marginBottom="28dp">
+
+                <!-- Tab Entrar — seleccionado por defecto -->
+                <TextView
+                    android:id="@+id/tabLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Entrar"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="#C4BCFF"
+                    android:background="@drawable/bg_tab_selected" />
+
+                <!-- Tab Registro -->
+                <TextView
+                    android:id="@+id/tabRegister"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Registro"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="#55FFFFFF"
+                    android:background="@android:color/transparent" />
+
+            </LinearLayout>
+
+            <!-- ── LOGIN CONTAINER ── -->
+            <LinearLayout
+                android:id="@+id/loginContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre de usuario" />
+                android:orientation="vertical"
+                android:visibility="visible">
 
-            <EditText
-                android:id="@+id/regEmail"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EMAIL"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/loginEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_field_glass"
+                    android:hint="tu@email.com"
+                    android:inputType="textEmailAddress"
+                    android:textColor="#FFFFFFFF"
+                    android:textColorHint="#44FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONTRASEÑA"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/loginPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_field_glass"
+                    android:hint="••••••••"
+                    android:inputType="textPassword"
+                    android:textColor="#FFFFFFFF"
+                    android:textColorHint="#44FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="28dp" />
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:text="Iniciar sesión"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFFFF"
+                    android:backgroundTint="@color/app_color"
+                    app:cornerRadius="14dp" />
+
+                <!-- Separador -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginVertical="20dp">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="#14FFFFFF" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¿Sin cuenta?"
+                        android:textColor="#33FFFFFF"
+                        android:textSize="12sp"
+                        android:layout_marginHorizontal="12dp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="#14FFFFFF" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvGoToRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crear una cuenta →"
+                    android:textColor="#9B8FF0"
+                    android:textSize="13sp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="16dp" />
+
+            </LinearLayout>
+
+            <!-- ── REGISTER CONTAINER ── -->
+            <LinearLayout
+                android:id="@+id/registerContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:layout_marginTop="12dp" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <EditText
-                android:id="@+id/regPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Contraseña"
-                android:inputType="textPassword"
-                android:layout_marginTop="12dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="USUARIO"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="6dp" />
 
-            <Button
-                android:id="@+id/btnRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Crear Cuenta"
-                android:layout_marginTop="24dp" />
+                <EditText
+                    android:id="@+id/regUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_field_glass"
+                    android:hint="cosmonauta42"
+                    android:inputType="text"
+                    android:textColor="#FFFFFFFF"
+                    android:textColorHint="#44FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EMAIL"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/regEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_field_glass"
+                    android:hint="tu@email.com"
+                    android:inputType="textEmailAddress"
+                    android:textColor="#FFFFFFFF"
+                    android:textColorHint="#44FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONTRASEÑA"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/regPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_field_glass"
+                    android:hint="••••••••"
+                    android:inputType="textPassword"
+                    android:textColor="#FFFFFFFF"
+                    android:textColorHint="#44FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="28dp" />
+
+                <Button
+                    android:id="@+id/btnRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:text="Crear cuenta"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFFFF"
+                    android:backgroundTint="@color/app_color"
+                    app:cornerRadius="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Al registrarte aceptas los términos de uso"
+                    android:textColor="#33FFFFFF"
+                    android:textSize="11sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:paddingBottom="16dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,26 +1,28 @@
-package com.example.cosmos.ui.Groups
+package com.example.cosmos.ui.Orbit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
 import com.example.cosmos.Model.Users.Group
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class GroupsUiState {
     object Loading : GroupsUiState()
-    object Empty : GroupsUiState()
+    object Empty   : GroupsUiState()
     data class Success(val groups: List<Group>) : GroupsUiState()
-    data class Error(val message: String) : GroupsUiState()
+    data class Error(val message: String)       : GroupsUiState()
 }
 
 sealed class GroupActionState {
-    object Idle : GroupActionState()
+    object Idle    : GroupActionState()
     object Loading : GroupActionState()
-    data class Success(val groupId: String) : GroupActionState()
+    object Success : GroupActionState()
     data class Error(val message: String) : GroupActionState()
 }
 
@@ -55,28 +57,22 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    fun createGroup(name: String, description: String) {
+    // userId viene del Intent, se pasa desde el Fragment
+    fun createGroup(name: String, description: String, userId: String) {
         if (name.isBlank()) {
             _actionState.value = GroupActionState.Error("El nombre no puede estar vacío")
             return
         }
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: run {
-            _actionState.value = GroupActionState.Error("Usuario no autenticado")
-            return
-        }
-        viewModelScope.launch {
-            _actionState.value = GroupActionState.Loading
-            val group = Group(
-                name        = name,
-                description = description,
-                memberIds   = listOf(userId),
-                adminIds    = listOf(userId)
-            )
-            val result = orbitRepository.createGroup(group)
-            _actionState.value = result.fold(
-                onSuccess = { id -> GroupActionState.Success(id) },
-                onFailure = { e  -> GroupActionState.Error(e.message ?: "Error desconocido") }
-            )
+        _actionState.value = GroupActionState.Loading
+        val group = Group(
+            name        = name,
+            description = description,
+            memberIds   = listOf(userId),
+            adminIds    = listOf(userId)
+        )
+        orbitRepository.createGroup(group) { success ->
+            _actionState.value = if (success) GroupActionState.Success
+            else GroupActionState.Error("Error al crear la órbita")
         }
     }
 

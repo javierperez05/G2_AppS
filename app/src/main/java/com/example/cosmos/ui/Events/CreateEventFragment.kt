@@ -1,6 +1,7 @@
 package com.example.cosmos.ui.Events.rvEvents
 
 import android.os.Bundle
+import android.app.TimePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
@@ -39,7 +41,9 @@ class CreateEventFragment : Fragment() {
 
     private var allFriendsList = listOf<User>()
     private var selectedDate: Date? = null
-    private var currentUserId: String = ""
+    private var selectedHour = 0
+    private var selectedMinute = 0
+    private var currentUserId = ""
     private val selectedMemberIds = mutableListOf<String>()
 
     private lateinit var searchAdapter: UserSearchAdapter
@@ -85,15 +89,29 @@ class CreateEventFragment : Fragment() {
     }
 
     private fun initListeners() {
+        // Selector de fecha
         binding.btnSelectEventDate.setOnClickListener { showDatePicker() }
-        binding.btnCreateEvent.setOnClickListener { saveEvent() }
-        binding.etMemberSearch.addTextChangedListener(object : TextWatcher {
+
+        // Selector de hora
+        binding.btnSelectEventTime.setOnClickListener { showTimePicker() }
+
+        // Buscador de miembros — usa etMemberEmail
+        binding.etMemberEmail.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filtrarAmigos(s.toString().trim())
             }
         })
+
+        // Botón añadir miembro manual
+        binding.btnAddMemberAction.setOnClickListener {
+            val query = binding.etMemberEmail.text.toString().trim()
+            if (query.isNotEmpty()) filtrarAmigos(query)
+        }
+
+        // Crear evento
+        binding.btnCreateEvent.setOnClickListener { saveEvent() }
     }
 
     private fun observeViewModel() {
@@ -103,7 +121,7 @@ class CreateEventFragment : Fragment() {
                     when (state) {
                         is CreateEventUiState.Idle -> {
                             binding.btnCreateEvent.isEnabled = true
-                            binding.btnCreateEvent.text = "LAUNCH EVENT"
+                            binding.btnCreateEvent.text = "Launch Event"
                         }
                         is CreateEventUiState.Loading -> {
                             binding.btnCreateEvent.isEnabled = false
@@ -115,7 +133,7 @@ class CreateEventFragment : Fragment() {
                         }
                         is CreateEventUiState.Error -> {
                             binding.btnCreateEvent.isEnabled = true
-                            binding.btnCreateEvent.text = "LAUNCH EVENT"
+                            binding.btnCreateEvent.text = "Launch Event"
                             Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                             viewModel.resetCreateState()
                         }
@@ -127,7 +145,7 @@ class CreateEventFragment : Fragment() {
 
     private fun filtrarAmigos(query: String) {
         if (query.isEmpty()) {
-            binding.rvSearchSuggestions.visibility = View.GONE
+            binding.rvSearchSuggestions.isVisible = false
             return
         }
         val filtered = allFriendsList.filter {
@@ -140,8 +158,8 @@ class CreateEventFragment : Fragment() {
     private fun addMemberToEvent(user: User) {
         if (!selectedMemberIds.contains(user.id)) {
             user.id?.let { selectedMemberIds.add(it) }
-            binding.etMemberSearch.text.clear()
-            binding.rvSearchSuggestions.visibility = View.GONE
+            binding.etMemberEmail.text.clear()
+            binding.rvSearchSuggestions.isVisible = false
         }
     }
 
@@ -154,6 +172,21 @@ class CreateEventFragment : Fragment() {
         picker.show(parentFragmentManager, "DATE_PICKER")
     }
 
+    private fun showTimePicker() {
+        val cal = Calendar.getInstance()
+        TimePickerDialog(
+            requireContext(),
+            { _, hour, minute ->
+                selectedHour   = hour
+                selectedMinute = minute
+                binding.tvDisplayTime.text = String.format("%02d:%02d", hour, minute)
+            },
+            cal.get(Calendar.HOUR_OF_DAY),
+            cal.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
+
     private fun saveEvent() {
         val title = binding.etEventName.text.toString().trim()
         if (title.isEmpty()) {
@@ -161,15 +194,24 @@ class CreateEventFragment : Fragment() {
             return
         }
         if (selectedDate == null) {
-            Snackbar.make(binding.root, "Select a date for the mission", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "Select a date", Snackbar.LENGTH_SHORT).show()
             return
         }
+
+        // Combina fecha + hora seleccionadas
+        val cal = Calendar.getInstance().apply {
+            time = selectedDate!!
+            set(Calendar.HOUR_OF_DAY, selectedHour)
+            set(Calendar.MINUTE, selectedMinute)
+        }
+
         val newEvent = Event(
-            title     = title,
-            date      = selectedDate,
-            adminIds  = listOf(currentUserId),
-            memberIds = selectedMemberIds.distinct(),
-            type      = EventType.DEFAULT
+            title       = title,
+            description = binding.etEventDescription.text.toString().trim(),
+            date        = cal.time,
+            adminIds    = listOf(currentUserId),
+            memberIds   = selectedMemberIds.distinct(),
+            type        = EventType.DEFAULT
         )
         viewModel.createEvent(newEvent)
     }
