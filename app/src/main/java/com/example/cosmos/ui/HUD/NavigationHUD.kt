@@ -9,7 +9,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.cosmos.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NavigationHUD : AppCompatActivity() {
 
     private lateinit var binding: com.example.cosmos.databinding.ActivityNavigationHudBinding

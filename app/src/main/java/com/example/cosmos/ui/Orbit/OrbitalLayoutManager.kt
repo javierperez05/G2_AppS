@@ -1,0 +1,47 @@
+package com.example.cosmos.ui.Orbit
+
+import android.content.Context
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
+
+/**
+ * LayoutManager parabólico: los ítems del centro se desplazan a la derecha (maxShiftPx)
+ * y los de los extremos quedan al ras izquierdo, creando una curva izquierda→centro→izquierda.
+ */
+class OrbitalLayoutManager(context: Context) : LinearLayoutManager(context) {
+
+    private var maxShiftPx = 0f
+
+    override fun onAttachedToWindow(view: RecyclerView) {
+        super.onAttachedToWindow(view)
+        maxShiftPx = view.context.resources.displayMetrics.density * 64f
+    }
+
+    override fun onLayoutCompleted(state: RecyclerView.State?) {
+        super.onLayoutCompleted(state)
+        applyTranslations()
+    }
+
+    override fun scrollVerticallyBy(
+        dy: Int,
+        recycler: RecyclerView.Recycler,
+        state: RecyclerView.State
+    ): Int {
+        val scrolled = super.scrollVerticallyBy(dy, recycler, state)
+        applyTranslations()
+        return scrolled
+    }
+
+    private fun applyTranslations() {
+        val midY = height / 2f
+        if (midY == 0f) return
+        for (i in 0 until childCount) {
+            val child = getChildAt(i) ?: continue
+            val childMidY = (getDecoratedTop(child) + getDecoratedBottom(child)) / 2f
+            val normalized = (abs(childMidY - midY) / midY).coerceIn(0f, 1f)
+            // Parábola: máximo en centro (normalized=0), cero en extremos (normalized=1)
+            child.translationX = maxShiftPx * (1f - normalized * normalized)
+        }
+    }
+}

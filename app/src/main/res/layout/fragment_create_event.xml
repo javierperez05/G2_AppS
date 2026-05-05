@@ -7,201 +7,254 @@
     android:background="@color/background"
     android:fillViewport="true">
 
+    <!-- Mancha nebulosa superior -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- Título -->
         <TextView
             android:id="@+id/tvCreateEventTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="24dp"
-            android:text="Create New Event"
+            android:paddingBottom="28dp"
+            android:paddingTop="8dp"
+            android:text="NUEVA MISIÓN"
             android:textColor="@android:color/white"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.14" />
 
+        <!-- Imagen del evento -->
         <ImageButton
             android:id="@+id/btnAddEventImage"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/shape_circle_dark"
-            android:contentDescription="Add Event Image"
+            android:background="@drawable/bg_chip_glass"
+            android:contentDescription="Añadir imagen"
             android:padding="20dp"
             android:src="@drawable/ic_add_image"
             app:tint="@color/app_color" />
 
+        <!-- Label nombre -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Event Name"
-            android:textColor="#BBBBBB"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="6dp"
+            android:text="NOMBRE DEL EVENTO"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
 
+        <!-- Campo nombre -->
         <EditText
             android:id="@+id/etEventName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="e.g. Galactic Meeting"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="ej. Reunión Galáctica"
             android:inputType="textPersonName"
             android:textColor="@android:color/white"
             android:textColorHint="#44FFFFFF"
-            android:backgroundTint="@color/app_color" />
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
 
+        <!-- Label descripción -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Event Description"
-            android:textColor="#BBBBBB"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp"
+            android:text="DESCRIPCIÓN"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
 
+        <!-- Campo descripción -->
         <EditText
             android:id="@+id/etEventDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_field_glass"
             android:gravity="top"
-            android:hint="What's happening in the cosmos?"
+            android:hint="¿Qué ocurre en el cosmos?"
             android:inputType="textMultiLine"
             android:minLines="3"
             android:textColor="@android:color/white"
             android:textColorHint="#44FFFFFF"
-            android:backgroundTint="@color/app_color" />
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp" />
 
+        <!-- Fecha y hora -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:orientation="horizontal">
 
+            <!-- Fecha -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_field_glass"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:padding="14dp">
+
                 <ImageButton
                     android:id="@+id/btnSelectEventDate"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/ic_calendar"
                     app:tint="@color/app_color" />
+
                 <TextView
                     android:id="@+id/tvDisplayDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Date"
-                    android:textColor="@android:color/white" />
+                    android:layout_marginTop="6dp"
+                    android:text="Seleccionar fecha"
+                    android:textColor="#AAFFFFFF"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
             </LinearLayout>
 
+            <!-- Hora -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_field_glass"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:padding="14dp">
+
                 <ImageButton
                     android:id="@+id/btnSelectEventTime"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/ic_clock"
                     app:tint="@color/app_color" />
+
                 <TextView
                     android:id="@+id/tvDisplayTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Time"
-                    android:textColor="@android:color/white" />
+                    android:layout_marginTop="6dp"
+                    android:text="Seleccionar hora"
+                    android:textColor="#AAFFFFFF"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
             </LinearLayout>
+
         </LinearLayout>
 
+        <!-- Divisor -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="24dp"
-            android:background="#22FFFFFF" />
+            android:layout_marginVertical="28dp"
+            android:background="#1AFFFFFF" />
 
+        <!-- Label invitar -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Invite Members"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="6dp"
+            android:text="INVITAR TRIPULACIÓN"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
 
+        <!-- Buscador + botón añadir -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <EditText
                 android:id="@+id/etMemberEmail"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:hint="Search username..."
+                android:background="@drawable/bg_field_glass"
+                android:hint="Buscar por usuario..."
                 android:inputType="text"
                 android:textColor="@android:color/white"
                 android:textColorHint="#44FFFFFF"
-                android:backgroundTint="@color/app_color" />
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp" />
 
             <ImageButton
                 android:id="@+id/btnAddMemberAction"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_chip_glass"
                 android:src="@drawable/ic_add"
+                android:padding="12dp"
                 app:tint="@color/app_color" />
+
         </LinearLayout>
 
+        <!-- Sugerencias de búsqueda -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSearchSuggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:maxHeight="200dp"
-            android:background="#1A1A1A"
+            android:background="@drawable/bg_field_glass"
             android:visibility="gone"
             tools:listitem="@android:layout/simple_list_item_1"
             tools:visibility="visible" />
 
+        <!-- Label invitados -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Selected Guests:"
-            android:textColor="#BBBBBB"
-            android:textSize="12sp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp"
+            android:text="TRIPULACIÓN SELECCIONADA"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMembersToInvite"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             tools:listitem="@android:layout/simple_list_item_1" />
 
-        <Button
+        <!-- Botón lanzar evento -->
+        <TextView
             android:id="@+id/btnCreateEvent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/app_color"
-            android:padding="14dp"
-            android:text="Launch Event"
+            android:background="@drawable/bg_tab_selected"
+            android:gravity="center"
+            android:text="LANZAR MISIÓN"
             android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12" />
 
     </LinearLayout>
 </ScrollView>

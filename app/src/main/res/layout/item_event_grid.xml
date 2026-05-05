@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_event_grid.xml — card cuadrada para el grid del perfil -->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#12FFFFFF">
+
+    <!-- Ratio 1:1 mediante ConstraintLayout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Spacer que fuerza el ratio 1:1 -->
+        <View
+            android:id="@+id/viewRatioSpacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Borde glassmorphism -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_card_orbital_border"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/viewRatioSpacer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Acento lateral superior -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/app_color"
+            android:alpha="0.6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Emoji del tipo de evento -->
+        <TextView
+            android:id="@+id/tvGridEventEmoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🚀"
+            android:textSize="26sp"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvGridEventTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Título del evento -->
+        <TextView
+            android:id="@+id/tvGridEventTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Evento"
+            android:textColor="#DDFFFFFF"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:paddingHorizontal="6dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/viewRatioSpacer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Fecha — esquina inferior derecha -->
+        <TextView
+            android:id="@+id/tvGridEventDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#55FFFFFF"
+            android:textSize="9sp"
+            android:paddingEnd="7dp"
+            android:paddingBottom="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/viewRatioSpacer"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

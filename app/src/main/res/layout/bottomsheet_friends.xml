@@ -4,33 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:paddingBottom="24dp">
 
-    <!-- Buscador + chip modo exploración -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="#44FFFFFF" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="12dp">
 
         <EditText
             android:id="@+id/etSearchFriend"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_chip_glass"
+            android:background="@drawable/bg_field_glass"
             android:hint="Buscar..."
             android:textColorHint="#55FFFFFF"
             android:textColor="@android:color/white"
             android:textSize="13sp"
-            android:paddingHorizontal="12dp"
+            android:paddingHorizontal="14dp"
             android:inputType="text"
             android:singleLine="true" />
 
-        <!-- Chip modo exploración -->
-        <!-- TODO: cuando esté activo cambiar fondo a app_color con alpha -->
         <TextView
             android:id="@+id/chipExplore"
             android:layout_width="wrap_content"
@@ -38,18 +44,39 @@
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_chip_glass"
             android:text="🚀 Explorar"
-            android:textColor="#AAFFFFFF"
+            android:textColor="#88FFFFFF"
             android:textSize="12sp"
             android:gravity="center"
-            android:paddingHorizontal="12dp" />
+            android:paddingHorizontal="14dp" />
 
     </LinearLayout>
 
-    <!-- Lista de amigos / resultados exploración -->
+    <TextView
+        android:id="@+id/tvFriendsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TUS AMIGOS"
+        android:textColor="#44FFFFFF"
+        android:textSize="10sp"
+        android:letterSpacing="0.15"
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="8dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFriends"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="false" />
+
+    <TextView
+        android:id="@+id/tvFriendsEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sin resultados"
+        android:textColor="#44FFFFFF"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:padding="24dp"
+        android:visibility="gone" />
 
 </LinearLayout>

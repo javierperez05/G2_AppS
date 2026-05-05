@@ -2,6 +2,8 @@ package com.example.cosmos.ui.Orbit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cosmos.Model.Event.Event
+import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
 import com.example.cosmos.Model.Users.Group
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +21,12 @@ sealed class GroupsUiState {
     data class Error(val message: String)       : GroupsUiState()
 }
 
+sealed class GroupEventsUiState {
+    object Loading : GroupEventsUiState()
+    object Empty   : GroupEventsUiState()
+    data class Success(val events: List<Event>) : GroupEventsUiState()
+}
+
 sealed class GroupActionState {
     object Idle    : GroupActionState()
     object Loading : GroupActionState()
@@ -28,7 +36,8 @@ sealed class GroupActionState {
 
 @HiltViewModel
 class GroupViewModel @Inject constructor(
-    private val orbitRepository: OrbitRepository
+    private val orbitRepository: OrbitRepository,
+    private val eventRepository: EventRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<GroupsUiState>(GroupsUiState.Loading)
@@ -39,6 +48,9 @@ class GroupViewModel @Inject constructor(
 
     private val _selectedGroup = MutableStateFlow<Group?>(null)
     val selectedGroup: StateFlow<Group?> = _selectedGroup.asStateFlow()
+
+    private val _groupEventsState = MutableStateFlow<GroupEventsUiState>(GroupEventsUiState.Loading)
+    val groupEventsState: StateFlow<GroupEventsUiState> = _groupEventsState.asStateFlow()
 
     fun loadGroups(userId: String) {
         if (userId.isEmpty()) {
@@ -73,6 +85,14 @@ class GroupViewModel @Inject constructor(
         orbitRepository.createGroup(group) { success ->
             _actionState.value = if (success) GroupActionState.Success
             else GroupActionState.Error("Error al crear la órbita")
+        }
+    }
+
+    fun loadGroupEvents(eventIds: List<String>) {
+        _groupEventsState.value = GroupEventsUiState.Loading
+        eventRepository.getEventsByIds(eventIds) { events ->
+            _groupEventsState.value = if (events.isEmpty()) GroupEventsUiState.Empty
+            else GroupEventsUiState.Success(events)
         }
     }
 

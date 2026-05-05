@@ -58,7 +58,7 @@
     <!-- GroupDetailFragment — pendiente de crear -->
     <fragment
         android:id="@+id/groupDetailFragment"
-        android:name="com.example.cosmos.ui.Orbit.GroupDetailFragment"
+        android:name="com.example.cosmos.ui.Orbit.Detail.GroupDetailFragment"
         android:label="fragment_group_detail"
         tools:layout="@layout/fragment_group_detail" />
 
