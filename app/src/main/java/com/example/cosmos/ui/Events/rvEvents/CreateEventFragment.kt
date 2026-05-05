@@ -1,7 +1,7 @@
 package com.example.cosmos.ui.Events.rvEvents
 
-import android.os.Bundle
 import android.app.TimePickerDialog
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -177,7 +177,7 @@ class CreateEventFragment : Fragment() {
         TimePickerDialog(
             requireContext(),
             { _, hour, minute ->
-                selectedHour   = hour
+                selectedHour = hour
                 selectedMinute = minute
                 binding.tvDisplayTime.text = String.format("%02d:%02d", hour, minute)
             },
@@ -206,12 +206,12 @@ class CreateEventFragment : Fragment() {
         }
 
         val newEvent = Event(
-            title       = title,
+            title = title,
             description = binding.etEventDescription.text.toString().trim(),
-            date        = cal.time,
-            adminIds    = listOf(currentUserId),
-            memberIds   = selectedMemberIds.distinct(),
-            type        = EventType.DEFAULT
+            date = cal.time,
+            adminIds = listOf(currentUserId),
+            memberIds = selectedMemberIds.distinct(),
+            type = EventType.DEFAULT
         )
         viewModel.createEvent(newEvent)
     }
