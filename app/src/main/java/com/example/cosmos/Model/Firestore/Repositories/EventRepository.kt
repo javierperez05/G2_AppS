@@ -39,6 +39,37 @@ class EventRepository @Inject constructor(
             .addOnFailureListener { onResult(emptyList()) }
     }
 
+    // Eventos donde al menos uno de los amigos es miembro (batches de 10 por limite de Firestore)
+    fun getFriendEvents(friendIds: List<String>, onResult: (List<Event>) -> Unit) {
+        val chunks = friendIds.chunked(10)
+        val collected = mutableListOf<Event>()
+        var pending = chunks.size
+
+        chunks.forEach { chunk ->
+            db.whereArrayContainsAny("memberIds", chunk)
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    synchronized(collected) {
+                        collected.addAll(snapshot.toObjects(Event::class.java))
+                        pending--
+                        if (pending == 0) onResult(collected.distinctBy { it.id })
+                    }
+                }
+                .addOnFailureListener {
+                    synchronized(collected) {
+                        pending--
+                        if (pending == 0) onResult(collected.distinctBy { it.id })
+                    }
+                }
+        }
+    }
+
+    fun getEventById(eventId: String, onResult: (Event?) -> Unit) {
+        db.document(eventId).get()
+            .addOnSuccessListener { onResult(it.toObject(Event::class.java)) }
+            .addOnFailureListener { onResult(null) }
+    }
+
     fun updateEventItems(eventId: String, newItems: List<EventItem>, onResult: (Boolean) -> Unit) {
         db.document(eventId).update("items", newItems)
             .addOnSuccessListener { onResult(true) }

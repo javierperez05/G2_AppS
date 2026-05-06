@@ -27,7 +27,10 @@ class GroupDetailFragment : Fragment() {
 
     private val viewModel: GroupViewModel by activityViewModels()
 
-    private val eventAdapter = EventAdapter { /* TODO: navegar a EventDetail */ }
+    private val eventAdapter = EventAdapter { event ->
+        val bundle = android.os.Bundle().apply { putString("eventId", event.id ?: "") }
+        findNavController().navigate(R.id.action_groupDetailFragment_to_eventDetailFragment, bundle)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

@@ -29,8 +29,8 @@ class EventFragment : Fragment() {
     private val viewModel: EventViewModel by viewModels()
 
     private val eventAdapter = EventAdapter { event ->
-        viewModel.selectEvent(event)
-        findNavController().navigate(R.id.action_eventFragment_to_eventDetailFragment)
+        val bundle = android.os.Bundle().apply { putString("eventId", event.id ?: "") }
+        findNavController().navigate(R.id.action_eventFragment_to_eventDetailFragment, bundle)
     }
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────

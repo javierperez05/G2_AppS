@@ -55,12 +55,18 @@
 
     </fragment>
 
-    <!-- GroupDetailFragment — pendiente de crear -->
+    <!-- GroupDetailFragment -->
     <fragment
         android:id="@+id/groupDetailFragment"
         android:name="com.example.cosmos.ui.Orbit.Detail.GroupDetailFragment"
         android:label="fragment_group_detail"
-        tools:layout="@layout/fragment_group_detail" />
+        tools:layout="@layout/fragment_group_detail">
+
+        <action
+            android:id="@+id/action_groupDetailFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+
+    </fragment>
 
     <!-- ProfileFragment -->
     <fragment
@@ -72,6 +78,10 @@
         <action
             android:id="@+id/action_profileFragment_to_configFragment"
             app:destination="@id/configFragment" />
+
+        <action
+            android:id="@+id/action_profileFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
 
     </fragment>
 
