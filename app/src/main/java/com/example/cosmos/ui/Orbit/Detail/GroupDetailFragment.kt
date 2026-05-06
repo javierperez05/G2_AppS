@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentGroupDetailBinding
 import com.example.cosmos.ui.Events.rvEvents.EventAdapter
 import com.example.cosmos.ui.Orbit.GroupEventsUiState
