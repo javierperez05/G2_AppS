@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Cell tower / signal icon -->
+    <path
+        android:fillColor="#AAFFFFFF"
+        android:pathData="M17.71,7.71L19.12,6.29C17.23,4.4 14.72,3.29 12,3.29s-5.23,1.11 -7.12,3L6.29,7.71c1.5,-1.5 3.57,-2.42 5.71,-2.42s4.21,0.92 5.71,2.42zM12,8.29c-1.6,0 -3.05,0.65 -4.1,1.7l1.41,1.41c0.72,-0.72 1.67,-1.11 2.69,-1.11s1.97,0.39 2.69,1.11l1.41,-1.41c-1.05,-1.05 -2.5,-1.7 -4.1,-1.7zM14,14c0,-1.1 -0.9,-2 -2,-2s-2,0.9 -2,2c0,0.78 0.46,1.45 1.12,1.77L10,22h4l-1.12,-6.23C13.54,15.45 14,14.78 14,14z" />
+</vector>

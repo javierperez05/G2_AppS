@@ -2,8 +2,10 @@ package com.example.cosmos.ui.Events.rvEvents
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
+import com.example.cosmos.Model.Firestore.Repositories.FriendRequestRepository
 import com.example.cosmos.Model.Users.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +30,8 @@ sealed class CreateEventUiState {
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val friendRequestRepository: FriendRequestRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<EventUiState>(EventUiState.Loading)
@@ -46,6 +49,9 @@ class EventViewModel @Inject constructor(
     private val _imageUri = MutableStateFlow<Uri?>(null)
     val imageUri: StateFlow<Uri?> = _imageUri.asStateFlow()
 
+    private val _incomingRequests = MutableStateFlow<List<FriendRequest>>(emptyList())
+    val incomingRequests: StateFlow<List<FriendRequest>> = _incomingRequests.asStateFlow()
+
     // ── Lista de eventos ──────────────────────────────────────────────────────
 
     fun loadEvents(userId: String) {
@@ -56,6 +62,13 @@ class EventViewModel @Inject constructor(
         eventRepository.getUserEvents(userId) { events ->
             _uiState.value = if (events.isEmpty()) EventUiState.Empty
             else EventUiState.Success(events)
+        }
+    }
+
+    fun loadIncomingRequests(userId: String) {
+        if (userId.isEmpty()) return
+        friendRequestRepository.getIncomingRequests(userId) { requests ->
+            _incomingRequests.value = requests
         }
     }
 
