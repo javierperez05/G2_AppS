@@ -56,6 +56,7 @@ class GroupFragment : Fragment() {
         initListeners()
         observeViewModel()
         groupViewModel.loadGroups(currentUserId)
+        friendViewModel.loadUsername(currentUserId)
     }
 
     override fun onDestroyView() {
@@ -128,6 +129,8 @@ class GroupFragment : Fragment() {
 
     // ── BottomSheet amigos ────────────────────────────────────────────────────
 
+    private enum class FriendSheetMode { FRIENDS, EXPLORE, REQUESTS }
+
     private fun showFriendsBottomSheet() {
         val dialog    = BottomSheetDialog(requireContext())
         val sheetView = layoutInflater.inflate(R.layout.bottomsheet_friends, null)
@@ -135,26 +138,88 @@ class GroupFragment : Fragment() {
 
         val etSearch     = sheetView.findViewById<EditText>(R.id.etSearchFriend)
         val chipExplore  = sheetView.findViewById<TextView>(R.id.chipExplore)
+        val chipRequests = sheetView.findViewById<TextView>(R.id.chipRequests)
         val tvLabel      = sheetView.findViewById<TextView>(R.id.tvFriendsLabel)
         val tvEmpty      = sheetView.findViewById<TextView>(R.id.tvFriendsEmpty)
         val rvFriends    = sheetView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rvFriends)
 
-        var exploreActive = false
+        var currentMode = FriendSheetMode.FRIENDS
 
-        val friendAdapter = FriendAdapter { user, isFriend ->
-            if (isFriend) {
+        val friendAdapter = FriendAdapter(
+            onAddClick = { user ->
+                friendViewModel.sendFriendRequest(
+                    currentUserId, user.id ?: return@FriendAdapter,
+                    friendViewModel.getUsername()
+                )
+            },
+            onRemoveClick = { user ->
                 friendViewModel.removeFriend(currentUserId, user.id ?: return@FriendAdapter)
-            } else {
-                friendViewModel.addFriend(currentUserId, user.id ?: return@FriendAdapter)
+            },
+            onAcceptClick = { user, requestId ->
+                friendViewModel.acceptRequest(requestId, user.id ?: return@FriendAdapter, currentUserId)
+            },
+            onRejectClick = { user, requestId ->
+                friendViewModel.rejectRequest(requestId, user.id ?: return@FriendAdapter, currentUserId)
             }
-        }
+        )
 
         rvFriends.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = friendAdapter
         }
 
-        // Observar estado de amigos
+        fun updateChipStyles() {
+            // Reset all chips
+            chipExplore.setBackgroundResource(R.drawable.bg_chip_glass)
+            chipExplore.setTextColor(0x88FFFFFF.toInt())
+            chipRequests.setBackgroundResource(R.drawable.bg_chip_glass)
+            chipRequests.setTextColor(0x88FFFFFF.toInt())
+            // Highlight active
+            when (currentMode) {
+                FriendSheetMode.EXPLORE -> {
+                    chipExplore.setBackgroundResource(R.drawable.bg_tab_selected)
+                    chipExplore.setTextColor(0xFFC4BCFF.toInt())
+                }
+                FriendSheetMode.REQUESTS -> {
+                    chipRequests.setBackgroundResource(R.drawable.bg_tab_selected)
+                    chipRequests.setTextColor(0xFFC4BCFF.toInt())
+                }
+                else -> {}
+            }
+        }
+
+        fun switchMode(mode: FriendSheetMode) {
+            if (currentMode == mode && mode != FriendSheetMode.FRIENDS) {
+                // Toggle off → back to friends
+                currentMode = FriendSheetMode.FRIENDS
+            } else {
+                currentMode = mode
+            }
+            friendAdapter.isRequestMode = currentMode == FriendSheetMode.REQUESTS
+            updateChipStyles()
+
+            when (currentMode) {
+                FriendSheetMode.FRIENDS -> {
+                    tvLabel.text = "TUS AMIGOS"
+                    etSearch.isVisible = true
+                    friendViewModel.loadFriends(currentUserId)
+                }
+                FriendSheetMode.EXPLORE -> {
+                    tvLabel.text = "EXPLORANDO EL COSMOS"
+                    etSearch.isVisible = true
+                    val query = etSearch.text.toString().trim()
+                    if (query.isNotBlank()) friendViewModel.searchAllUsers(currentUserId, query)
+                    else friendViewModel.searchAllUsers(currentUserId, "")
+                }
+                FriendSheetMode.REQUESTS -> {
+                    tvLabel.text = "SOLICITUDES PENDIENTES"
+                    etSearch.isVisible = false
+                    friendViewModel.loadIncomingRequests(currentUserId)
+                }
+            }
+        }
+
+        // Observe friend list state
         viewLifecycleOwner.lifecycleScope.launch {
             friendViewModel.friendsState.collect { state ->
                 when (state) {
@@ -166,43 +231,75 @@ class GroupFragment : Fragment() {
                     is FriendUiState.Empty -> {
                         tvEmpty.isVisible = true
                         rvFriends.isVisible = false
+                        tvEmpty.text = when (currentMode) {
+                            FriendSheetMode.REQUESTS -> "Sin solicitudes pendientes"
+                            FriendSheetMode.EXPLORE -> "Sin resultados"
+                            else -> "Sin amigos"
+                        }
                     }
                     else -> Unit
                 }
             }
         }
 
-        // Observar friendIds para actualizar los botones
+        // Observe friendIds for button state
         viewLifecycleOwner.lifecycleScope.launch {
             friendViewModel.friendIds.collect { ids ->
                 friendAdapter.friendIds = ids
             }
         }
 
-        // Chip exploración
-        chipExplore.setOnClickListener {
-            exploreActive = !exploreActive
-            if (exploreActive) {
-                chipExplore.setBackgroundResource(R.drawable.bg_tab_selected)
-                chipExplore.setTextColor(0xFFC4BCFF.toInt())
-                tvLabel.text = "EXPLORANDO EL COSMOS"
-                friendViewModel.searchAllUsers(currentUserId, etSearch.text.toString())
-            } else {
-                chipExplore.setBackgroundResource(R.drawable.bg_chip_glass)
-                chipExplore.setTextColor(0x88FFFFFF.toInt())
-                tvLabel.text = "TUS AMIGOS"
-                friendViewModel.loadFriends(currentUserId)
+        // Observe pending sent IDs
+        viewLifecycleOwner.lifecycleScope.launch {
+            friendViewModel.pendingSentIds.collect { ids ->
+                friendAdapter.pendingSentIds = ids
             }
         }
 
-        // Buscador
+        // Observe incoming request map
+        viewLifecycleOwner.lifecycleScope.launch {
+            friendViewModel.incomingRequestMap.collect { map ->
+                friendAdapter.incomingRequestMap = map
+            }
+        }
+
+        // Observe action state for snackbar feedback
+        viewLifecycleOwner.lifecycleScope.launch {
+            friendViewModel.actionState.collect { state ->
+                when (state) {
+                    is FriendActionState.RequestSent -> {
+                        Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+                        friendViewModel.resetActionState()
+                    }
+                    is FriendActionState.RequestAccepted -> {
+                        Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+                        friendViewModel.resetActionState()
+                    }
+                    is FriendActionState.Error -> {
+                        Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                        friendViewModel.resetActionState()
+                    }
+                    is FriendActionState.Success -> friendViewModel.resetActionState()
+                    else -> Unit
+                }
+            }
+        }
+
+        // Chip listeners
+        chipExplore.setOnClickListener { switchMode(FriendSheetMode.EXPLORE) }
+        chipRequests.setOnClickListener { switchMode(FriendSheetMode.REQUESTS) }
+
+        // Search listener
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString().trim()
-                if (exploreActive) friendViewModel.searchAllUsers(currentUserId, query)
-                else friendViewModel.searchFriends(currentUserId, query)
+                when (currentMode) {
+                    FriendSheetMode.EXPLORE -> friendViewModel.searchAllUsers(currentUserId, query)
+                    FriendSheetMode.FRIENDS -> friendViewModel.searchFriends(currentUserId, query)
+                    else -> {}
+                }
             }
         })
 
@@ -215,8 +312,6 @@ class GroupFragment : Fragment() {
         val dialog = BottomSheetDialog(requireContext())
         val view   = layoutInflater.inflate(R.layout.bottomsheet_groups, null)
         dialog.setContentView(view)
-        // TODO: RV de grupos ordenados por actividad
         dialog.show()
     }
-
 }

@@ -1,9 +1,11 @@
 package com.example.cosmos.ui.Profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
+import com.example.cosmos.Model.Firestore.Repositories.StorageRepository
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,12 +24,23 @@ sealed class ProfileUiState {
     data class Error(val message: String) : ProfileUiState()
 }
 
+sealed class AvatarState {
+    object Idle : AvatarState()
+    object Uploading : AvatarState()
+    data class Success(val url: String) : AvatarState()
+    data class Error(val message: String) : AvatarState()
+}
+
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val eventRepository: EventRepository,
-    private val orbitRepository: OrbitRepository
+    private val orbitRepository: OrbitRepository,
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
+
+    private val _avatarState = MutableStateFlow<AvatarState>(AvatarState.Idle)
+    val avatarState: StateFlow<AvatarState> = _avatarState.asStateFlow()
 
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -68,4 +81,24 @@ class ProfileViewModel @Inject constructor(
         val orbitCount = cachedOrbitCount ?: return
         _uiState.value = ProfileUiState.Success(user, events, orbitCount)
     }
+
+    fun uploadAvatar(userId: String, imageUri: Uri) {
+        _avatarState.value = AvatarState.Uploading
+        storageRepository.uploadAvatar(userId, imageUri) { url ->
+            if (url != null) {
+                // Guardar URL en Firestore
+                userRepository.updateUserFields(userId, mapOf("profilePictureUrl" to url)) { success ->
+                    if (success) {
+                        _avatarState.value = AvatarState.Success(url)
+                    } else {
+                        _avatarState.value = AvatarState.Error("Error al guardar avatar")
+                    }
+                }
+            } else {
+                _avatarState.value = AvatarState.Error("Error al subir imagen")
+            }
+        }
+    }
+
+    fun resetAvatarState() { _avatarState.value = AvatarState.Idle }
 }

@@ -55,7 +55,8 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
     implementation("com.google.dagger:hilt-android:2.48")
     implementation(libs.androidx.navigation.fragment.ktx)

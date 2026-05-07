@@ -1,7 +1,10 @@
 package com.example.cosmos.ui.Orbit
 
 import androidx.lifecycle.ViewModel
+import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Firestore.Repositories.FriendRepository
+import com.example.cosmos.Model.Firestore.Repositories.FriendRequestRepository
+import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,11 +23,15 @@ sealed class FriendActionState {
     object Idle    : FriendActionState()
     object Success : FriendActionState()
     data class Error(val message: String) : FriendActionState()
+    data class RequestSent(val message: String = "Solicitud enviada") : FriendActionState()
+    data class RequestAccepted(val message: String = "Solicitud aceptada") : FriendActionState()
 }
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
-    private val friendRepository: FriendRepository
+    private val friendRepository: FriendRepository,
+    private val friendRequestRepository: FriendRequestRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _friendsState = MutableStateFlow<FriendUiState>(FriendUiState.Loading)
@@ -33,13 +40,19 @@ class FriendViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<FriendActionState>(FriendActionState.Idle)
     val actionState: StateFlow<FriendActionState> = _actionState.asStateFlow()
 
-    // Modo exploración activo o no
-    private val _exploreMode = MutableStateFlow(false)
-    val exploreMode: StateFlow<Boolean> = _exploreMode.asStateFlow()
-
-    // Cache de IDs de amigos actuales para saber si mostrar "+ Añadir" o "✓ Amigo"
+    // Cache de IDs de amigos actuales
     private val _friendIds = MutableStateFlow<Set<String>>(emptySet())
     val friendIds: StateFlow<Set<String>> = _friendIds.asStateFlow()
+
+    // IDs de usuarios a los que ya hemos enviado solicitud
+    private val _pendingSentIds = MutableStateFlow<Set<String>>(emptySet())
+    val pendingSentIds: StateFlow<Set<String>> = _pendingSentIds.asStateFlow()
+
+    // Incoming requests: userId -> requestId
+    private val _incomingRequestMap = MutableStateFlow<Map<String, String>>(emptyMap())
+    val incomingRequestMap: StateFlow<Map<String, String>> = _incomingRequestMap.asStateFlow()
+
+    private var cachedUsername: String = ""
 
     // ── Cargar amigos ─────────────────────────────────────────────────────────
 
@@ -49,6 +62,10 @@ class FriendViewModel @Inject constructor(
             _friendIds.value = users.mapNotNull { it.id }.toSet()
             _friendsState.value = if (users.isEmpty()) FriendUiState.Empty
                                   else FriendUiState.Success(users)
+        }
+        // Also load pending sent requests
+        friendRequestRepository.getSentPendingIds(currentUserId) { ids ->
+            _pendingSentIds.value = ids
         }
     }
 
@@ -62,7 +79,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // ── Buscar en toda la app (modo exploración) ──────────────────────────────
+    // ── Buscar en toda la app (modo exploracion) ──────────────────────────────
 
     fun searchAllUsers(currentUserId: String, query: String) {
         if (query.isBlank()) { _friendsState.value = FriendUiState.Empty; return }
@@ -72,32 +89,76 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // ── Toggle modo exploración ───────────────────────────────────────────────
+    // ── Cargar solicitudes entrantes ──────────────────────────────────────────
 
-    fun toggleExploreMode(currentUserId: String, currentQuery: String) {
-        _exploreMode.value = !_exploreMode.value
-        if (_exploreMode.value) {
-            if (currentQuery.isNotBlank()) searchAllUsers(currentUserId, currentQuery)
-            else _friendsState.value = FriendUiState.Empty
-        } else {
-            loadFriends(currentUserId)
-        }
-    }
-
-    // ── Añadir amigo ──────────────────────────────────────────────────────────
-
-    fun addFriend(currentUserId: String, friendId: String) {
-        friendRepository.addFriend(currentUserId, friendId) { success ->
-            if (success) {
-                _friendIds.value = _friendIds.value + friendId
-                _actionState.value = FriendActionState.Success
-            } else {
-                _actionState.value = FriendActionState.Error("Error al añadir amigo")
+    fun loadIncomingRequests(currentUserId: String) {
+        _friendsState.value = FriendUiState.Loading
+        friendRequestRepository.getIncomingRequests(currentUserId) { requests ->
+            if (requests.isEmpty()) {
+                _incomingRequestMap.value = emptyMap()
+                _friendsState.value = FriendUiState.Empty
+                return@getIncomingRequests
+            }
+            // Map fromId -> requestId
+            _incomingRequestMap.value = requests.associate { it.fromId to (it.id ?: "") }
+            // Load user objects for the request senders
+            val fromIds = requests.map { it.fromId }
+            userRepository.getUsersByIds(fromIds) { users ->
+                _friendsState.value = if (users.isEmpty()) FriendUiState.Empty
+                                      else FriendUiState.Success(users)
             }
         }
     }
 
-    // ── Eliminar amigo ────────────────────────────────────────────────────────
+    // ── Enviar solicitud de amistad ──────────────────────────────────────────
+
+    fun sendFriendRequest(currentUserId: String, targetUserId: String, username: String) {
+        val request = FriendRequest(
+            fromId = currentUserId,
+            toId = targetUserId,
+            fromUsername = username
+        )
+        friendRequestRepository.sendRequest(request) { success ->
+            if (success) {
+                _pendingSentIds.value = _pendingSentIds.value + targetUserId
+                _actionState.value = FriendActionState.RequestSent()
+            } else {
+                _actionState.value = FriendActionState.Error("Ya existe una solicitud pendiente")
+            }
+        }
+    }
+
+    // ── Aceptar solicitud ───────────────────────────────────────────────────
+
+    fun acceptRequest(requestId: String, fromId: String, currentUserId: String) {
+        friendRequestRepository.acceptRequest(requestId, fromId, currentUserId) { success ->
+            if (success) {
+                _friendIds.value = _friendIds.value + fromId
+                _incomingRequestMap.value = _incomingRequestMap.value - fromId
+                _actionState.value = FriendActionState.RequestAccepted()
+                // Refresh the requests list
+                loadIncomingRequests(currentUserId)
+            } else {
+                _actionState.value = FriendActionState.Error("Error al aceptar solicitud")
+            }
+        }
+    }
+
+    // ── Rechazar solicitud ──────────────────────────────────────────────────
+
+    fun rejectRequest(requestId: String, fromId: String, currentUserId: String) {
+        friendRequestRepository.rejectRequest(requestId) { success ->
+            if (success) {
+                _incomingRequestMap.value = _incomingRequestMap.value - fromId
+                _actionState.value = FriendActionState.Success
+                loadIncomingRequests(currentUserId)
+            } else {
+                _actionState.value = FriendActionState.Error("Error al rechazar solicitud")
+            }
+        }
+    }
+
+    // ── Eliminar amigo ──────────────────────────────────────────────────────
 
     fun removeFriend(currentUserId: String, friendId: String) {
         friendRepository.removeFriend(currentUserId, friendId) { success ->
@@ -107,6 +168,16 @@ class FriendViewModel @Inject constructor(
             } else {
                 _actionState.value = FriendActionState.Error("Error al eliminar amigo")
             }
+        }
+    }
+
+    fun setUsername(username: String) { cachedUsername = username }
+    fun getUsername(): String = cachedUsername
+
+    fun loadUsername(userId: String) {
+        if (cachedUsername.isNotEmpty()) return
+        userRepository.getUserById(userId) { user ->
+            cachedUsername = user?.username ?: ""
         }
     }
 

@@ -277,6 +277,7 @@ class CreateEventFragment : Fragment() {
         val newEvent = Event(
             title = title,
             description = binding.etEventDescription.text.toString().trim(),
+            location = binding.etEventLocation.text.toString().trim().ifBlank { null },
             date = cal.time,
             durationMinutes = selectedDurationMinutes,
             adminIds = listOf(currentUserId),

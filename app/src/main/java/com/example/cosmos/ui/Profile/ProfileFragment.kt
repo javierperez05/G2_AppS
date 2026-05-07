@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,8 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentProfileBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,9 +28,18 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
 
+    private var currentUserId = ""
+
     private val eventAdapter = ProfileEventAdapter { event ->
         val bundle = android.os.Bundle().apply { putString("eventId", event.id ?: "") }
         findNavController().navigate(R.id.action_profileFragment_to_eventDetailFragment, bundle)
+    }
+
+    private val pickAvatar = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            binding.ivProfileAvatar.setImageURI(uri)
+            viewModel.uploadAvatar(currentUserId, uri)
+        }
     }
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
@@ -41,11 +53,11 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userId = activity?.intent?.getStringExtra("USER_ID") ?: ""
+        currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
         initUI()
         initListeners()
         observeViewModel()
-        viewModel.loadProfile(userId)
+        viewModel.loadProfile(currentUserId)
     }
 
     override fun onDestroyView() {
@@ -70,6 +82,9 @@ class ProfileFragment : Fragment() {
         binding.btnEditProfile.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_configFragment)
         }
+        binding.ivProfileAvatar.setOnClickListener {
+            pickAvatar.launch("image/*")
+        }
     }
 
     // ── Observadores ──────────────────────────────────────────────────────────
@@ -77,16 +92,45 @@ class ProfileFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    if (state is ProfileUiState.Success) {
-                        binding.tvProfileUsername.text = state.user.username ?: "Usuario"
-                        binding.tvProfileBio.text = state.user.email ?: ""
-                        binding.tvProfileEventCount.text = state.events.size.toString()
-                        binding.tvProfileFriendCount.text = state.user.friends.size.toString()
-                        binding.tvProfileOrbitCount.text = state.orbitCount.toString()
-                        binding.layoutProfileEmpty.isVisible = state.events.isEmpty()
-                        binding.rvProfileEvents.isVisible = state.events.isNotEmpty()
-                        if (state.events.isNotEmpty()) eventAdapter.submitList(state.events)
+                launch {
+                    viewModel.uiState.collect { state ->
+                        if (state is ProfileUiState.Success) {
+                            binding.tvProfileUsername.text = state.user.username ?: "Usuario"
+                            binding.tvProfileBio.text = state.user.email ?: ""
+                            binding.tvProfileEventCount.text = state.events.size.toString()
+                            binding.tvProfileFriendCount.text = state.user.friends.size.toString()
+                            binding.tvProfileOrbitCount.text = state.orbitCount.toString()
+                            binding.layoutProfileEmpty.isVisible = state.events.isEmpty()
+                            binding.rvProfileEvents.isVisible = state.events.isNotEmpty()
+                            if (state.events.isNotEmpty()) eventAdapter.submitList(state.events)
+
+                            // Cargar avatar desde URL de Firestore
+                            if (!state.user.profilePictureUrl.isNullOrEmpty()) {
+                                Glide.with(this@ProfileFragment)
+                                    .load(state.user.profilePictureUrl)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_circle_profile)
+                                    .into(binding.ivProfileAvatar)
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.avatarState.collect { state ->
+                        when (state) {
+                            is AvatarState.Uploading -> {
+                                Snackbar.make(binding.root, "Subiendo avatar...", Snackbar.LENGTH_SHORT).show()
+                            }
+                            is AvatarState.Success -> {
+                                Snackbar.make(binding.root, "Avatar actualizado", Snackbar.LENGTH_SHORT).show()
+                                viewModel.resetAvatarState()
+                            }
+                            is AvatarState.Error -> {
+                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                                viewModel.resetAvatarState()
+                            }
+                            else -> {}
+                        }
                     }
                 }
             }

@@ -18,7 +18,12 @@ class UserRepository @Inject constructor(
             .get()
             .addOnSuccessListener { snapshot ->
                 Log.i("UserRepository", "Login query returned ${snapshot.size()} results for email: $email")
-                onResult(snapshot.documents.firstOrNull()?.toObject(User::class.java))
+                val user = snapshot.documents.firstOrNull()?.toObject(User::class.java)
+                // Auto-migracion: si no tiene usernameLower, ponerlo
+                if (user != null && user.usernameLower.isNullOrEmpty() && !user.username.isNullOrEmpty()) {
+                    db.document(user.id ?: "").update("usernameLower", user.username.lowercase())
+                }
+                onResult(user)
             }
             .addOnFailureListener { onResult(null) }
     }
@@ -62,6 +67,13 @@ class UserRepository @Inject constructor(
         db.whereIn("id", userIds.take(30)).get()
             .addOnSuccessListener { onResult(it.toObjects(User::class.java)) }
             .addOnFailureListener { onResult(emptyList()) }
+    }
+
+    fun updateUserFields(userId: String, fields: Map<String, Any?>, onResult: (Boolean) -> Unit) {
+        if (userId.isEmpty()) { onResult(false); return }
+        db.document(userId).update(fields)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 
     fun searchByUsername(query: String, excludeUserId: String, onResult: (List<User>) -> Unit) {

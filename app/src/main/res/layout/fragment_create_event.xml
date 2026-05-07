@@ -91,6 +91,30 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp" />
 
+        <!-- Label ubicacion -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp"
+            android:text="UBICACION"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <!-- Campo ubicacion -->
+        <EditText
+            android:id="@+id/etEventLocation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="ej. Sala de conferencias, Parque..."
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
+
         <!-- Fecha y hora -->
         <LinearLayout
             android:layout_width="match_parent"

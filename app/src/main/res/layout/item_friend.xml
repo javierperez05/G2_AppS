@@ -46,7 +46,7 @@
 
     </LinearLayout>
 
-    <!-- Botón acción — "+ Añadir" o "✓ Amigo" -->
+    <!-- Boton accion principal (Añadir / Pendiente / Amigo) -->
     <TextView
         android:id="@+id/btnFriendAction"
         android:layout_width="wrap_content"
@@ -57,5 +57,39 @@
         android:textStyle="bold"
         android:background="@drawable/bg_chip_glass"
         android:textColor="#AAFFFFFF" />
+
+    <!-- Botones de solicitud (solo visibles para incoming requests) -->
+    <LinearLayout
+        android:id="@+id/layoutRequestActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/btnAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:text="Aceptar"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_tab_selected"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/btnReject"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="6dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:text="Rechazar"
+            android:textSize="12sp"
+            android:background="@drawable/bg_chip_glass"
+            android:textColor="#88FFFFFF" />
+
+    </LinearLayout>
 
 </LinearLayout>
