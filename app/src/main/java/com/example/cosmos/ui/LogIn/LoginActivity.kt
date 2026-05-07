@@ -27,6 +27,20 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Auto-login: si hay sesión guardada, saltar directo al HUD
+        val prefs = getSharedPreferences("cosmos_session", MODE_PRIVATE)
+        val savedUserId = prefs.getString("USER_ID", null)
+        if (!savedUserId.isNullOrEmpty()) {
+            startActivity(
+                Intent(this, NavigationHUD::class.java).apply {
+                    putExtra("USER_ID", savedUserId)
+                }
+            )
+            finish()
+            return
+        }
+
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initListeners()
@@ -90,6 +104,9 @@ class LoginActivity : AppCompatActivity() {
                             }
                             is LoginUiState.Success -> {
                                 viewModel.resetLoginState()
+                                // Guardar sesión en SharedPreferences
+                                getSharedPreferences("cosmos_session", MODE_PRIVATE)
+                                    .edit().putString("USER_ID", state.user.id).apply()
                                 startActivity(
                                     Intent(this@LoginActivity, NavigationHUD::class.java).apply {
                                         putExtra("USER_ID", state.user.id)

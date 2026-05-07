@@ -21,7 +21,6 @@ import com.example.cosmos.Model.Users.Group
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentGroupBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -73,7 +72,9 @@ class GroupFragment : Fragment() {
     }
 
     private fun initListeners() {
-        binding.fabNewGroup.setOnClickListener { showCreateGroupDialog() }
+        binding.fabNewGroup.setOnClickListener {
+            findNavController().navigate(R.id.action_groupFragment_to_createGroupFragment)
+        }
         binding.btnGroups.setOnClickListener { showGroupsBottomSheet() }
         binding.btnFriends.setOnClickListener {
             friendViewModel.loadFriends(currentUserId)
@@ -218,28 +219,4 @@ class GroupFragment : Fragment() {
         dialog.show()
     }
 
-    // ── Dialog crear grupo ────────────────────────────────────────────────────
-
-    private fun showCreateGroupDialog() {
-        val nameInput = EditText(requireContext()).apply { hint = "Nombre de la órbita" }
-        val descInput = EditText(requireContext()).apply { hint = "Descripción (opcional)" }
-        val container = android.widget.LinearLayout(requireContext()).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setPadding(48, 16, 48, 0)
-            addView(nameInput)
-            addView(descInput)
-        }
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Nueva órbita")
-            .setView(container)
-            .setPositiveButton("Crear") { _, _ ->
-                groupViewModel.createGroup(
-                    name        = nameInput.text.toString(),
-                    description = descInput.text.toString(),
-                    userId      = currentUserId
-                )
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
 }

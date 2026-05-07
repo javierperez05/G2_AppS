@@ -6,42 +6,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.HUD.NavigationHUD"
-    android:background="@color/background">
+    android:background="@drawable/bg_cosmos">
 
+    <!-- Fragment ocupa TODA la pantalla, el navbar flota encima -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:navGraph="@navigation/main_graph"
-        app:defaultNavHost ="true"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
+        android:name="androidx.navigation.fragment.NavHostFragment" />
 
-        >
-
-    </androidx.fragment.app.FragmentContainerView>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_menu"
-        android:layout_marginHorizontal="20dp"
-        app:dividerColor="@color/item_background"
-        />
+    <!-- Navbar transparente flotante -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_menu"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_menu"
-        android:background="@color/background">
-
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
-
+        android:background="#00000000"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="unlabeled"
+        app:itemActiveIndicatorStyle="@style/Widget.Cosmos.BottomNav.Indicator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import com.example.cosmos.Model.Event.Event
 data class User(
     val id: String? = null,
     val username: String? = null,
+    val usernameLower: String? = null,
     val email: String? = null,
     val password: String? = null,
     val profilePictureUrl: String? = null,

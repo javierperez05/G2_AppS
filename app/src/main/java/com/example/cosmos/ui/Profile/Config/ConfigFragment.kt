@@ -38,6 +38,9 @@ class ConfigFragment : Fragment() {
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 
         binding.cardLogout.setOnClickListener {
+            // Limpiar sesión guardada
+            requireContext().getSharedPreferences("cosmos_session", android.content.Context.MODE_PRIVATE)
+                .edit().clear().apply()
             val intent = Intent(requireContext(), LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }

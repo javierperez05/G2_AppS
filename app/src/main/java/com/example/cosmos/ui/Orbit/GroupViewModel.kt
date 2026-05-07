@@ -70,16 +70,22 @@ class GroupViewModel @Inject constructor(
     }
 
     // userId viene del Intent, se pasa desde el Fragment
-    fun createGroup(name: String, description: String, userId: String) {
+    fun createGroup(
+        name: String,
+        description: String,
+        userId: String,
+        memberIds: List<String> = listOf(userId)
+    ) {
         if (name.isBlank()) {
             _actionState.value = GroupActionState.Error("El nombre no puede estar vacío")
             return
         }
         _actionState.value = GroupActionState.Loading
+        val allMembers = (memberIds + userId).distinct()
         val group = Group(
             name        = name,
             description = description,
-            memberIds   = listOf(userId),
+            memberIds   = allMembers,
             adminIds    = listOf(userId)
         )
         orbitRepository.createGroup(group) { success ->

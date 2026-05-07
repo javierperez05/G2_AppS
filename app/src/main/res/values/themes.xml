@@ -12,4 +12,17 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <!-- Indicador activo del BottomNav — pill sutil -->
+    <style name="Widget.Cosmos.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#221717AB</item>
+        <item name="android:width">48dp</item>
+        <item name="android:height">28dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Cosmos.NavIndicator</item>
+    </style>
+
+    <style name="ShapeAppearance.Cosmos.NavIndicator" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
 </resources>

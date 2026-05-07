@@ -75,4 +75,10 @@ class EventRepository @Inject constructor(
             .addOnSuccessListener { onResult(true) }
             .addOnFailureListener { onResult(false) }
     }
+
+    fun finishEvent(eventId: String, onResult: (Boolean) -> Unit) {
+        db.document(eventId).update("finished", true)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
 }

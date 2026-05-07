@@ -1,12 +1,14 @@
 package com.example.cosmos.ui.Events.rvEvents
 
 import android.app.TimePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,14 +41,30 @@ class CreateEventFragment : Fragment() {
     @Inject
     lateinit var userRepository: UserRepository
 
-    private var allFriendsList = listOf<User>()
     private var selectedDate: Date? = null
     private var selectedHour = 0
     private var selectedMinute = 0
+    private var selectedDurationMinutes: Int? = null
     private var currentUserId = ""
     private val selectedMemberIds = mutableListOf<String>()
+    private val selectedMembers = mutableListOf<User>()
+
+    private var selectedImageUri: Uri? = null
 
     private lateinit var searchAdapter: UserSearchAdapter
+    private lateinit var membersAdapter: SelectedMembersAdapter
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+            binding.btnAddEventImage.apply {
+                setImageURI(uri)
+                setPadding(0, 0, 0, 0)
+                imageTintList = null
+                scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -72,9 +90,6 @@ class CreateEventFragment : Fragment() {
         currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
         if (currentUserId.isNotEmpty()) {
             selectedMemberIds.add(currentUserId)
-            userRepository.getFriends(currentUserId) { friends ->
-                allFriendsList = friends
-            }
         }
     }
 
@@ -86,28 +101,44 @@ class CreateEventFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter
         }
+
+        membersAdapter = SelectedMembersAdapter(selectedMembers) { user ->
+            removeMemberFromEvent(user)
+        }
+        binding.rvMembersToInvite.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = membersAdapter
+        }
     }
 
     private fun initListeners() {
+        // Selector de imagen desde galeria
+        binding.btnAddEventImage.setOnClickListener { pickImage.launch("image/*") }
+
         // Selector de fecha
         binding.btnSelectEventDate.setOnClickListener { showDatePicker() }
 
         // Selector de hora
         binding.btnSelectEventTime.setOnClickListener { showTimePicker() }
 
-        // Buscador de miembros — usa etMemberEmail
+        // Buscador de miembros — busca en Firestore con cada letra
         binding.etMemberEmail.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filtrarAmigos(s.toString().trim())
+                buscarUsuarios(s.toString().trim())
             }
         })
 
-        // Botón añadir miembro manual
-        binding.btnAddMemberAction.setOnClickListener {
-            val query = binding.etMemberEmail.text.toString().trim()
-            if (query.isNotEmpty()) filtrarAmigos(query)
+        // Chips de duracion
+        val durationChips = mapOf(
+            binding.chipDuration30 to 30,
+            binding.chipDuration60 to 60,
+            binding.chipDuration120 to 120,
+            binding.chipDuration180 to 180
+        )
+        durationChips.forEach { (chip, minutes) ->
+            chip.setOnClickListener { selectDuration(minutes, durationChips.keys) }
         }
 
         // Crear evento
@@ -143,24 +174,62 @@ class CreateEventFragment : Fragment() {
         }
     }
 
-    private fun filtrarAmigos(query: String) {
+    private fun buscarUsuarios(query: String) {
         if (query.isEmpty()) {
+            searchAdapter.updateList(emptyList())
             binding.rvSearchSuggestions.isVisible = false
             return
         }
-        val filtered = allFriendsList.filter {
-            it.username?.contains(query, ignoreCase = true) == true
+        userRepository.searchByUsername(query, currentUserId) { users ->
+            val filtered = users.filter { !selectedMemberIds.contains(it.id) }
+            searchAdapter.updateList(filtered)
+            binding.rvSearchSuggestions.isVisible = filtered.isNotEmpty()
         }
-        searchAdapter.updateList(filtered)
-        binding.rvSearchSuggestions.isVisible = filtered.isNotEmpty()
     }
 
     private fun addMemberToEvent(user: User) {
         if (!selectedMemberIds.contains(user.id)) {
             user.id?.let { selectedMemberIds.add(it) }
+            selectedMembers.add(user)
+            membersAdapter.notifyItemInserted(selectedMembers.size - 1)
             binding.etMemberEmail.text.clear()
             binding.rvSearchSuggestions.isVisible = false
         }
+    }
+
+    private fun removeMemberFromEvent(user: User) {
+        val index = selectedMembers.indexOf(user)
+        if (index != -1) {
+            selectedMemberIds.remove(user.id)
+            selectedMembers.removeAt(index)
+            membersAdapter.notifyItemRemoved(index)
+        }
+    }
+
+    private fun selectDuration(minutes: Int, allChips: Set<android.view.View>) {
+        selectedDurationMinutes = minutes
+        allChips.forEach { chip ->
+            (chip as android.widget.TextView).apply {
+                setBackgroundResource(R.drawable.bg_chip_glass)
+                setTextColor(0x88FFFFFF.toInt())
+            }
+        }
+        (allChips.first { (it as android.widget.TextView).let { tv ->
+            when (minutes) {
+                30 -> tv.text == "30 min"
+                60 -> tv.text == "1h"
+                120 -> tv.text == "2h"
+                180 -> tv.text == "3h"
+                else -> false
+            }
+        } } as android.widget.TextView).apply {
+            setBackgroundResource(R.drawable.bg_tab_selected)
+            setTextColor(0xFFC4BCFF.toInt())
+        }
+        val label = if (minutes < 60) "${minutes} min"
+                    else "${minutes / 60}h" + if (minutes % 60 > 0) " ${minutes % 60}min" else ""
+        binding.tvDurationLabel.text = label
+        binding.tvDurationLabel.setTextColor(0xFFFFFFFF.toInt())
     }
 
     private fun showDatePicker() {
@@ -209,6 +278,7 @@ class CreateEventFragment : Fragment() {
             title = title,
             description = binding.etEventDescription.text.toString().trim(),
             date = cal.time,
+            durationMinutes = selectedDurationMinutes,
             adminIds = listOf(currentUserId),
             memberIds = selectedMemberIds.distinct(),
             type = EventType.DEFAULT

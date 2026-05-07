@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_cosmos"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Titulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="28dp"
+            android:paddingTop="8dp"
+            android:text="NUEVA ORBITA"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.14" />
+
+        <!-- Imagen del grupo -->
+        <ImageView
+            android:id="@+id/ivGroupImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_chip_glass"
+            android:contentDescription="Imagen del grupo"
+            android:padding="24dp"
+            android:src="@drawable/ic_add_image"
+            app:tint="@color/app_color"
+            android:scaleType="centerCrop" />
+
+        <!-- Label nombre -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="6dp"
+            android:text="NOMBRE DE LA ORBITA"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <!-- Campo nombre -->
+        <EditText
+            android:id="@+id/etGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="ej. Exploradores Estelares"
+            android:inputType="textPersonName"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
+
+        <!-- Label descripcion -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp"
+            android:text="DESCRIPCION"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <!-- Campo descripcion -->
+        <EditText
+            android:id="@+id/etGroupDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_field_glass"
+            android:gravity="top"
+            android:hint="Describe tu orbita..."
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp" />
+
+        <!-- Divisor -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="28dp"
+            android:background="#1AFFFFFF" />
+
+        <!-- Label miembros -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="INVITAR TRIPULACION"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <!-- Buscador miembros -->
+        <EditText
+            android:id="@+id/etSearchMember"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="Buscar por usuario..."
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
+
+        <!-- Sugerencias de busqueda -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_field_glass"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- Label seleccionados -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp"
+            android:text="TRIPULACION SELECCIONADA"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSelectedMembers"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Boton crear -->
+        <TextView
+            android:id="@+id/btnCreateGroup"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_tab_selected"
+            android:gravity="center"
+            android:text="LANZAR ORBITA"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12" />
+
+    </LinearLayout>
+</ScrollView>

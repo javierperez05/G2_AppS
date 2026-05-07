@@ -31,7 +31,7 @@ class UserRepository @Inject constructor(
                     return@addOnSuccessListener
                 }
                 val newId   = db.document().id
-                val newUser = user.copy(id = newId)
+                val newUser = user.copy(id = newId, usernameLower = user.username?.lowercase())
                 db.document(newId).set(newUser)
                     .addOnSuccessListener { onResult(true, "Cuenta creada correctamente") }
                     .addOnFailureListener { onResult(false, "Error al crear la cuenta") }
@@ -61,6 +61,19 @@ class UserRepository @Inject constructor(
         if (userIds.isEmpty()) { onResult(emptyList()); return }
         db.whereIn("id", userIds.take(30)).get()
             .addOnSuccessListener { onResult(it.toObjects(User::class.java)) }
+            .addOnFailureListener { onResult(emptyList()) }
+    }
+
+    fun searchByUsername(query: String, excludeUserId: String, onResult: (List<User>) -> Unit) {
+        if (query.isBlank()) { onResult(emptyList()); return }
+        val lower = query.lowercase()
+        db.whereGreaterThanOrEqualTo("usernameLower", lower)
+            .whereLessThanOrEqualTo("usernameLower", lower + "\uf8ff")
+            .limit(20)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                onResult(snapshot.toObjects(User::class.java).filter { it.id != excludeUserId })
+            }
             .addOnFailureListener { onResult(emptyList()) }
     }
 }

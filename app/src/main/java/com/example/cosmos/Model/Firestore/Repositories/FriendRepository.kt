@@ -21,19 +21,20 @@ class FriendRepository @Inject constructor(
     ) {
         if (query.isBlank()) { onResult(emptyList()); return }
 
-        // Primero sacamos los IDs de amigos del usuario actual
+        // Firestore no permite whereIn + inequality en campos distintos,
+        // así que cargamos amigos por IDs y filtramos localmente por username
         db.document(currentUserId).get()
             .addOnSuccessListener { doc ->
                 val friendIds = doc.get("friends") as? List<String> ?: emptyList()
                 if (friendIds.isEmpty()) { onResult(emptyList()); return@addOnSuccessListener }
 
-                // Filtramos por username dentro de los amigos
-                db.whereIn("id", friendIds.take(30))
-                    .whereGreaterThanOrEqualTo("username", query)
-                    .whereLessThanOrEqualTo("username", query + "\uf8ff")
-                    .get()
+                db.whereIn("id", friendIds.take(30)).get()
                     .addOnSuccessListener { snapshot ->
-                        onResult(snapshot.toObjects(User::class.java))
+                        val lowerQuery = query.lowercase()
+                        val filtered = snapshot.toObjects(User::class.java).filter {
+                            it.username?.lowercase()?.contains(lowerQuery) == true
+                        }
+                        onResult(filtered)
                     }
                     .addOnFailureListener { onResult(emptyList()) }
             }
@@ -49,12 +50,12 @@ class FriendRepository @Inject constructor(
     ) {
         if (query.isBlank()) { onResult(emptyList()); return }
 
-        db.whereGreaterThanOrEqualTo("username", query)
-            .whereLessThanOrEqualTo("username", query + "\uf8ff")
+        val lower = query.lowercase()
+        db.whereGreaterThanOrEqualTo("usernameLower", lower)
+            .whereLessThanOrEqualTo("usernameLower", lower + "\uf8ff")
             .limit(20)
             .get()
             .addOnSuccessListener { snapshot ->
-                // Excluimos al propio usuario de los resultados
                 val users = snapshot.toObjects(User::class.java)
                     .filter { it.id != currentUserId }
                 onResult(users)

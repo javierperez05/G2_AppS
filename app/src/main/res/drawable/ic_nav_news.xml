@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="50dp"
+    android:height="50dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Satelite / Señal -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,11c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM18,13c0,-3.31 -2.69,-6 -6,-6v2c2.21,0 4,1.79 4,4h2zM22,13c0,-5.52 -4.48,-10 -10,-10v2c4.42,0 8,3.58 8,8h2zM7.05,16.95L3.52,20.48c-0.39,0.39 -0.39,1.02 0,1.41l0,0c0.39,0.39 1.02,0.39 1.41,0l3.54,-3.54L7.05,16.95zM5.64,15.54l1.41,-1.41 -1.42,-1.42 -2.12,2.12c-0.78,0.78 -0.78,2.05 0,2.83l1.42,1.42 2.12,-2.12 -1.42,-1.42z" />
+</vector>

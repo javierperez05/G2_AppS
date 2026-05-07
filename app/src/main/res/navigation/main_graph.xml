@@ -40,7 +40,13 @@
         android:id="@+id/navigation_news"
         android:name="com.example.cosmos.ui.News.NewsFragment"
         android:label="fragment_news"
-        tools:layout="@layout/fragment_news" />
+        tools:layout="@layout/fragment_news">
+
+        <action
+            android:id="@+id/action_newsFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+
+    </fragment>
 
     <!-- GroupFragment — órbitas -->
     <fragment
@@ -53,7 +59,17 @@
             android:id="@+id/action_groupFragment_to_groupDetailFragment"
             app:destination="@id/groupDetailFragment" />
 
+        <action
+            android:id="@+id/action_groupFragment_to_createGroupFragment"
+            app:destination="@id/createGroupFragment" />
+
     </fragment>
+
+    <!-- CreateGroupFragment -->
+    <fragment
+        android:id="@+id/createGroupFragment"
+        android:name="com.example.cosmos.ui.Orbit.CreateGroupFragment"
+        android:label="CreateGroupFragment" />
 
     <!-- GroupDetailFragment -->
     <fragment

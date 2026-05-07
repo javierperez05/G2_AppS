@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@drawable/bg_cosmos">
 
     <!-- Toolbar -->
     <LinearLayout
@@ -218,6 +218,113 @@
                         android:textColor="#66FFFFFF"
                         android:textSize="12sp"
                         android:lineSpacingMultiplier="1.3" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Banner duracion -->
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_chip_glass"
+                android:textColor="#AAFFFFFF"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+            <!-- Boton finalizar mision (solo admin, cuando ha pasado la duracion) -->
+            <TextView
+                android:id="@+id/btnFinishEvent"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_tab_selected"
+                android:gravity="center"
+                android:text="FINALIZAR MISION"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.10"
+                android:visibility="gone" />
+
+            <!-- Banner mision finalizada + boton valorar -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFinished"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1A1717AB"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MISION COMPLETADA"
+                        android:textColor="#AAFFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.14" />
+
+                    <TextView
+                        android:id="@+id/btnRate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_tab_selected"
+                        android:gravity="center"
+                        android:text="VALORAR MISION"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tvAlreadyRated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Ya has valorado esta mision"
+                        android:textColor="#55FFFFFF"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/btnPublishPost"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_chip_glass"
+                        android:gravity="center"
+                        android:text="PUBLICAR EN NEWS"
+                        android:textColor="#AAFFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvAlreadyPosted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Ya publicaste esta mision"
+                        android:textColor="#55FFFFFF"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
