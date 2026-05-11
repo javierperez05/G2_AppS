@@ -19,12 +19,19 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-
         }
-        //intent para abrir el HUD
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
 
+        // Si la app se abrió desde un deep link cosmos://invite/{userId},
+        // guardamos el ID del invitante en SharedPreferences para procesarlo
+        // después de que el usuario esté autenticado (en NavigationHUD).
+        val inviteUserId = intent.data?.let { uri ->
+            if (uri.scheme == "cosmos" && uri.host == "invite") uri.lastPathSegment else null
+        }
+        if (!inviteUserId.isNullOrEmpty()) {
+            getSharedPreferences("cosmos_session", MODE_PRIVATE)
+                .edit().putString("PENDING_INVITE", inviteUserId).apply()
+        }
 
+        startActivity(Intent(this, LoginActivity::class.java))
     }
 }

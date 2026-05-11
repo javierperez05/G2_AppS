@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Fondo oscuro circular -->
+    <path
+        android:fillColor="#191A1C"
+        android:pathData="M0,50 A50,50 0 1,0 100,50 A50,50 0 1,0 0,50 Z"/>
+
+    <!-- Antena: tallo -->
+    <path
+        android:fillColor="#6666AA"
+        android:pathData="M48,17 L52,17 L52,27 L48,27 Z"/>
+
+    <!-- Antena: bola -->
+    <path
+        android:fillColor="#AAAAFF"
+        android:pathData="M45,12 A5,5 0 1,0 55,12 A5,5 0 1,0 45,12 Z"/>
+
+    <!-- Cara principal -->
+    <path
+        android:fillColor="#1F1FA8"
+        android:pathData="M24,52 A26,26 0 1,0 76,52 A26,26 0 1,0 24,52 Z"/>
+
+    <!-- Rubor mejilla izquierda -->
+    <path
+        android:fillColor="#AA88FF"
+        android:fillAlpha="0.35"
+        android:pathData="M26,59 A6,4 0 1,0 38,59 A6,4 0 1,0 26,59 Z"/>
+
+    <!-- Rubor mejilla derecha -->
+    <path
+        android:fillColor="#AA88FF"
+        android:fillAlpha="0.35"
+        android:pathData="M62,59 A6,4 0 1,0 74,59 A6,4 0 1,0 62,59 Z"/>
+
+    <!-- Ojo izquierdo blanco -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,50 A7,7 0 1,0 46,50 A7,7 0 1,0 32,50 Z"/>
+
+    <!-- Ojo derecho blanco -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,50 A7,7 0 1,0 68,50 A7,7 0 1,0 54,50 Z"/>
+
+    <!-- Pupila izquierda -->
+    <path
+        android:fillColor="#0A0A35"
+        android:pathData="M36.5,51 A3.5,3.5 0 1,0 43.5,51 A3.5,3.5 0 1,0 36.5,51 Z"/>
+
+    <!-- Pupila derecha -->
+    <path
+        android:fillColor="#0A0A35"
+        android:pathData="M58.5,51 A3.5,3.5 0 1,0 65.5,51 A3.5,3.5 0 1,0 58.5,51 Z"/>
+
+    <!-- Brillo ojo izquierdo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,47.5 A1.5,1.5 0 1,0 39,47.5 A1.5,1.5 0 1,0 36,47.5 Z"/>
+
+    <!-- Brillo ojo derecho -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M58,47.5 A1.5,1.5 0 1,0 61,47.5 A1.5,1.5 0 1,0 58,47.5 Z"/>
+
+    <!-- Sonrisa -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43,63 Q50,70 57,63 Q54,67 50,68 Q46,67 43,63 Z"/>
+
+</vector>

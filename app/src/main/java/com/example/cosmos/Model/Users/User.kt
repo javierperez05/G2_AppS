@@ -10,6 +10,7 @@ data class User(
     val email: String? = null,
     val password: String? = null,
     val profilePictureUrl: String? = null,
+    val profilePictureBase64: String? = null,
     val config: UserConfig = UserConfig(),
     val friends: List<String> = emptyList() // Guardamos IDs para evitar recursión
 )

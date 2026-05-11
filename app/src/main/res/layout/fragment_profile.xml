@@ -34,7 +34,7 @@
         android:layout_gravity="top|end"
         android:layout_margin="20dp"
         android:background="@drawable/bg_chip_glass"
-        android:src="@drawable/ic_groups"
+        android:src="@drawable/ic_settings"
         android:padding="9dp"
         android:contentDescription="Configuración"
         android:elevation="4dp" />
@@ -64,7 +64,7 @@
                     android:id="@+id/ivProfileAvatar"
                     android:layout_width="84dp"
                     android:layout_height="84dp"
-                    android:src="@drawable/ic_circle_profile"
+                    android:src="@drawable/ic_cosmos_critter"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"
                     app:strokeWidth="2.5dp"

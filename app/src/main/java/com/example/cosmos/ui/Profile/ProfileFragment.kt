@@ -1,6 +1,9 @@
 package com.example.cosmos.ui.Profile
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +22,7 @@ import com.example.cosmos.databinding.FragmentProfileBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -37,8 +41,10 @@ class ProfileFragment : Fragment() {
 
     private val pickAvatar = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
-            binding.ivProfileAvatar.setImageURI(uri)
-            viewModel.uploadAvatar(currentUserId, uri)
+            val base64 = compressToBase64(uri) ?: return@registerForActivityResult
+            val bytes = Base64.decode(base64, Base64.DEFAULT)
+            Glide.with(this).load(bytes).circleCrop().into(binding.ivProfileAvatar)
+            viewModel.saveAvatarBase64(currentUserId, base64)
         }
     }
 
@@ -104,14 +110,7 @@ class ProfileFragment : Fragment() {
                             binding.rvProfileEvents.isVisible = state.events.isNotEmpty()
                             if (state.events.isNotEmpty()) eventAdapter.submitList(state.events)
 
-                            // Cargar avatar desde URL de Firestore
-                            if (!state.user.profilePictureUrl.isNullOrEmpty()) {
-                                Glide.with(this@ProfileFragment)
-                                    .load(state.user.profilePictureUrl)
-                                    .circleCrop()
-                                    .placeholder(R.drawable.ic_circle_profile)
-                                    .into(binding.ivProfileAvatar)
-                            }
+                            loadAvatar(state.user.profilePictureBase64)
                         }
                     }
                 }
@@ -119,7 +118,7 @@ class ProfileFragment : Fragment() {
                     viewModel.avatarState.collect { state ->
                         when (state) {
                             is AvatarState.Uploading -> {
-                                Snackbar.make(binding.root, "Subiendo avatar...", Snackbar.LENGTH_SHORT).show()
+                                Snackbar.make(binding.root, "Guardando avatar...", Snackbar.LENGTH_SHORT).show()
                             }
                             is AvatarState.Success -> {
                                 Snackbar.make(binding.root, "Avatar actualizado", Snackbar.LENGTH_SHORT).show()
@@ -136,4 +135,28 @@ class ProfileFragment : Fragment() {
             }
         }
     }
+
+    // ── Avatar ────────────────────────────────────────────────────────────────
+
+    private fun loadAvatar(base64: String?) {
+        if (!base64.isNullOrEmpty()) {
+            val bytes = Base64.decode(base64, Base64.DEFAULT)
+            Glide.with(this)
+                .load(bytes)
+                .circleCrop()
+                .placeholder(R.drawable.ic_cosmos_critter)
+                .into(binding.ivProfileAvatar)
+        } else {
+            binding.ivProfileAvatar.setImageResource(R.drawable.ic_cosmos_critter)
+        }
+    }
+
+    private fun compressToBase64(uri: android.net.Uri): String? = try {
+        val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
+        val original = BitmapFactory.decodeStream(inputStream)
+        val scaled = Bitmap.createScaledBitmap(original, 150, 150, true)
+        val baos = ByteArrayOutputStream()
+        scaled.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP)
+    } catch (e: Exception) { null }
 }
