@@ -21,6 +21,7 @@ import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Event.EventType
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
+import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentCreateEventBinding
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar

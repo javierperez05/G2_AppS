@@ -1,7 +1,6 @@
 package com.example.cosmos.Model.Firestore
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +19,7 @@ object FirebaseModule {
     fun provideFirestore(): FirebaseFirestore =
         FirebaseFirestore.getInstance()
 
-    @Provides
-    @Singleton
-    fun provideStorage(): FirebaseStorage =
-        FirebaseStorage.getInstance()
+
 
     // ── Acceso estático — para código que aún no está migrado ─────────────────
     // No rompe nada existente. Puedes eliminarlas cuando todo esté migrado.

@@ -71,8 +71,8 @@ class CloudinaryRepository @Inject constructor(
         //                      → Add upload preset → Signing mode: Unsigned
         //                      Guarda el nombre que le pongas.
         // ─────────────────────────────────────────────────────────────────────
-        private const val CLOUD_NAME    = "TU_CLOUD_NAME_AQUI"
-        private const val UPLOAD_PRESET = "TU_UPLOAD_PRESET_AQUI"
+        private const val CLOUD_NAME    = "dxni6xuiy"
+        private const val UPLOAD_PRESET = "COSMOS_uppload"
 
         private const val UPLOAD_URL    = "https://api.cloudinary.com/v1_1/$CLOUD_NAME/image/upload"
 

@@ -155,7 +155,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="#1AFFFFFF"
-                        android:marginHorizontal="16dp" />
+                        android:layout_marginHorizontal="16dp" />
 
                     <!-- Switch: perfil privado -->
                     <LinearLayout
@@ -200,7 +200,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="#1AFFFFFF"
-                        android:marginHorizontal="16dp" />
+                        android:layout_marginHorizontal="16dp" />
 
                     <!-- Switch: mostrar email -->
                     <LinearLayout
@@ -369,7 +369,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="#1AFFFFFF"
-                        android:marginHorizontal="16dp" />
+                        android:layout_marginHorizontal="16dp" />
 
                     <!-- Switch: notif eventos -->
                     <LinearLayout
