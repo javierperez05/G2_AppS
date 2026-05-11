@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Event.Event
+import com.example.cosmos.Model.Firestore.Repositories.CloudinaryRepository
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.FriendRequestRepository
 import com.example.cosmos.Model.Users.User
@@ -31,7 +32,8 @@ sealed class CreateEventUiState {
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
-    private val friendRequestRepository: FriendRequestRepository
+    private val friendRequestRepository: FriendRequestRepository,
+    private val cloudinaryRepository: CloudinaryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<EventUiState>(EventUiState.Loading)
@@ -90,11 +92,21 @@ class EventViewModel @Inject constructor(
 
     // ── Crear evento ──────────────────────────────────────────────────────────
 
-    fun createEvent(event: Event) {
+    fun createEvent(event: Event, imageUri: Uri? = null) {
         _createState.value = CreateEventUiState.Loading
-        eventRepository.createEvent(event) { success ->
-            _createState.value = if (success) CreateEventUiState.Success(event.id ?: "")
-            else CreateEventUiState.Error("Error al lanzar el evento")
+        if (imageUri != null) {
+            cloudinaryRepository.uploadImage(imageUri) { url ->
+                val eventWithImage = event.copy(imageURL = url)
+                eventRepository.createEvent(eventWithImage) { success ->
+                    _createState.value = if (success) CreateEventUiState.Success(eventWithImage.id ?: "")
+                    else CreateEventUiState.Error("Error al lanzar el evento")
+                }
+            }
+        } else {
+            eventRepository.createEvent(event) { success ->
+                _createState.value = if (success) CreateEventUiState.Success(event.id ?: "")
+                else CreateEventUiState.Error("Error al lanzar el evento")
+            }
         }
     }
 

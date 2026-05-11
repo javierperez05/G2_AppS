@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Users.Group
+import com.example.cosmos.R
 import com.example.cosmos.databinding.ItemGroupOrbitalBinding
 
 class GroupAdapter(
@@ -42,9 +44,15 @@ class GroupAdapter(
             binding.tvMemberCount.text = "${group.memberIds.size} ✦"
             binding.viewAccent.setBackgroundColor(Color.parseColor(accentHex))
 
-            // Sin Glide por ahora — cuando lo instalemos:
-            // TODO: if (!group.imageUrl.isNullOrBlank()) Glide.with(...).load(group.imageUrl)...
-            binding.ivGroupImage.setImageResource(com.example.cosmos.R.drawable.ic_circle_profile)
+            if (!group.imageUrl.isNullOrBlank()) {
+                Glide.with(binding.ivGroupImage)
+                    .load(group.imageUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .into(binding.ivGroupImage)
+            } else {
+                binding.ivGroupImage.setImageResource(R.drawable.ic_circle_profile)
+            }
 
             binding.cardGroup.setOnClickListener { onGroupClick(group) }
         }

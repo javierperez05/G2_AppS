@@ -188,7 +188,8 @@ class CreateGroupFragment : Fragment() {
             name = name,
             description = binding.etGroupDescription.text.toString().trim(),
             userId = currentUserId,
-            memberIds = selectedMemberIds.distinct()
+            memberIds = selectedMemberIds.distinct(),
+            imageUri = selectedImageUri
         )
     }
 }

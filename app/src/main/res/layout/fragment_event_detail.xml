@@ -86,6 +86,17 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <!-- Imagen del evento (visible solo si existe) -->
+                    <ImageView
+                        android:id="@+id/ivEventImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="16dp"
+                        android:scaleType="centerCrop"
+                        android:background="#1AFFFFFF"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Medium"
+                        android:visibility="gone" />
+
                     <!-- Emoji + titulo -->
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -210,14 +221,143 @@
 
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvMemberNames"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvEventMembers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:textColor="#66FFFFFF"
+                        android:layout_marginTop="8dp"
+                        android:overScrollMode="never"
+                        android:clipToPadding="false" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card equipamiento (items) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#12FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@color/app_color" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="EQUIPAMIENTO"
+                            android:textColor="#AAFFFFFF"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.14" />
+
+                        <TextView
+                            android:id="@+id/btnAddItem"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="+"
+                            android:textColor="@color/app_color"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_chip_glass" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#1AFFFFFF" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                    <TextView
+                        android:id="@+id/tvEmptyItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingVertical="12dp"
+                        android:text="Sin items aun. Pulsa + para añadir."
+                        android:textColor="#44FFFFFF"
                         android:textSize="12sp"
-                        android:lineSpacingMultiplier="1.3" />
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card cuentas (settlements) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardSettlements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#121717AB"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@color/app_color" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CUENTAS"
+                            android:textColor="#AAFFFFFF"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.14" />
+
+                    </LinearLayout>
+
+                    <!-- Filas de deudas generadas dinamicamente -->
+                    <LinearLayout
+                        android:id="@+id/layoutSettlements"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
                 </LinearLayout>
 

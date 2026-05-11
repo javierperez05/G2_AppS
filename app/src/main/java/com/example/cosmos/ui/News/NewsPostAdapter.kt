@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Actions.Post
 import com.example.cosmos.databinding.ItemNewsPostBinding
 
@@ -49,7 +50,13 @@ class NewsPostAdapter(
             binding.tvEventTitle.text = post.eventTitle ?: ""
             binding.tvTimeAgo.text = getTimeAgo(post.createdAt)
 
+            val firstImage = post.imageUrls.firstOrNull()
+
             if (isMine) {
+                binding.ivPhotoMine.isVisible = firstImage != null
+                if (firstImage != null) {
+                    Glide.with(binding.ivPhotoMine).load(firstImage).centerCrop().into(binding.ivPhotoMine)
+                }
                 binding.tvUsernameMine.text = "@${post.username ?: ""}"
                 binding.tvStarsMine.text = starsText
                 binding.tvStarsMine.setTextColor(0xFFFFD700.toInt())
@@ -60,6 +67,10 @@ class NewsPostAdapter(
                 binding.tvCrewMine.setOnClickListener { onCrewClick(post) }
                 binding.btnViewEventMine.setOnClickListener { onViewEvent(post.eventId ?: "") }
             } else {
+                binding.ivPhotoOther.isVisible = firstImage != null
+                if (firstImage != null) {
+                    Glide.with(binding.ivPhotoOther).load(firstImage).centerCrop().into(binding.ivPhotoOther)
+                }
                 binding.tvUsernameOther.text = "@${post.username ?: ""}"
                 binding.tvStarsOther.text = starsText
                 binding.tvStarsOther.setTextColor(0xFFFFD700.toInt())

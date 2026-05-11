@@ -37,9 +37,11 @@ package com.example.cosmos.ui.Orbit
  * ═══════════════════════════════════════════════════════════════════
  */
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cosmos.Model.Event.Event
+import com.example.cosmos.Model.Firestore.Repositories.CloudinaryRepository
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
 import com.example.cosmos.Model.Users.Group
@@ -74,7 +76,8 @@ sealed class GroupActionState {
 @HiltViewModel
 class GroupViewModel @Inject constructor(
     private val orbitRepository: OrbitRepository,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val cloudinaryRepository: CloudinaryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<GroupsUiState>(GroupsUiState.Loading)
@@ -121,24 +124,34 @@ class GroupViewModel @Inject constructor(
         name: String,
         description: String,
         userId: String,
-        memberIds: List<String> = listOf(userId)
+        memberIds: List<String> = listOf(userId),
+        imageUri: Uri? = null
     ) {
         if (name.isBlank()) {
             _actionState.value = GroupActionState.Error("El nombre no puede estar vacío")
             return
         }
         _actionState.value = GroupActionState.Loading
-        // distinct() por si userId ya estaba en memberIds (no duplicar al creador)
         val allMembers = (memberIds + userId).distinct()
-        val group = Group(
-            name        = name,
-            description = description,
-            memberIds   = allMembers,
-            adminIds    = listOf(userId)
-        )
-        orbitRepository.createGroup(group) { success ->
-            _actionState.value = if (success) GroupActionState.Success
-            else GroupActionState.Error("Error al crear la órbita")
+
+        fun saveWithImage(imageUrl: String?) {
+            val group = Group(
+                name        = name,
+                description = description,
+                imageUrl    = imageUrl,
+                memberIds   = allMembers,
+                adminIds    = listOf(userId)
+            )
+            orbitRepository.createGroup(group) { success ->
+                _actionState.value = if (success) GroupActionState.Success
+                else GroupActionState.Error("Error al crear la órbita")
+            }
+        }
+
+        if (imageUri != null) {
+            cloudinaryRepository.uploadImage(imageUri) { url -> saveWithImage(url) }
+        } else {
+            saveWithImage(null)
         }
     }
 

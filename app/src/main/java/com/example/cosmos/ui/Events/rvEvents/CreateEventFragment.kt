@@ -284,6 +284,6 @@ class CreateEventFragment : Fragment() {
             memberIds = selectedMemberIds.distinct(),
             type = EventType.DEFAULT
         )
-        viewModel.createEvent(newEvent)
+        viewModel.createEvent(newEvent, selectedImageUri)
     }
 }

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentGroupDetailBinding
 import com.example.cosmos.ui.Events.rvEvents.EventAdapter
@@ -72,6 +73,13 @@ class GroupDetailFragment : Fragment() {
             tvGroupDescription.text = group.description ?: ""
             tvGroupDescription.isVisible = !group.description.isNullOrBlank()
             tvGroupMeta.text = "${group.memberIds.size} miembro${if (group.memberIds.size == 1) "" else "s"}"
+            if (!group.imageUrl.isNullOrBlank()) {
+                Glide.with(this@GroupDetailFragment)
+                    .load(group.imageUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .into(ivGroupImage)
+            }
         }
         viewModel.loadGroupEvents(group.eventIds)
     }
