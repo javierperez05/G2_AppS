@@ -1,31 +1,38 @@
 package com.example.cosmos.ui.Events.rvEvents
 
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Users.User
+import com.example.cosmos.R
+import com.example.cosmos.databinding.ItemUserSearchBinding
 
 class UserSearchAdapter(
     private var users: List<User>,
     private val onUserClick: (User) -> Unit
 ) : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nameText: TextView = view.findViewById(android.R.id.text1)
-    }
+    class ViewHolder(val binding: ItemUserSearchBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
-        return ViewHolder(v)
+        val binding = ItemUserSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
-        holder.nameText.text = user.username
-        holder.nameText.setTextColor(Color.WHITE)
+        holder.binding.tvSearchUsername.text = user.username ?: "?"
+        holder.binding.tvSearchEmail.text = user.email ?: ""
+        if (!user.profilePictureUrl.isNullOrEmpty()) {
+            Glide.with(holder.binding.ivSearchAvatar)
+                .load(user.profilePictureUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .into(holder.binding.ivSearchAvatar)
+        } else {
+            holder.binding.ivSearchAvatar.setImageResource(R.drawable.ic_circle_profile)
+        }
         holder.itemView.setOnClickListener { onUserClick(user) }
     }
 

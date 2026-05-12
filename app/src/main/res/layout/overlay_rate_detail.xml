@@ -25,12 +25,16 @@
             android:padding="24dp"
             android:gravity="center">
 
-            <!-- Avatar placeholder -->
-            <View
-                android:id="@+id/viewOverlayAvatar"
+            <!-- Avatar -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivOverlayAvatar"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_chip_glass" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_circle_profile"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"
+                app:strokeWidth="1dp"
+                app:strokeColor="#33FFFFFF" />
 
             <TextView
                 android:id="@+id/tvOverlayUsername"

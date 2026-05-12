@@ -293,17 +293,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:indicatorColor="@color/app_color" />
 
-    <!-- FAB crear evento -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- Botón crear evento -->
+    <LinearLayout
         android:id="@+id/fabCreateEvent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="80dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/app_color"
-        app:tint="@android:color/white"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="22dp"
+        android:background="@drawable/bg_fab_cosmos"
+        android:elevation="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_rocket"
+            app:tint="@android:color/white"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="NUEVA MISIÓN"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.10" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

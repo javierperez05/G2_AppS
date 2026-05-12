@@ -82,6 +82,10 @@
             android:id="@+id/action_groupDetailFragment_to_eventDetailFragment"
             app:destination="@id/eventDetailFragment" />
 
+        <action
+            android:id="@+id/action_groupDetailFragment_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
+
     </fragment>
 
     <!-- ProfileFragment -->

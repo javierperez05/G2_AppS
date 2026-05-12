@@ -70,7 +70,8 @@ sealed class EventDetailUiState {
         val memberNames: Map<String, String>,
         val canFinish: Boolean = false,
         val hasRated: Boolean = false,
-        val hasPosted: Boolean = false
+        val hasPosted: Boolean = false,
+        val userRate: Rate? = null
     ) : EventDetailUiState()
     data class Error(val message: String) : EventDetailUiState()
 }
@@ -85,7 +86,8 @@ sealed class RateUiState {
 }
 
 sealed class PostUiState {
-    object Idle : PostUiState()
+    object Idle    : PostUiState()
+    object Loading : PostUiState()
     object Success : PostUiState()
     data class Error(val message: String) : PostUiState()
 }
@@ -143,14 +145,16 @@ class EventDetailViewModel @Inject constructor(
                 val effectiveEvent = if (canFinishEvent(event)) event.copy(finished = true) else event
 
                 rateRepository.getRates(eventId) { rates ->
-                    val hasRated = rates.any { it.userId == currentUserId }
+                    val userRate = rates.find { it.userId == currentUserId }
+                    val hasRated = userRate != null
                     val canFinish = canFinishEvent(effectiveEvent)
 
                     postRepository.hasPosted(currentUserId, eventId) { hasPosted ->
                         threadsListener?.remove()
                         threadsListener = forumRepository.listenThreads(eventId) { threads ->
                             _uiState.value = EventDetailUiState.Success(
-                                effectiveEvent, currentMembers, threads, memberNames, canFinish, hasRated, hasPosted
+                                effectiveEvent, currentMembers, threads, memberNames,
+                                canFinish, hasRated, hasPosted, userRate
                             )
                         }
                     }
@@ -209,36 +213,40 @@ class EventDetailViewModel @Inject constructor(
     // Crea el Post con los datos del evento y la valoración del usuario.
     // memberIds se incluye en el post para que el feed de News pueda filtrar
     // "posts de gente en mis órbitas" usando whereArrayContains.
-    fun publishPost(eventId: String, userId: String, imageUris: List<Uri> = emptyList()) {
+    fun publishPost(
+        eventId: String,
+        userId: String,
+        comment: String = "",
+        imageUris: List<Uri> = emptyList()
+    ) {
         val event    = currentEvent ?: return
         val username = memberNames[userId] ?: userId
+        _postState.value = PostUiState.Loading
 
         fun doPublish(imageUrls: List<String>) {
-            rateRepository.getRates(eventId) { rates ->
-                val userRate = rates.find { it.userId == userId }
-                val post = Post(
-                    userId           = userId,
-                    username         = username,
-                    eventId          = eventId,
-                    eventTitle       = event.title,
-                    eventDescription = event.description,
-                    eventLocation    = event.location,
-                    rating           = userRate?.rating ?: 0f,
-                    comment          = userRate?.comment,
-                    imageUrls        = imageUrls,
-                    memberIds        = event.memberIds,
-                    createdAt        = System.currentTimeMillis()
-                )
-                postRepository.createPost(post) { success ->
-                    if (success) {
-                        _postState.value = PostUiState.Success
-                        val current = _uiState.value
-                        if (current is EventDetailUiState.Success) {
-                            _uiState.value = current.copy(hasPosted = true)
-                        }
-                    } else {
-                        _postState.value = PostUiState.Error("Error al publicar")
+            val current = _uiState.value as? EventDetailUiState.Success
+            val rating = current?.userRate?.rating ?: 0f
+            val post = Post(
+                userId           = userId,
+                username         = username,
+                eventId          = eventId,
+                eventTitle       = event.title,
+                eventDescription = event.description,
+                eventLocation    = event.location,
+                rating           = rating,
+                comment          = comment.ifBlank { current?.userRate?.comment },
+                imageUrls        = imageUrls,
+                memberIds        = event.memberIds,
+                createdAt        = System.currentTimeMillis()
+            )
+            postRepository.createPost(post) { success ->
+                if (success) {
+                    _postState.value = PostUiState.Success
+                    if (current != null) {
+                        _uiState.value = current.copy(hasPosted = true)
                     }
+                } else {
+                    _postState.value = PostUiState.Error("Error al publicar")
                 }
             }
         }

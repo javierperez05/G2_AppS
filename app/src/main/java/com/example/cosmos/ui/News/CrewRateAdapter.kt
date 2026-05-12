@@ -3,13 +3,16 @@ package com.example.cosmos.ui.News
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Actions.Rate
+import com.example.cosmos.R
 import com.example.cosmos.databinding.ItemCrewRateBinding
 
 data class CrewRateItem(
     val userId: String,
     val username: String,
-    val rate: Rate?
+    val rate: Rate?,
+    val avatarUrl: String? = null
 )
 
 class CrewRateAdapter(
@@ -36,6 +39,16 @@ class CrewRateAdapter(
 
         fun bind(item: CrewRateItem) {
             binding.tvCrewUsername.text = item.username
+
+            if (!item.avatarUrl.isNullOrEmpty()) {
+                Glide.with(binding.ivCrewAvatar)
+                    .load(item.avatarUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .into(binding.ivCrewAvatar)
+            } else {
+                binding.ivCrewAvatar.setImageResource(R.drawable.ic_circle_profile)
+            }
 
             if (item.rate != null) {
                 val filled = item.rate.rating.toInt().coerceIn(0, 5)

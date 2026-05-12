@@ -5,13 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
+import android.view.Gravity
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RatingBar
-import android.widget.ScrollView
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -37,6 +36,7 @@ import com.example.cosmos.ui.Events.Detail.ForumThreadAdapter
 import com.example.cosmos.ui.Events.Detail.PostUiState
 import com.example.cosmos.ui.Events.Detail.RateUiState
 import com.example.cosmos.ui.Events.Detail.Settlement
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,13 +68,18 @@ class EventDetailFragment : Fragment() {
     private var eventId: String = ""
     private var userId: String = ""
     private var replyingToThreadId: String? = null
-    private var pendingPostImageUris: List<Uri> = emptyList()
+
+    // Publicar en News — bottom sheet
+    private var publishSheet: BottomSheetDialog? = null
+    private var publishPhotoContainer: LinearLayout? = null
+    private var pendingPublishUris: MutableList<Uri> = mutableListOf()
 
     private val pickPostImages = registerForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ) { uris ->
-        pendingPostImageUris = uris
-        viewModel.publishPost(eventId, userId, pendingPostImageUris)
+        if (uris.isEmpty()) return@registerForActivityResult
+        pendingPublishUris.addAll(uris)
+        uris.forEach { uri -> addPhotoThumb(uri) }
     }
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
@@ -172,7 +177,8 @@ class EventDetailFragment : Fragment() {
         binding.btnRate.setOnClickListener { showRateDialog() }
 
         binding.btnPublishPost.setOnClickListener {
-            pickPostImages.launch("image/*")
+            val state = viewModel.uiState.value as? EventDetailUiState.Success ?: return@setOnClickListener
+            showPublishSheet(state)
         }
 
         binding.btnAddItem.setOnClickListener { showAddItemDialog() }
@@ -242,11 +248,20 @@ class EventDetailFragment : Fragment() {
                 launch {
                     viewModel.postState.collect { state ->
                         when (state) {
+                            is PostUiState.Loading -> {
+                                publishSheet?.findViewById<LinearLayout>(R.id.layoutPublishing)?.isVisible = true
+                                publishSheet?.findViewById<TextView>(R.id.btnPublish)?.isEnabled = false
+                            }
                             is PostUiState.Success -> {
-                                Snackbar.make(binding.root, "Publicado en News", Snackbar.LENGTH_SHORT).show()
+                                publishSheet?.dismiss()
+                                publishSheet = null
+                                pendingPublishUris.clear()
+                                Snackbar.make(binding.root, "Transmisión publicada", Snackbar.LENGTH_SHORT).show()
                                 viewModel.resetPostState()
                             }
                             is PostUiState.Error -> {
+                                publishSheet?.findViewById<LinearLayout>(R.id.layoutPublishing)?.isVisible = false
+                                publishSheet?.findViewById<TextView>(R.id.btnPublish)?.isEnabled = true
                                 Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                                 viewModel.resetPostState()
                             }
@@ -306,100 +321,192 @@ class EventDetailFragment : Fragment() {
         }
     }
 
-    // ── Dialog de item ──────────────────────────────────────────────────────
+    // ── Bottom sheet publicar en News (estilo Instagram) ──────────────────────
+
+    private fun showPublishSheet(state: EventDetailUiState.Success) {
+        pendingPublishUris.clear()
+
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottomsheet_publish_post, null)
+        dialog.setContentView(view)
+        publishSheet = dialog
+
+        val etComment       = view.findViewById<EditText>(R.id.etPostComment)
+        val tvStars         = view.findViewById<TextView>(R.id.tvPostStars)
+        val tvRating        = view.findViewById<TextView>(R.id.tvPostRating)
+        val tvEventTitle    = view.findViewById<TextView>(R.id.tvPostEventTitle)
+        val btnPublish      = view.findViewById<TextView>(R.id.btnPublish)
+        val btnAddPhoto     = view.findViewById<FrameLayout>(R.id.btnAddPhoto)
+        val llPhotos        = view.findViewById<LinearLayout>(R.id.llPhotos)
+        publishPhotoContainer = llPhotos
+
+        // Pre-fill rating
+        val rate = state.userRate
+        if (rate != null) {
+            val filled = rate.rating.toInt().coerceIn(0, 5)
+            tvStars.text = "\u2605".repeat(filled) + "\u2606".repeat(5 - filled)
+            tvStars.setTextColor(0xFFFFD700.toInt())
+            tvRating.text = "%.1f".format(rate.rating)
+            etComment.setText(rate.comment ?: "")
+        }
+        tvEventTitle.text = state.event.title ?: ""
+
+        btnAddPhoto.setOnClickListener { pickPostImages.launch("image/*") }
+
+        btnPublish.setOnClickListener {
+            val comment = etComment.text.toString().trim()
+            viewModel.publishPost(eventId, userId, comment, pendingPublishUris.toList())
+        }
+
+        dialog.setOnDismissListener {
+            publishSheet = null
+            publishPhotoContainer = null
+        }
+
+        dialog.show()
+    }
+
+    private fun addPhotoThumb(uri: Uri) {
+        val container = publishPhotoContainer ?: return
+        val ctx = requireContext()
+        val size = (80 * resources.displayMetrics.density).toInt()
+        val margin = (8 * resources.displayMetrics.density).toInt()
+
+        val frame = FrameLayout(ctx).apply {
+            layoutParams = LinearLayout.LayoutParams(size, size).also { it.setMargins(0, 0, margin, 0) }
+        }
+        val iv = ImageView(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            setBackgroundColor(0x22FFFFFF)
+        }
+        Glide.with(this).load(uri).centerCrop().into(iv)
+        frame.addView(iv)
+
+        // Tap para eliminar
+        frame.setOnClickListener {
+            pendingPublishUris.remove(uri)
+            container.removeView(frame)
+        }
+
+        // Insertar antes del botón "+"
+        container.addView(frame, 0)
+    }
+
+    // ── Bottom sheet de item ─────────────────────────────────────────────────
 
     private fun showAddItemDialog() {
         val members = currentMembers
         if (members.isEmpty()) return
         val ctx = requireContext()
 
-        val scroll = ScrollView(ctx)
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(64, 32, 64, 8)
-        }
-        scroll.addView(container)
+        val dialog = BottomSheetDialog(ctx)
+        val view = layoutInflater.inflate(R.layout.bottomsheet_add_item, null)
+        dialog.setContentView(view)
 
-        val etName = EditText(ctx).apply {
-            hint = "Nombre del item"
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0x55FFFFFF)
-        }
+        val etName    = view.findViewById<EditText>(R.id.etItemName)
+        val etPrice   = view.findViewById<EditText>(R.id.etItemPrice)
+        val llPayer   = view.findViewById<LinearLayout>(R.id.llPayerChips)
+        val llSplit   = view.findViewById<LinearLayout>(R.id.llSplitChips)
+        val btnConfirm = view.findViewById<LinearLayout>(R.id.btnConfirmItem)
 
-        val etPrice = EditText(ctx).apply {
-            hint = "Precio total (€)"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0x55FFFFFF)
-            setPadding(0, 24, 0, 0)
-        }
+        val density   = resources.displayMetrics.density
+        val chipH     = (36 * density).toInt()
+        val chipPadH  = (14 * density).toInt()
+        val chipMargin = (8 * density).toInt()
 
-        val tvPayerLabel = TextView(ctx).apply {
-            text = "Quién paga:"
-            setTextColor(0x88FFFFFF.toInt())
-            textSize = 12f
-            setPadding(0, 24, 0, 6)
-        }
+        // ── Payer chips (radio-style, one selected at a time) ─────────────────
+        var selectedPayerIndex = members.indexOfFirst { it.id == userId }.coerceAtLeast(0)
 
-        val spinnerPayer = Spinner(ctx)
-        spinnerPayer.adapter = ArrayAdapter(
-            ctx,
-            android.R.layout.simple_spinner_dropdown_item,
-            members.map { it.username ?: "?" }
-        )
-        // Preseleccionar al usuario actual
-        val selfIndex = members.indexOfFirst { it.id == userId }.coerceAtLeast(0)
-        spinnerPayer.setSelection(selfIndex)
-
-        val tvSplitLabel = TextView(ctx).apply {
-            text = "Dividir entre:"
-            setTextColor(0x88FFFFFF.toInt())
-            textSize = 12f
-            setPadding(0, 20, 0, 4)
-        }
-
-        val checkBoxes = members.map { member ->
-            CheckBox(ctx).apply {
+        val payerChips = members.map { member ->
+            TextView(ctx).apply {
                 text = member.username ?: "?"
-                isChecked = true
-                setTextColor(0xCCFFFFFF.toInt())
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(chipPadH, 0, chipPadH, 0)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, chipH
+                ).also { it.setMargins(0, 0, chipMargin, 0) }
+                textSize = 12f
             }
         }
 
-        container.addView(etName)
-        container.addView(etPrice)
-        container.addView(tvPayerLabel)
-        container.addView(spinnerPayer)
-        container.addView(tvSplitLabel)
-        checkBoxes.forEach { container.addView(it) }
-
-        MaterialAlertDialogBuilder(ctx)
-            .setTitle("Añadir item")
-            .setView(scroll)
-            .setPositiveButton("Añadir") { _, _ ->
-                val name = etName.text.toString().trim()
-                if (name.isBlank()) return@setPositiveButton
-                val price = etPrice.text.toString().toDoubleOrNull() ?: 0.0
-                val payerId = members.getOrNull(spinnerPayer.selectedItemPosition)?.id ?: userId
-                val splitIds = checkBoxes.indices
-                    .filter { checkBoxes[it].isChecked }
-                    .mapNotNull { members.getOrNull(it)?.id }
-                    .ifEmpty { listOf(userId) }
-
-                viewModel.addItem(
-                    eventId,
-                    EventItem(
-                        id                  = UUID.randomUUID().toString(),
-                        name                = name,
-                        price               = price,
-                        paidByUserId        = payerId,
-                        splitBetweenUserIds = splitIds
-                    )
-                )
+        fun refreshPayerStyles() {
+            payerChips.forEachIndexed { i, chip ->
+                if (i == selectedPayerIndex) {
+                    chip.setBackgroundResource(R.drawable.bg_tab_selected)
+                    chip.setTextColor(0xFFC4BCFF.toInt())
+                } else {
+                    chip.setBackgroundResource(R.drawable.bg_chip_glass)
+                    chip.setTextColor(0x88FFFFFF.toInt())
+                }
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        }
+        payerChips.forEachIndexed { i, chip ->
+            chip.setOnClickListener { selectedPayerIndex = i; refreshPayerStyles() }
+            llPayer.addView(chip)
+        }
+        refreshPayerStyles()
+
+        // ── Split chips (multi-select toggle, all on initially) ───────────────
+        val splitSelected = BooleanArray(members.size) { true }
+
+        val splitChips = members.map { member ->
+            TextView(ctx).apply {
+                text = member.username ?: "?"
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(chipPadH, 0, chipPadH, 0)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, chipH
+                ).also { it.setMargins(0, 0, chipMargin, 0) }
+                textSize = 12f
+            }
+        }
+
+        fun refreshSplitStyles() {
+            splitChips.forEachIndexed { i, chip ->
+                if (splitSelected[i]) {
+                    chip.setBackgroundResource(R.drawable.bg_tab_selected)
+                    chip.setTextColor(0xFFC4BCFF.toInt())
+                } else {
+                    chip.setBackgroundResource(R.drawable.bg_chip_glass)
+                    chip.setTextColor(0x88FFFFFF.toInt())
+                }
+            }
+        }
+        splitChips.forEachIndexed { i, chip ->
+            chip.setOnClickListener { splitSelected[i] = !splitSelected[i]; refreshSplitStyles() }
+            llSplit.addView(chip)
+        }
+        refreshSplitStyles()
+
+        // ── Confirm ───────────────────────────────────────────────────────────
+        btnConfirm.setOnClickListener {
+            val name = etName.text.toString().trim()
+            if (name.isBlank()) return@setOnClickListener
+            val price   = etPrice.text.toString().toDoubleOrNull() ?: 0.0
+            val payerId = members.getOrNull(selectedPayerIndex)?.id ?: userId
+            val splitIds = splitSelected.indices
+                .filter { splitSelected[it] }
+                .mapNotNull { members.getOrNull(it)?.id }
+                .ifEmpty { listOf(userId) }
+
+            viewModel.addItem(
+                eventId,
+                EventItem(
+                    id                  = UUID.randomUUID().toString(),
+                    name                = name,
+                    price               = price,
+                    paidByUserId        = payerId,
+                    splitBetweenUserIds = splitIds
+                )
+            )
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     // ── Cuentas (Tricount) ──────────────────────────────────────────────────

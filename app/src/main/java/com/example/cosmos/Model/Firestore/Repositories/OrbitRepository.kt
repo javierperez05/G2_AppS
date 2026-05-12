@@ -73,4 +73,73 @@ class OrbitRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    // ── Añadir evento al grupo ────────────────────────────────────────────────
+
+    fun addEventToGroup(groupId: String, eventId: String, onResult: (Boolean) -> Unit) {
+        db.document(groupId)
+            .update("eventIds", FieldValue.arrayUnion(eventId))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Invitar usuario ───────────────────────────────────────────────────────
+
+    fun inviteUserToGroup(groupId: String, userId: String, onResult: (Boolean) -> Unit) {
+        db.document(groupId)
+            .update("invitedIds", FieldValue.arrayUnion(userId))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Aceptar invitación ────────────────────────────────────────────────────
+
+    fun acceptGroupInvite(groupId: String, userId: String, onResult: (Boolean) -> Unit) {
+        val batch = firestore.batch()
+        val ref = db.document(groupId)
+        batch.update(ref, "invitedIds", FieldValue.arrayRemove(userId))
+        batch.update(ref, "memberIds", FieldValue.arrayUnion(userId))
+        batch.commit()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Rechazar / cancelar invitación ────────────────────────────────────────
+
+    fun rejectGroupInvite(groupId: String, userId: String, onResult: (Boolean) -> Unit) {
+        db.document(groupId)
+            .update("invitedIds", FieldValue.arrayRemove(userId))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Salir del grupo ───────────────────────────────────────────────────────
+
+    fun leaveGroup(groupId: String, userId: String, onResult: (Boolean) -> Unit) {
+        db.document(groupId)
+            .update("memberIds", FieldValue.arrayRemove(userId))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Expulsar miembro (solo admins) ────────────────────────────────────────
+
+    fun removeMemberFromGroup(groupId: String, userId: String, onResult: (Boolean) -> Unit) {
+        db.document(groupId)
+            .update("memberIds", FieldValue.arrayRemove(userId))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Grupos donde el usuario está invitado (flow) ──────────────────────────
+
+    fun getInvitedGroupsFlow(userId: String): Flow<List<Group>> = callbackFlow {
+        val listener = db
+            .whereArrayContains("invitedIds", userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) { close(error); return@addSnapshotListener }
+                trySend(snapshot?.toObjects(Group::class.java) ?: emptyList())
+            }
+        awaitClose { listener.remove() }
+    }
 }

@@ -25,6 +25,7 @@ import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentCreateEventBinding
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
+import com.example.cosmos.ui.Orbit.GroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -38,6 +39,7 @@ class CreateEventFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: EventViewModel by viewModels()
+    private val groupViewModel: GroupViewModel by androidx.fragment.app.activityViewModels()
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -51,6 +53,7 @@ class CreateEventFragment : Fragment() {
     private val selectedMembers = mutableListOf<User>()
 
     private var selectedImageUri: Uri? = null
+    private var groupId: String? = null
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var membersAdapter: SelectedMembersAdapter
@@ -89,6 +92,7 @@ class CreateEventFragment : Fragment() {
 
     private fun initData() {
         currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
+        groupId = arguments?.getString("groupId")
         if (currentUserId.isNotEmpty()) {
             selectedMemberIds.add(currentUserId)
         }
@@ -160,6 +164,11 @@ class CreateEventFragment : Fragment() {
                             binding.btnCreateEvent.text = "Launching..."
                         }
                         is CreateEventUiState.Success -> {
+                            // Si venimos de un grupo, vincular el evento creado al grupo
+                            val gId = groupId
+                            if (!gId.isNullOrEmpty() && state.eventId.isNotEmpty()) {
+                                groupViewModel.linkEventToGroup(gId, state.eventId)
+                            }
                             viewModel.resetCreateState()
                             findNavController().popBackStack()
                         }

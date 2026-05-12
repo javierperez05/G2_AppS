@@ -297,37 +297,18 @@
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
-        <!-- Buscador + botón añadir -->
-        <LinearLayout
+        <!-- Buscador -->
+        <EditText
+            android:id="@+id/etMemberEmail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <EditText
-                android:id="@+id/etMemberEmail"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_field_glass"
-                android:hint="Buscar por usuario..."
-                android:inputType="text"
-                android:textColor="@android:color/white"
-                android:textColorHint="#44FFFFFF"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp" />
-
-            <ImageButton
-                android:id="@+id/btnAddMemberAction"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_chip_glass"
-                android:src="@drawable/ic_add"
-                android:padding="12dp"
-                app:tint="@color/app_color" />
-
-        </LinearLayout>
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="Buscar por usuario..."
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
 
         <!-- Sugerencias de búsqueda -->
         <androidx.recyclerview.widget.RecyclerView

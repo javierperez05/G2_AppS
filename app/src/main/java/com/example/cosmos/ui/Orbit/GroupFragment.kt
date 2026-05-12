@@ -108,6 +108,7 @@ class GroupFragment : Fragment() {
                         binding.rvGroups.isVisible     = state is GroupsUiState.Success
                         if (state is GroupsUiState.Success) {
                             allGroups = state.groups
+                            groupAdapter.invitedGroupIds = state.invitedGroupIds
                             groupAdapter.submitList(state.groups)
                         }
                     }

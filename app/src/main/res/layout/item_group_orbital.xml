@@ -64,12 +64,35 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvMemberCount"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:textColor="#55FFFFFF" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvMemberCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="#55FFFFFF" />
+
+            <TextView
+                android:id="@+id/tvInvitedBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="INVITADO"
+                android:textColor="#FFC4BCFF"
+                android:textSize="8sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:background="@drawable/bg_chip_glass"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

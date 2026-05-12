@@ -44,19 +44,22 @@ import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Firestore.Repositories.CloudinaryRepository
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
+import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.Group
+import com.example.cosmos.Model.Users.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class GroupsUiState {
     object Loading : GroupsUiState()
     object Empty   : GroupsUiState()
-    data class Success(val groups: List<Group>) : GroupsUiState()
+    data class Success(val groups: List<Group>, val invitedGroupIds: Set<String> = emptySet()) : GroupsUiState()
     data class Error(val message: String)       : GroupsUiState()
 }
 
@@ -73,11 +76,27 @@ sealed class GroupActionState {
     data class Error(val message: String) : GroupActionState()
 }
 
+sealed class GroupMembersUiState {
+    object Loading : GroupMembersUiState()
+    data class Success(
+        val members: List<User>,
+        val invitedUsers: List<User>
+    ) : GroupMembersUiState()
+}
+
+sealed class GroupDetailActionState {
+    object Idle    : GroupDetailActionState()
+    object Loading : GroupDetailActionState()
+    data class Success(val message: String = "") : GroupDetailActionState()
+    data class Error(val message: String) : GroupDetailActionState()
+}
+
 @HiltViewModel
 class GroupViewModel @Inject constructor(
     private val orbitRepository: OrbitRepository,
     private val eventRepository: EventRepository,
-    private val cloudinaryRepository: CloudinaryRepository
+    private val cloudinaryRepository: CloudinaryRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<GroupsUiState>(GroupsUiState.Loading)
@@ -94,6 +113,12 @@ class GroupViewModel @Inject constructor(
     private val _groupEventsState = MutableStateFlow<GroupEventsUiState>(GroupEventsUiState.Loading)
     val groupEventsState: StateFlow<GroupEventsUiState> = _groupEventsState.asStateFlow()
 
+    private val _groupMembersState = MutableStateFlow<GroupMembersUiState>(GroupMembersUiState.Loading)
+    val groupMembersState: StateFlow<GroupMembersUiState> = _groupMembersState.asStateFlow()
+
+    private val _detailActionState = MutableStateFlow<GroupDetailActionState>(GroupDetailActionState.Idle)
+    val detailActionState: StateFlow<GroupDetailActionState> = _detailActionState.asStateFlow()
+
     // Señal para abrir el bottom sheet de solicitudes desde EventFragment.
     // true = "oye GroupFragment, abre el sheet en modo REQUESTS"
     // false = estado por defecto / ya consumido
@@ -109,13 +134,20 @@ class GroupViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            orbitRepository.getUserGroupsFlow(userId)
+            combine(
+                orbitRepository.getUserGroupsFlow(userId),
+                orbitRepository.getInvitedGroupsFlow(userId)
+            ) { memberGroups, invitedGroups ->
+                val invitedIds = invitedGroups.mapNotNull { it.id }.toSet()
+                val allGroups = (memberGroups + invitedGroups).distinctBy { it.id }
+                Pair(allGroups, invitedIds)
+            }
                 .catch { e ->
                     _uiState.value = GroupsUiState.Error(e.message ?: "Error cargando órbitas")
                 }
-                .collect { groups ->
-                    _uiState.value = if (groups.isEmpty()) GroupsUiState.Empty
-                    else GroupsUiState.Success(groups)
+                .collect { (allGroups, invitedIds) ->
+                    _uiState.value = if (allGroups.isEmpty()) GroupsUiState.Empty
+                    else GroupsUiState.Success(allGroups, invitedIds)
                 }
         }
     }
@@ -162,6 +194,68 @@ class GroupViewModel @Inject constructor(
             else GroupEventsUiState.Success(events)
         }
     }
+
+    fun loadGroupMembers(memberIds: List<String>, invitedIds: List<String>) {
+        _groupMembersState.value = GroupMembersUiState.Loading
+        val allIds = (memberIds + invitedIds).distinct()
+        if (allIds.isEmpty()) {
+            _groupMembersState.value = GroupMembersUiState.Success(emptyList(), emptyList())
+            return
+        }
+        userRepository.getUsersByIds(allIds) { users ->
+            val members = users.filter { memberIds.contains(it.id) }
+            val invited = users.filter { invitedIds.contains(it.id) }
+            _groupMembersState.value = GroupMembersUiState.Success(members, invited)
+        }
+    }
+
+    fun inviteToGroup(groupId: String, userId: String) {
+        orbitRepository.inviteUserToGroup(groupId, userId) { success ->
+            _detailActionState.value = if (success)
+                GroupDetailActionState.Success("Invitación enviada")
+            else GroupDetailActionState.Error("Error al enviar invitación")
+        }
+    }
+
+    fun acceptGroupInvite(groupId: String, userId: String) {
+        _detailActionState.value = GroupDetailActionState.Loading
+        orbitRepository.acceptGroupInvite(groupId, userId) { success ->
+            _detailActionState.value = if (success)
+                GroupDetailActionState.Success("Te has unido a la órbita")
+            else GroupDetailActionState.Error("Error al aceptar invitación")
+        }
+    }
+
+    fun rejectGroupInvite(groupId: String, userId: String) {
+        orbitRepository.rejectGroupInvite(groupId, userId) { success ->
+            _detailActionState.value = if (success)
+                GroupDetailActionState.Success()
+            else GroupDetailActionState.Error("Error al rechazar invitación")
+        }
+    }
+
+    fun leaveGroup(groupId: String, userId: String) {
+        _detailActionState.value = GroupDetailActionState.Loading
+        orbitRepository.leaveGroup(groupId, userId) { success ->
+            _detailActionState.value = if (success)
+                GroupDetailActionState.Success("Has salido de la órbita")
+            else GroupDetailActionState.Error("Error al salir del grupo")
+        }
+    }
+
+    fun kickMember(groupId: String, userId: String) {
+        orbitRepository.removeMemberFromGroup(groupId, userId) { success ->
+            _detailActionState.value = if (success)
+                GroupDetailActionState.Success("Miembro expulsado")
+            else GroupDetailActionState.Error("Error al expulsar miembro")
+        }
+    }
+
+    fun linkEventToGroup(groupId: String, eventId: String) {
+        orbitRepository.addEventToGroup(groupId, eventId) {}
+    }
+
+    fun resetDetailActionState() { _detailActionState.value = GroupDetailActionState.Idle }
 
     // EventFragment llama a signalOpenRequests() cuando el usuario toca
     // una alerta de solicitud de amistad. GroupFragment lo detecta y abre

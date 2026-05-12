@@ -7,6 +7,6 @@ data class Group(
     val imageUrl: String? = null,
     val memberIds: List<String> = emptyList(),
     val adminIds: List<String> = emptyList(),
-    val eventIds: List<String> = emptyList()
-    // TODO: val updatedAt: Long? = null — añadir cuando hagamos el BottomSheet de grupos ordenados por actividad
+    val eventIds: List<String> = emptyList(),
+    val invitedIds: List<String> = emptyList()
 )

@@ -2,6 +2,7 @@ package com.example.cosmos.ui.Orbit
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -14,6 +15,8 @@ import com.example.cosmos.databinding.ItemGroupOrbitalBinding
 class GroupAdapter(
     private val onGroupClick: (Group) -> Unit
 ) : ListAdapter<Group, GroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
+
+    var invitedGroupIds: Set<String> = emptySet()
 
     private val accentColors = listOf(
         "#7C6DF0", "#0EA5E9", "#34D399",
@@ -42,6 +45,8 @@ class GroupAdapter(
             binding.tvGroupName.text   = group.name ?: "Órbita"
             binding.tvGroupMeta.text   = group.description ?: "Sin descripción"
             binding.tvMemberCount.text = "${group.memberIds.size} ✦"
+            binding.tvInvitedBadge.visibility =
+                if (invitedGroupIds.contains(group.id)) View.VISIBLE else View.GONE
             binding.viewAccent.setBackgroundColor(Color.parseColor(accentHex))
 
             if (!group.imageUrl.isNullOrBlank()) {

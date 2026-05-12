@@ -63,6 +63,14 @@ class EventRepository @Inject constructor(
             .addOnFailureListener { onResult(false) }
     }
 
+    fun createEventGetId(event: Event, onResult: (String?) -> Unit) {
+        val docRef     = db.document()
+        val finalEvent = event.copy(id = docRef.id)
+        docRef.set(finalEvent)
+            .addOnSuccessListener { onResult(docRef.id) }
+            .addOnFailureListener { onResult(null) }
+    }
+
     // addSnapshotListener: tiempo real. El callback se llama al instante con
     // los datos actuales y cada vez que Firestore actualiza la colección.
     fun getUserEvents(userId: String, onResult: (List<Event>) -> Unit) {
