@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_field_glass"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="20dp">
+
+    <!-- Icon -->
+    <ImageView
+        android:id="@+id/ivDialogIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        android:contentDescription="Dialog icon" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#EEFFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.06" />
+
+    <!-- Message -->
+    <TextView
+        android:id="@+id/tvDialogMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="#88FFFFFF"
+        android:textSize="13sp"
+        android:lineSpacingExtra="3dp" />
+
+    <!-- Buttons row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="center">
+
+        <!-- Cancel -->
+        <TextView
+            android:id="@+id/btnDialogCancel"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:background="@drawable/bg_chip_glass"
+            android:text="Cancelar"
+            android:textColor="#88FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+
+        <!-- Confirm -->
+        <TextView
+            android:id="@+id/btnDialogConfirm"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:background="@drawable/bg_tab_selected"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+
+    </LinearLayout>
+
+</LinearLayout>

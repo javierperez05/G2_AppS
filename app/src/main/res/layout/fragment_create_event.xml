@@ -305,12 +305,42 @@
             android:layout_marginVertical="28dp"
             android:background="#1AFFFFFF" />
 
+        <!-- Label orbitas -->
+        <TextView
+            android:id="@+id/tvOrbitLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="INVITAR ORBITAS"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"
+            android:visibility="gone" />
+
+        <!-- Chips de orbitas del usuario -->
+        <HorizontalScrollView
+            android:id="@+id/scrollOrbits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/llOrbitChips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
         <!-- Label invitar -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:text="INVITAR TRIPULACIÓN"
+            android:text="INVITAR TRIPULACION"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />

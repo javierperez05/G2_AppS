@@ -3,6 +3,7 @@ package com.example.cosmos.ui.Events
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cosmos.databinding.ItemNotificationAlertBinding
 
@@ -11,11 +12,14 @@ data class AlertItem(
     val title: String,
     val subtitle: String,
     val timeLabel: String,
-    val eventId: String? = null
+    val eventId: String? = null,
+    val alertKey: String = ""
 )
 
 class AlertAdapter(
-    private val onAlertClick: (AlertItem) -> Unit
+    private val showDismiss: Boolean = false,
+    private val onAlertClick: (AlertItem) -> Unit,
+    private val onDismiss: ((AlertItem) -> Unit)? = null
 ) : RecyclerView.Adapter<AlertAdapter.AlertViewHolder>() {
 
     private val items = mutableListOf<AlertItem>()
@@ -44,6 +48,8 @@ class AlertAdapter(
             tvAlertSubtitle.text = item.subtitle
             tvAlertTime.text = item.timeLabel
             root.setOnClickListener { onAlertClick(item) }
+            btnDismiss.isVisible = showDismiss && onDismiss != null
+            btnDismiss.setOnClickListener { onDismiss?.invoke(item) }
         }
     }
 

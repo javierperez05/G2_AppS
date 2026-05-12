@@ -20,7 +20,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Event.EventType
+import com.example.cosmos.Model.Firestore.Repositories.OrbitRepository
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
+import com.example.cosmos.Model.Users.Group
 import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentCreateEventBinding
@@ -44,6 +46,8 @@ class CreateEventFragment : Fragment() {
 
     @Inject
     lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var orbitRepository: OrbitRepository
 
     private var selectedDate: Date? = null
     private var selectedHour = 0
@@ -56,6 +60,13 @@ class CreateEventFragment : Fragment() {
     private var selectedImageUri: Uri? = null
     private var groupId: String? = null
     private var editEventId: String? = null
+
+    // Orbitas: grupos seleccionados y miembros que vienen de grupos
+    private val selectedGroupIds = mutableSetOf<String>()
+    // Mapa: groupId -> lista de memberIds que vinieron de ese grupo
+    private val groupMemberMap = mutableMapOf<String, List<String>>()
+    private var userGroups: List<Group> = emptyList()
+    private val orbitChipViews = mutableMapOf<String, android.widget.TextView>()
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var membersAdapter: SelectedMembersAdapter
@@ -104,6 +115,14 @@ class CreateEventFragment : Fragment() {
             binding.btnCreateEvent.text = "Guardar cambios"
         } else if (currentUserId.isNotEmpty()) {
             selectedMemberIds.add(currentUserId)
+        }
+
+        // Cargar orbitas del usuario para poder invitar grupos enteros
+        if (currentUserId.isNotEmpty()) {
+            orbitRepository.getUserGroups(currentUserId) { groups ->
+                userGroups = groups
+                buildOrbitChips()
+            }
         }
     }
 
@@ -323,6 +342,94 @@ class CreateEventFragment : Fragment() {
         binding.tvDurationLabel.text = label
         binding.tvDurationLabel.setTextColor(0xFFFFFFFF.toInt())
     }
+
+    // ── Orbitas ─────────────────────────────────────────────────────────────
+
+    private fun buildOrbitChips() {
+        if (_binding == null) return
+        val ll = binding.llOrbitChips
+        ll.removeAllViews()
+        orbitChipViews.clear()
+
+        if (userGroups.isEmpty()) return
+
+        binding.tvOrbitLabel.isVisible = true
+        binding.scrollOrbits.isVisible = true
+
+        val density = resources.displayMetrics.density
+        val chipH   = (36 * density).toInt()
+        val chipPad = (14 * density).toInt()
+        val chipMar = (8 * density).toInt()
+
+        for (group in userGroups) {
+            val gId = group.id ?: continue
+            val chip = android.widget.TextView(requireContext()).apply {
+                text = group.name ?: "Orbita"
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(chipPad, 0, chipPad, 0)
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, chipH
+                ).also { it.setMargins(0, 0, chipMar, 0) }
+                textSize = 12f
+                setBackgroundResource(R.drawable.bg_chip_glass)
+                setTextColor(0x88FFFFFF.toInt())
+                setOnClickListener { toggleGroup(gId, group) }
+            }
+            orbitChipViews[gId] = chip
+            ll.addView(chip)
+        }
+    }
+
+    private fun toggleGroup(groupId: String, group: Group) {
+        if (selectedGroupIds.contains(groupId)) {
+            // Deseleccionar grupo
+            selectedGroupIds.remove(groupId)
+            removeGroupMembers(groupId)
+            orbitChipViews[groupId]?.apply {
+                setBackgroundResource(R.drawable.bg_chip_glass)
+                setTextColor(0x88FFFFFF.toInt())
+            }
+        } else {
+            // Seleccionar grupo
+            selectedGroupIds.add(groupId)
+            addGroupMembers(groupId, group.memberIds)
+            orbitChipViews[groupId]?.apply {
+                setBackgroundResource(R.drawable.bg_tab_selected)
+                setTextColor(0xFFC4BCFF.toInt())
+            }
+        }
+    }
+
+    private fun addGroupMembers(groupId: String, memberIds: List<String>) {
+        // IDs nuevos que no estan ya seleccionados
+        val newIds = memberIds.filter { !selectedMemberIds.contains(it) }
+        groupMemberMap[groupId] = newIds
+        selectedMemberIds.addAll(newIds)
+
+        if (newIds.isEmpty()) return
+
+        // Fetch User objects para mostrar en la lista
+        userRepository.getUsersByIds(newIds) { users ->
+            if (_binding == null) return@getUsersByIds
+            selectedMembers.addAll(users)
+            membersAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun removeGroupMembers(groupId: String) {
+        val idsFromGroup = groupMemberMap.remove(groupId) ?: return
+
+        // Solo quitar los IDs que no estan en otro grupo seleccionado ni fueron
+        // anadidos individualmente (los que siguen en algun otro grupo los dejamos)
+        val idsInOtherGroups = groupMemberMap.values.flatten().toSet()
+        val idsToRemove = idsFromGroup.filter { it !in idsInOtherGroups }
+
+        selectedMemberIds.removeAll(idsToRemove.toSet())
+        selectedMembers.removeAll { it.id in idsToRemove }
+        membersAdapter.notifyDataSetChanged()
+    }
+
+    // ── Date / Time pickers ─────────────────────────────────────────────────
 
     private fun showDatePicker() {
         val picker = MaterialDatePicker.Builder.datePicker().build()

@@ -27,7 +27,10 @@ import com.example.cosmos.ui.Orbit.GroupEventsUiState
 import com.example.cosmos.ui.Orbit.GroupMembersUiState
 import com.example.cosmos.ui.Orbit.GroupViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -166,14 +169,11 @@ class GroupDetailFragment : Fragment() {
         binding.btnInvite.setOnClickListener { showInviteSheet() }
 
         binding.btnLeaveGroup.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Salir de la órbita")
-                .setMessage("¿Seguro que quieres salir de ${viewModel.selectedGroup.value?.name}?")
-                .setPositiveButton("Salir") { _, _ ->
-                    viewModel.leaveGroup(currentGroupId, currentUserId)
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            showConfirmDialog(
+                title = "Salir de la orbita",
+                message = "¿Seguro que quieres salir de ${viewModel.selectedGroup.value?.name}?",
+                confirmText = "Salir"
+            ) { viewModel.leaveGroup(currentGroupId, currentUserId) }
         }
 
         binding.btnAcceptInvite.setOnClickListener {
@@ -181,14 +181,11 @@ class GroupDetailFragment : Fragment() {
         }
 
         binding.btnRejectInvite.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Rechazar invitación")
-                .setMessage("¿Rechazar la invitación a esta órbita?")
-                .setPositiveButton("Rechazar") { _, _ ->
-                    viewModel.rejectGroupInvite(currentGroupId, currentUserId)
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            showConfirmDialog(
+                title = "Rechazar invitacion",
+                message = "¿Rechazar la invitacion a esta orbita?",
+                confirmText = "Rechazar"
+            ) { viewModel.rejectGroupInvite(currentGroupId, currentUserId) }
         }
     }
 
@@ -304,14 +301,11 @@ class GroupDetailFragment : Fragment() {
     }
 
     private fun confirmKick(user: User) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Expulsar de la órbita")
-            .setMessage("¿Expulsar a @${user.username}?")
-            .setPositiveButton("Expulsar") { _, _ ->
-                viewModel.kickMember(currentGroupId, user.id ?: return@setPositiveButton)
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        showConfirmDialog(
+            title = "Expulsar de la orbita",
+            message = "¿Expulsar a @${user.username}?",
+            confirmText = "Expulsar"
+        ) { viewModel.kickMember(currentGroupId, user.id ?: return@showConfirmDialog) }
     }
 
     // ── Bottom sheet para invitar ─────────────────────────────────────────────
@@ -367,6 +361,35 @@ class GroupDetailFragment : Fragment() {
                 }
             }
         })
+
+        dialog.show()
+    }
+
+    // ── Dialog de confirmacion custom ────────────────────────────────────────
+
+    private fun showConfirmDialog(
+        title: String,
+        message: String,
+        confirmText: String,
+        onConfirm: () -> Unit
+    ) {
+        val dialog = Dialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.dialog_confirm, null)
+        dialog.setContentView(view)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        view.findViewById<TextView>(R.id.tvDialogTitle).text = title
+        view.findViewById<TextView>(R.id.tvDialogMessage).text = message
+        view.findViewById<TextView>(R.id.btnDialogConfirm).text = confirmText
+        view.findViewById<TextView>(R.id.btnDialogCancel).setOnClickListener { dialog.dismiss() }
+        view.findViewById<TextView>(R.id.btnDialogConfirm).setOnClickListener {
+            dialog.dismiss()
+            onConfirm()
+        }
 
         dialog.show()
     }

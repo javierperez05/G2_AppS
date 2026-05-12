@@ -103,6 +103,7 @@ class EventFragment : Fragment() {
     private var currentAlerts:   List<AlertItem>     = emptyList()
     private var currentEvents:   List<Event>          = emptyList()
     private var currentRequests: List<FriendRequest>  = emptyList()
+    private val dismissedAlertKeys = mutableSetOf<String>()
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
 
@@ -328,14 +329,16 @@ class EventFragment : Fragment() {
                     iconRes   = R.drawable.ic_person_add,
                     title     = "${req.fromUsername} quiere ser tu amigo",
                     subtitle  = "Solicitud de amistad pendiente",
-                    timeLabel = ""
+                    timeLabel = "",
+                    alertKey  = "friend_requests"
                 ))
             } else {
                 alerts.add(AlertItem(
                     iconRes   = R.drawable.ic_person_add,
                     title     = "${currentRequests.size} solicitudes de amistad",
                     subtitle  = currentRequests.take(3).joinToString(", ") { it.fromUsername },
-                    timeLabel = ""
+                    timeLabel = "",
+                    alertKey  = "friend_requests"
                 ))
             }
         }
@@ -372,7 +375,8 @@ class EventFragment : Fragment() {
                 else -> continue  // Más de 3 días: no aparece en alertas urgentes
             }
             alerts.add(AlertItem(iconRes = iconRes, title = event.title ?: "Evento",
-                subtitle = subtitle, timeLabel = timeLabel, eventId = event.id))
+                subtitle = subtitle, timeLabel = timeLabel, eventId = event.id,
+                alertKey = "event_${event.id}"))
         }
 
         // Eventos lejanos (>3 días): aparecen en el marquee como info general
@@ -384,12 +388,13 @@ class EventFragment : Fragment() {
                     title     = event.title ?: "Nuevo evento",
                     subtitle  = "${event.memberIds.size} crew · ${SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)}",
                     timeLabel = "",
-                    eventId   = event.id
+                    eventId   = event.id,
+                    alertKey  = "event_${event.id}"
                 ))
             }
         }
 
-        currentAlerts = alerts
+        currentAlerts = alerts.filter { it.alertKey !in dismissedAlertKeys }
         updateMarquee()
     }
 
@@ -431,15 +436,17 @@ class EventFragment : Fragment() {
             // la reanudación tras arrastrar sea suave
             val startX = scrollView.scrollX
 
+            val halfText = binding.tvMarquee.width / 2
+
             marqueeRunnable = object : Runnable {
                 var scrollX = startX
                 override fun run() {
                     if (_binding == null) return
                     scrollX += 2
-                    // Al llegar a la mitad (fin del primer bloque de texto),
-                    // volvemos a 0. Como el segundo bloque es idéntico al primero,
-                    // el salto es invisible para el usuario.
-                    if (scrollX >= maxScroll / 2) scrollX = 0
+                    // Al llegar al inicio del segundo bloque de texto (mitad del
+                    // ancho total del TextView), volvemos a 0. Como ambos bloques
+                    // son idénticos, el salto es invisible para el usuario.
+                    if (scrollX >= halfText) scrollX = 0
                     scrollView.scrollTo(scrollX, 0)
                     marqueeHandler.postDelayed(this, 35)
                 }
@@ -460,31 +467,53 @@ class EventFragment : Fragment() {
         val sheetBinding = BottomSheetAlertsBinding.inflate(layoutInflater)
         dialog.setContentView(sheetBinding.root)
 
-        sheetBinding.tvNoAlerts.isVisible = currentAlerts.isEmpty()
-        sheetBinding.rvAlerts.isVisible   = currentAlerts.isNotEmpty()
+        sheetBinding.tvNoAlerts.isVisible  = currentAlerts.isEmpty()
+        sheetBinding.rvAlerts.isVisible    = currentAlerts.isNotEmpty()
+        sheetBinding.btnClearAll.isVisible = currentAlerts.isNotEmpty()
 
         if (currentAlerts.isNotEmpty()) {
-            val alertAdapter = AlertAdapter { alert ->
-                dialog.dismiss()
-                when {
-                    alert.iconRes == R.drawable.ic_person_add -> {
-                        // Solicitud de amistad: cambiar a tab Órbitas y señalar
-                        // a GroupFragment que abra el sheet en modo REQUESTS
-                        activity?.findViewById<BottomNavigationView>(R.id.bottom_menu)
-                            ?.selectedItemId = R.id.navigation_orbit
-                        groupViewModel.signalOpenRequests()
+            val alertAdapter = AlertAdapter(
+                showDismiss = true,
+                onAlertClick = { alert ->
+                    dialog.dismiss()
+                    when {
+                        alert.iconRes == R.drawable.ic_person_add -> {
+                            activity?.findViewById<BottomNavigationView>(R.id.bottom_menu)
+                                ?.selectedItemId = R.id.navigation_orbit
+                            groupViewModel.signalOpenRequests()
+                        }
+                        alert.eventId != null -> {
+                            val bundle = Bundle().apply { putString("eventId", alert.eventId) }
+                            findNavController().navigate(
+                                R.id.action_eventFragment_to_eventDetailFragment, bundle
+                            )
+                        }
                     }
-                    alert.eventId != null -> {
-                        val bundle = Bundle().apply { putString("eventId", alert.eventId) }
-                        findNavController().navigate(
-                            R.id.action_eventFragment_to_eventDetailFragment, bundle
-                        )
+                },
+                onDismiss = { alert ->
+                    if (alert.alertKey.isNotEmpty()) {
+                        dismissedAlertKeys.add(alert.alertKey)
+                        rebuildAlerts()
+                        // Actualizar la lista en el sheet
+                        sheetBinding.tvNoAlerts.isVisible  = currentAlerts.isEmpty()
+                        sheetBinding.rvAlerts.isVisible    = currentAlerts.isNotEmpty()
+                        sheetBinding.btnClearAll.isVisible  = currentAlerts.isNotEmpty()
+                        (sheetBinding.rvAlerts.adapter as? AlertAdapter)?.submitList(currentAlerts)
                     }
                 }
-            }
+            )
             sheetBinding.rvAlerts.layoutManager = LinearLayoutManager(requireContext())
             sheetBinding.rvAlerts.adapter        = alertAdapter
             alertAdapter.submitList(currentAlerts)
+
+            sheetBinding.btnClearAll.setOnClickListener {
+                currentAlerts.forEach { dismissedAlertKeys.add(it.alertKey) }
+                rebuildAlerts()
+                sheetBinding.tvNoAlerts.isVisible  = true
+                sheetBinding.rvAlerts.isVisible    = false
+                sheetBinding.btnClearAll.isVisible  = false
+                alertAdapter.submitList(emptyList())
+            }
         }
 
         dialog.show()

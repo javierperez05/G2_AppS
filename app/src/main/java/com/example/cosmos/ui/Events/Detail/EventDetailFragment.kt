@@ -29,7 +29,6 @@ import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentEventDetailBinding
 import android.content.Intent
-import android.net.Uri
 import com.example.cosmos.ui.Events.Detail.DeleteEventUiState
 import com.example.cosmos.ui.Events.Detail.EventDetailUiState
 import com.example.cosmos.ui.Events.Detail.EventDetailViewModel
@@ -40,7 +39,9 @@ import com.example.cosmos.ui.Events.Detail.PostUiState
 import com.example.cosmos.ui.Events.Detail.RateUiState
 import com.example.cosmos.ui.Events.Detail.Settlement
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -167,14 +168,11 @@ class EventDetailFragment : Fragment() {
         }
 
         binding.btnFinishEvent.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Finalizar mision")
-                .setMessage("Esto marcara el evento como completado para todos los miembros.")
-                .setPositiveButton("Finalizar") { _, _ ->
-                    viewModel.finishEvent(eventId)
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            showConfirmDialog(
+                title = "Finalizar mision",
+                message = "Esto marcara el evento como completado para todos los miembros.",
+                confirmText = "Finalizar"
+            ) { viewModel.finishEvent(eventId) }
         }
 
         binding.btnRate.setOnClickListener { showRateDialog() }
@@ -192,12 +190,11 @@ class EventDetailFragment : Fragment() {
         }
 
         binding.btnDeleteEvent.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Eliminar evento")
-                .setMessage("Esta accion es irreversible. Se eliminara el evento para todos los miembros.")
-                .setPositiveButton("Eliminar") { _, _ -> viewModel.deleteEvent(eventId) }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            showConfirmDialog(
+                title = "Eliminar evento",
+                message = "Esta accion es irreversible. Se eliminara el evento para todos los miembros.",
+                confirmText = "Eliminar"
+            ) { viewModel.deleteEvent(eventId) }
         }
     }
 
@@ -584,46 +581,61 @@ class EventDetailFragment : Fragment() {
         }
     }
 
-    // ── Dialog de valoracion ────────────────────────────────────────────────
+    // ── Bottom sheet de valoracion ──────────────────────────────────────────
 
     private fun showRateDialog() {
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(64, 32, 64, 16)
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottomsheet_rate, null)
+        dialog.setContentView(view)
+
+        val ratingBar   = view.findViewById<RatingBar>(R.id.ratingBar)
+        val tvValue     = view.findViewById<TextView>(R.id.tvRatingValue)
+        val etComment   = view.findViewById<EditText>(R.id.etRateComment)
+        val btnSubmit   = view.findViewById<LinearLayout>(R.id.btnSubmitRate)
+
+        ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
+            tvValue.text = "%.1f".format(rating)
         }
 
-        val ratingBar = RatingBar(requireContext(), null, android.R.attr.ratingBarStyle).apply {
-            numStars = 5
-            stepSize = 0.5f
-            rating = 3f
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { gravity = android.view.Gravity.CENTER_HORIZONTAL }
+        btnSubmit.setOnClickListener {
+            viewModel.submitRate(
+                eventId = eventId,
+                userId = userId,
+                rating = ratingBar.rating,
+                comment = etComment.text.toString().trim()
+            )
+            dialog.dismiss()
         }
 
-        val etComment = EditText(requireContext()).apply {
-            hint = "Comentario (opcional)"
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0x55FFFFFF)
-            setPadding(0, 32, 0, 0)
+        dialog.show()
+    }
+
+    // ── Dialog de confirmacion custom ────────────────────────────────────────
+
+    private fun showConfirmDialog(
+        title: String,
+        message: String,
+        confirmText: String,
+        onConfirm: () -> Unit
+    ) {
+        val dialog = Dialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.dialog_confirm, null)
+        dialog.setContentView(view)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        view.findViewById<TextView>(R.id.tvDialogTitle).text = title
+        view.findViewById<TextView>(R.id.tvDialogMessage).text = message
+        view.findViewById<TextView>(R.id.btnDialogConfirm).text = confirmText
+        view.findViewById<TextView>(R.id.btnDialogCancel).setOnClickListener { dialog.dismiss() }
+        view.findViewById<TextView>(R.id.btnDialogConfirm).setOnClickListener {
+            dialog.dismiss()
+            onConfirm()
         }
 
-        container.addView(ratingBar)
-        container.addView(etComment)
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Valorar mision")
-            .setView(container)
-            .setPositiveButton("Enviar") { _, _ ->
-                viewModel.submitRate(
-                    eventId = eventId,
-                    userId = userId,
-                    rating = ratingBar.rating,
-                    comment = etComment.text.toString().trim()
-                )
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        dialog.show()
     }
 }

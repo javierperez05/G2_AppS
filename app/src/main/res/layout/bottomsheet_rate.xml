@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#1E1F22"
+    android:paddingBottom="32dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
+        android:background="#44FFFFFF" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="VALORAR MISION"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.12" />
+
+    <!-- Stars label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="12dp"
+        android:text="PUNTUACION"
+        android:textColor="#66FFFFFF"
+        android:textSize="10sp"
+        android:letterSpacing="0.15" />
+
+    <!-- RatingBar -->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="?android:attr/ratingBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="3"
+        android:progressTint="#FFD700"
+        android:secondaryProgressTint="#44FFFFFF" />
+
+    <!-- Rating value -->
+    <TextView
+        android:id="@+id/tvRatingValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="3.0"
+        android:textColor="#FFCC80"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Comment label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:text="COMENTARIO"
+        android:textColor="#66FFFFFF"
+        android:textSize="10sp"
+        android:letterSpacing="0.15" />
+
+    <!-- Comment field -->
+    <EditText
+        android:id="@+id/etRateComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/bg_field_glass"
+        android:hint="Comentario (opcional)"
+        android:textColorHint="#44FFFFFF"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:inputType="textMultiLine|textCapSentences"
+        android:minLines="2"
+        android:maxLines="4"
+        android:gravity="top" />
+
+    <!-- Submit button -->
+    <LinearLayout
+        android:id="@+id/btnSubmitRate"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_fab_cosmos"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ENVIAR VALORACION"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.10" />
+
+    </LinearLayout>
+
+</LinearLayout>
