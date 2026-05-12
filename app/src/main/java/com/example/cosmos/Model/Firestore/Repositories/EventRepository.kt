@@ -141,4 +141,18 @@ class EventRepository @Inject constructor(
             .addOnSuccessListener { onResult(true) }
             .addOnFailureListener { onResult(false) }
     }
+
+    // Sobreescribe el documento completo con los nuevos datos del evento.
+    fun updateEvent(event: Event, onResult: (Boolean) -> Unit) {
+        val id = event.id ?: return onResult(false)
+        db.document(id).set(event)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun deleteEvent(eventId: String, onResult: (Boolean) -> Unit) {
+        db.document(eventId).delete()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
 }

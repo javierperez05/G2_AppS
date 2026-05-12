@@ -35,7 +35,7 @@ class NewsFragment : Fragment() {
     private val viewModel: NewsViewModel by viewModels()
 
     private lateinit var newsAdapter: NewsPostAdapter
-    private var currentUserId = ""
+    var currentUserId = ""
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
 
@@ -62,6 +62,11 @@ class NewsFragment : Fragment() {
 
     // ── Init ──────────────────────────────────────────────────────────────────
 
+    fun navigateToEvent(eventId: String) {
+        val bundle = Bundle().apply { putString("eventId", eventId) }
+        findNavController().navigate(R.id.action_newsFragment_to_eventDetailFragment, bundle)
+    }
+
     private fun initUI() {
         newsAdapter = NewsPostAdapter(
             currentUserId = currentUserId,
@@ -69,12 +74,13 @@ class NewsFragment : Fragment() {
             onCrewClick = { post ->
                 viewModel.loadCrewRates(post.eventId ?: "", post.memberIds)
             },
-            onViewEvent = { eventId ->
-                val bundle = Bundle().apply { putString("eventId", eventId) }
-                findNavController().navigate(R.id.action_newsFragment_to_eventDetailFragment, bundle)
-            },
+            onViewEvent = { eventId -> navigateToEvent(eventId) },
             onProposeClick = { post ->
                 viewModel.loadProposeData(currentUserId, post)
+            },
+            onCardClick = { post ->
+                viewModel.selectPost(post)
+                PostDetailBottomSheet().show(childFragmentManager, "post_detail")
             }
         )
         binding.rvNews.apply {
@@ -108,14 +114,13 @@ class NewsFragment : Fragment() {
                                 onCrewClick = { post ->
                                     viewModel.loadCrewRates(post.eventId ?: "", post.memberIds)
                                 },
-                                onViewEvent = { eventId ->
-                                    val bundle = Bundle().apply { putString("eventId", eventId) }
-                                    findNavController().navigate(
-                                        R.id.action_newsFragment_to_eventDetailFragment, bundle
-                                    )
-                                },
+                                onViewEvent = { eventId -> navigateToEvent(eventId) },
                                 onProposeClick = { post ->
                                     viewModel.loadProposeData(currentUserId, post)
+                                },
+                                onCardClick = { post ->
+                                    viewModel.selectPost(post)
+                                    PostDetailBottomSheet().show(childFragmentManager, "post_detail")
                                 }
                             )
                             binding.rvNews.adapter = newsAdapter

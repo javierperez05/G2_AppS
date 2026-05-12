@@ -28,12 +28,18 @@
         android:name="com.example.cosmos.ui.Events.rvEvents.CreateEventFragment"
         android:label="CreateEventFragment" />
 
-    <!-- EventDetailFragment — pendiente de crear -->
+    <!-- EventDetailFragment -->
     <fragment
         android:id="@+id/eventDetailFragment"
         android:name="com.example.cosmos.ui.Events.EventDetailFragment"
         android:label="fragment_event_detail"
-        tools:layout="@layout/fragment_event_detail" />
+        tools:layout="@layout/fragment_event_detail">
+
+        <action
+            android:id="@+id/action_eventDetailFragment_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
+
+    </fragment>
 
     <!-- NewsFragment -->
     <fragment

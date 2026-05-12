@@ -40,6 +40,30 @@
             android:maxLines="1"
             android:ellipsize="end" />
 
+        <!-- Edit button — solo visible para admins -->
+        <ImageButton
+            android:id="@+id/btnEditEvent"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_chip_glass"
+            android:src="@drawable/ic_edit"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:tint="#AAFFFFFF" />
+
+        <!-- Delete button — solo visible para admins -->
+        <ImageButton
+            android:id="@+id/btnDeleteEvent"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_chip_glass"
+            android:src="@drawable/ic_delete"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:tint="#AAFFFFFF" />
+
     </LinearLayout>
 
     <!-- Loading global -->
@@ -163,20 +187,30 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="10dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:gravity="center"
-                            android:text="&#128205;"
-                            android:textSize="11sp"
-                            android:layout_marginEnd="10dp" />
+                            android:src="@drawable/ic_map_pin"
+                            android:layout_marginEnd="10dp"
+                            app:tint="@color/app_color" />
 
                         <TextView
                             android:id="@+id/tvEventLocation"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:textColor="#AAFFFFFF"
                             android:textSize="13sp" />
+
+                        <ImageButton
+                            android:id="@+id/btnOpenMap"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_chip_glass"
+                            android:src="@drawable/ic_map_pin"
+                            android:padding="7dp"
+                            android:visibility="gone"
+                            app:tint="#AAC4BCFF" />
 
                     </LinearLayout>
 

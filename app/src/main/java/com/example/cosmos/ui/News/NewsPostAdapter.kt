@@ -23,7 +23,8 @@ class NewsPostAdapter(
     private val avatarUrls: Map<String, String> = emptyMap(),
     private val onCrewClick: (Post) -> Unit,
     private val onViewEvent: (String) -> Unit,
-    private val onProposeClick: (Post) -> Unit = {}
+    private val onProposeClick: (Post) -> Unit = {},
+    private val onCardClick: (Post) -> Unit = {}
 ) : ListAdapter<Post, NewsPostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -43,6 +44,9 @@ class NewsPostAdapter(
 
         fun bind(post: Post) {
             val isMine = post.userId == currentUserId
+
+            // ── Card click ────────────────────────────────────────────────────
+            binding.root.setOnClickListener { onCardClick(post) }
 
             // ── Carousel ──────────────────────────────────────────────────────
             bindCarousel(post.imageUrls)

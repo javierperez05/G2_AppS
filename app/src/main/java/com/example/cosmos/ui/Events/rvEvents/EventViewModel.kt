@@ -7,6 +7,7 @@ import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Firestore.Repositories.CloudinaryRepository
 import com.example.cosmos.Model.Firestore.Repositories.EventRepository
 import com.example.cosmos.Model.Firestore.Repositories.FriendRequestRepository
+import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,8 @@ sealed class CreateEventUiState {
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val friendRequestRepository: FriendRequestRepository,
-    private val cloudinaryRepository: CloudinaryRepository
+    private val cloudinaryRepository: CloudinaryRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<EventUiState>(EventUiState.Loading)
@@ -106,6 +108,37 @@ class EventViewModel @Inject constructor(
             eventRepository.createEvent(event) { success ->
                 _createState.value = if (success) CreateEventUiState.Success(event.id ?: "")
                 else CreateEventUiState.Error("Error al lanzar el evento")
+            }
+        }
+    }
+
+    // ── Editar evento ─────────────────────────────────────────────────────────
+
+    // Carga el evento a editar + sus usuarios miembros en selectedMembers
+    fun loadEventForEdit(eventId: String) {
+        eventRepository.getEventById(eventId) { event ->
+            if (event == null) return@getEventById
+            _selectedEvent.value = event
+            userRepository.getUsersByIds(event.memberIds) { users ->
+                _selectedMembers.value = users
+            }
+        }
+    }
+
+    fun updateEvent(event: Event, imageUri: Uri? = null) {
+        _createState.value = CreateEventUiState.Loading
+        if (imageUri != null) {
+            cloudinaryRepository.uploadImage(imageUri) { url ->
+                val updated = event.copy(imageURL = url)
+                eventRepository.updateEvent(updated) { success ->
+                    _createState.value = if (success) CreateEventUiState.Success(updated.id ?: "")
+                    else CreateEventUiState.Error("Error al actualizar el evento")
+                }
+            }
+        } else {
+            eventRepository.updateEvent(event) { success ->
+                _createState.value = if (success) CreateEventUiState.Success(event.id ?: "")
+                else CreateEventUiState.Error("Error al actualizar el evento")
             }
         }
     }

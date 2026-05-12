@@ -102,18 +102,36 @@
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
-        <!-- Campo ubicacion -->
-        <EditText
-            android:id="@+id/etEventLocation"
+        <!-- Campo ubicacion + botón preview en mapa -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/bg_field_glass"
-            android:hint="ej. Sala de conferencias, Parque..."
-            android:inputType="text"
-            android:textColor="@android:color/white"
-            android:textColorHint="#44FFFFFF"
-            android:textSize="14sp"
-            android:paddingHorizontal="16dp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etEventLocation"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_field_glass"
+                android:hint="ej. Sala de conferencias, Parque..."
+                android:inputType="text"
+                android:textColor="@android:color/white"
+                android:textColorHint="#44FFFFFF"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp" />
+
+            <ImageButton
+                android:id="@+id/btnPreviewLocation"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_glass"
+                android:src="@drawable/ic_map_pin"
+                android:padding="13dp"
+                app:tint="@color/app_color" />
+
+        </LinearLayout>
 
         <!-- Fecha y hora -->
         <LinearLayout

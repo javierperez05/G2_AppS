@@ -68,6 +68,9 @@ class NewsViewModel @Inject constructor(
     private val _proposeState = MutableStateFlow<ProposeUiState>(ProposeUiState.Idle)
     val proposeState: StateFlow<ProposeUiState> = _proposeState.asStateFlow()
 
+    private val _selectedPost = MutableStateFlow<Post?>(null)
+    val selectedPost: StateFlow<Post?> = _selectedPost.asStateFlow()
+
     private var allMemberNames: Map<String, String> = emptyMap()
 
     fun loadNews(userId: String) {
@@ -182,5 +185,13 @@ class NewsViewModel @Inject constructor(
 
     fun resetProposeState() {
         _proposeState.value = ProposeUiState.Idle
+    }
+
+    fun selectPost(post: Post) {
+        _selectedPost.value = post
+    }
+
+    fun clearSelectedPost() {
+        _selectedPost.value = null
     }
 }

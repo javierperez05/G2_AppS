@@ -28,6 +28,9 @@ import com.example.cosmos.Model.Event.EventType
 import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentEventDetailBinding
+import android.content.Intent
+import android.net.Uri
+import com.example.cosmos.ui.Events.Detail.DeleteEventUiState
 import com.example.cosmos.ui.Events.Detail.EventDetailUiState
 import com.example.cosmos.ui.Events.Detail.EventDetailViewModel
 import com.example.cosmos.ui.Events.Detail.EventItemAdapter
@@ -182,6 +185,20 @@ class EventDetailFragment : Fragment() {
         }
 
         binding.btnAddItem.setOnClickListener { showAddItemDialog() }
+
+        binding.btnEditEvent.setOnClickListener {
+            val bundle = Bundle().apply { putString("editEventId", eventId) }
+            findNavController().navigate(R.id.action_eventDetailFragment_to_createEventFragment, bundle)
+        }
+
+        binding.btnDeleteEvent.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Eliminar evento")
+                .setMessage("Esta accion es irreversible. Se eliminara el evento para todos los miembros.")
+                .setPositiveButton("Eliminar") { _, _ -> viewModel.deleteEvent(eventId) }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
     }
 
     // ── Observadores ──────────────────────────────────────────────────────────
@@ -269,6 +286,21 @@ class EventDetailFragment : Fragment() {
                         }
                     }
                 }
+                launch {
+                    viewModel.deleteState.collect { state ->
+                        when (state) {
+                            is DeleteEventUiState.Success -> {
+                                viewModel.resetDeleteState()
+                                findNavController().popBackStack()
+                            }
+                            is DeleteEventUiState.Error -> {
+                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                                viewModel.resetDeleteState()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
             }
         }
     }
@@ -287,7 +319,20 @@ class EventDetailFragment : Fragment() {
         binding.tvEventEmoji.text = if (event.type == EventType.SECRET) "\uD83D\uDD2E" else "\uD83D\uDE80"
         binding.tvEventTitle.text = event.title ?: ""
         binding.tvEventDate.text = event.date?.let { fmt.format(it) } ?: "Sin fecha"
-        binding.tvEventLocation.text = event.location?.ifBlank { "Sin ubicacion" } ?: "Sin ubicacion"
+        val location = event.location?.ifBlank { null }
+        binding.tvEventLocation.text = location ?: "Sin ubicacion"
+        binding.btnOpenMap.isVisible = location != null
+        binding.btnOpenMap.setOnClickListener {
+            val query = location ?: return@setOnClickListener
+            val uri = Uri.parse("geo:0,0?q=${Uri.encode(query)}")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                startActivity(intent)
+            } else {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://maps.google.com/?q=${Uri.encode(query)}")))
+            }
+        }
         binding.tvEventDescription.text = event.description?.ifBlank { "" } ?: ""
         binding.tvEventDescription.isVisible = !event.description.isNullOrBlank()
         binding.tvMemberCount.text = "${event.memberIds.size} astronautas"
@@ -306,6 +351,10 @@ class EventDetailFragment : Fragment() {
 
     private fun bindFinishState(event: Event, canFinish: Boolean, hasRated: Boolean, hasPosted: Boolean = false) {
         val isAdmin = event.adminIds.contains(userId)
+
+        // Botones de admin en toolbar
+        binding.btnEditEvent.isVisible   = isAdmin
+        binding.btnDeleteEvent.isVisible = isAdmin
 
         // Boton finalizar: solo admin + tiempo pasado + no finalizado
         binding.btnFinishEvent.isVisible = isAdmin && canFinish && !event.finished

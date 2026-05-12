@@ -200,8 +200,8 @@ class EventFragment : Fragment() {
                         binding.rvEvents.isVisible     = state is EventUiState.Success
 
                         if (state is EventUiState.Success) {
-                            currentEvents = state.events
-                            val sorted = state.events.sortedBy { it.date?.time ?: Long.MAX_VALUE }
+                            currentEvents = state.events.filter { !it.finished }
+                            val sorted = currentEvents.sortedBy { it.date?.time ?: Long.MAX_VALUE }
                             eventAdapter.submitList(sorted)
                             setupNextEvent(sorted)
                             startCountdown()

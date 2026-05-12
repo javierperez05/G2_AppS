@@ -92,6 +92,13 @@ sealed class PostUiState {
     data class Error(val message: String) : PostUiState()
 }
 
+sealed class DeleteEventUiState {
+    object Idle    : DeleteEventUiState()
+    object Loading : DeleteEventUiState()
+    object Success : DeleteEventUiState()
+    data class Error(val message: String) : DeleteEventUiState()
+}
+
 @HiltViewModel
 class EventDetailViewModel @Inject constructor(
     private val eventRepository: EventRepository,
@@ -110,6 +117,9 @@ class EventDetailViewModel @Inject constructor(
 
     private val _postState  = MutableStateFlow<PostUiState>(PostUiState.Idle)
     val postState: StateFlow<PostUiState> = _postState.asStateFlow()
+
+    private val _deleteState = MutableStateFlow<DeleteEventUiState>(DeleteEventUiState.Idle)
+    val deleteState: StateFlow<DeleteEventUiState> = _deleteState.asStateFlow()
 
     private var memberNames: Map<String, String> = emptyMap()
     private var currentMembers: List<User> = emptyList()
@@ -288,8 +298,17 @@ class EventDetailViewModel @Inject constructor(
         threadsListener?.remove()
     }
 
+    fun deleteEvent(eventId: String) {
+        _deleteState.value = DeleteEventUiState.Loading
+        eventRepository.deleteEvent(eventId) { success ->
+            _deleteState.value = if (success) DeleteEventUiState.Success
+            else DeleteEventUiState.Error("Error al eliminar el evento")
+        }
+    }
+
     fun resetRateState() { _rateState.value = RateUiState.Idle }
     fun resetPostState() { _postState.value = PostUiState.Idle }
+    fun resetDeleteState() { _deleteState.value = DeleteEventUiState.Idle }
 
     // ── Items (equipamiento) ──────────────────────────────────────────────────
 

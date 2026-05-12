@@ -1,6 +1,7 @@
 package com.example.cosmos.ui.Events.rvEvents
 
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -54,6 +55,7 @@ class CreateEventFragment : Fragment() {
 
     private var selectedImageUri: Uri? = null
     private var groupId: String? = null
+    private var editEventId: String? = null
 
     private lateinit var searchAdapter: UserSearchAdapter
     private lateinit var membersAdapter: SelectedMembersAdapter
@@ -93,7 +95,14 @@ class CreateEventFragment : Fragment() {
     private fun initData() {
         currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
         groupId = arguments?.getString("groupId")
-        if (currentUserId.isNotEmpty()) {
+        editEventId = arguments?.getString("editEventId")
+
+        if (editEventId != null) {
+            // Edit mode: load event data into ViewModel (members will be loaded too)
+            viewModel.loadEventForEdit(editEventId!!)
+            binding.tvCreateEventTitle.text = "EDITAR MISIÓN"
+            binding.btnCreateEvent.text = "Guardar cambios"
+        } else if (currentUserId.isNotEmpty()) {
             selectedMemberIds.add(currentUserId)
         }
     }
@@ -148,39 +157,112 @@ class CreateEventFragment : Fragment() {
 
         // Crear evento
         binding.btnCreateEvent.setOnClickListener { saveEvent() }
+
+        // Preview de ubicacion en el mapa
+        binding.btnPreviewLocation.setOnClickListener {
+            val query = binding.etEventLocation.text.toString().trim()
+            if (query.isEmpty()) return@setOnClickListener
+            openInMaps(query)
+        }
+    }
+
+    private fun openInMaps(query: String) {
+        val uri = Uri.parse("geo:0,0?q=${Uri.encode(query)}")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
+            startActivity(intent)
+        } else {
+            startActivity(Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://maps.google.com/?q=${Uri.encode(query)}")))
+        }
     }
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.createState.collect { state ->
-                    when (state) {
-                        is CreateEventUiState.Idle -> {
-                            binding.btnCreateEvent.isEnabled = true
-                            binding.btnCreateEvent.text = "Launch Event"
-                        }
-                        is CreateEventUiState.Loading -> {
-                            binding.btnCreateEvent.isEnabled = false
-                            binding.btnCreateEvent.text = "Launching..."
-                        }
-                        is CreateEventUiState.Success -> {
-                            // Si venimos de un grupo, vincular el evento creado al grupo
-                            val gId = groupId
-                            if (!gId.isNullOrEmpty() && state.eventId.isNotEmpty()) {
-                                groupViewModel.linkEventToGroup(gId, state.eventId)
+                launch {
+                    viewModel.createState.collect { state ->
+                        when (state) {
+                            is CreateEventUiState.Idle -> {
+                                binding.btnCreateEvent.isEnabled = true
+                                if (editEventId == null) binding.btnCreateEvent.text = "Launch Event"
                             }
-                            viewModel.resetCreateState()
-                            findNavController().popBackStack()
+                            is CreateEventUiState.Loading -> {
+                                binding.btnCreateEvent.isEnabled = false
+                                binding.btnCreateEvent.text = if (editEventId != null) "Guardando..." else "Launching..."
+                            }
+                            is CreateEventUiState.Success -> {
+                                val gId = groupId
+                                if (!gId.isNullOrEmpty() && state.eventId.isNotEmpty() && editEventId == null) {
+                                    groupViewModel.linkEventToGroup(gId, state.eventId)
+                                }
+                                viewModel.resetCreateState()
+                                findNavController().popBackStack()
+                            }
+                            is CreateEventUiState.Error -> {
+                                binding.btnCreateEvent.isEnabled = true
+                                binding.btnCreateEvent.text = if (editEventId != null) "Guardar cambios" else "Launch Event"
+                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                                viewModel.resetCreateState()
+                            }
                         }
-                        is CreateEventUiState.Error -> {
-                            binding.btnCreateEvent.isEnabled = true
-                            binding.btnCreateEvent.text = "Launch Event"
-                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
-                            viewModel.resetCreateState()
+                    }
+                }
+                // Edit mode: prefill when event data arrives
+                if (editEventId != null) {
+                    launch {
+                        viewModel.selectedEvent.collect { event ->
+                            if (event != null) prefillEvent(event)
+                        }
+                    }
+                    launch {
+                        viewModel.selectedMembers.collect { members ->
+                            if (members.isNotEmpty()) {
+                                selectedMemberIds.clear()
+                                selectedMembers.clear()
+                                members.forEach { user ->
+                                    user.id?.let { selectedMemberIds.add(it) }
+                                    selectedMembers.add(user)
+                                }
+                                membersAdapter.notifyDataSetChanged()
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun prefillEvent(event: Event) {
+        binding.etEventName.setText(event.title ?: "")
+        binding.etEventDescription.setText(event.description ?: "")
+        binding.etEventLocation.setText(event.location ?: "")
+
+        if (event.date != null) {
+            selectedDate = event.date
+            val fmt = java.text.SimpleDateFormat("EEE, d MMM yyyy", java.util.Locale.getDefault())
+            binding.tvDisplayDate.text = fmt.format(event.date)
+            val cal = java.util.Calendar.getInstance().apply { time = event.date }
+            selectedHour   = cal.get(java.util.Calendar.HOUR_OF_DAY)
+            selectedMinute = cal.get(java.util.Calendar.MINUTE)
+            binding.tvDisplayTime.text = String.format("%02d:%02d", selectedHour, selectedMinute)
+        }
+
+        val dur = event.durationMinutes
+        if (dur != null && dur > 0) {
+            selectedDurationMinutes = dur
+            val label = if (dur < 60) "$dur min" else "${dur / 60}h" + if (dur % 60 > 0) " ${dur % 60}min" else ""
+            binding.tvDurationLabel.text = label
+            binding.tvDurationLabel.setTextColor(0xFFFFFFFF.toInt())
+        }
+
+        if (!event.imageURL.isNullOrEmpty()) {
+            com.bumptech.glide.Glide.with(binding.btnAddEventImage)
+                .load(event.imageURL).centerCrop()
+                .into(binding.btnAddEventImage)
+            binding.btnAddEventImage.setPadding(0, 0, 0, 0)
+            binding.btnAddEventImage.imageTintList = null
+            binding.btnAddEventImage.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
         }
     }
 
@@ -284,16 +366,31 @@ class CreateEventFragment : Fragment() {
             set(Calendar.MINUTE, selectedMinute)
         }
 
-        val newEvent = Event(
-            title = title,
-            description = binding.etEventDescription.text.toString().trim(),
-            location = binding.etEventLocation.text.toString().trim().ifBlank { null },
-            date = cal.time,
-            durationMinutes = selectedDurationMinutes,
-            adminIds = listOf(currentUserId),
-            memberIds = selectedMemberIds.distinct(),
-            type = EventType.DEFAULT
-        )
-        viewModel.createEvent(newEvent, selectedImageUri)
+        val editId = editEventId
+        if (editId != null) {
+            // Edit mode: preserve existing event fields (adminIds, type, finished, etc.)
+            val existing = viewModel.selectedEvent.value ?: return
+            val updatedEvent = existing.copy(
+                title           = title,
+                description     = binding.etEventDescription.text.toString().trim(),
+                location        = binding.etEventLocation.text.toString().trim().ifBlank { null },
+                date            = cal.time,
+                durationMinutes = selectedDurationMinutes,
+                memberIds       = selectedMemberIds.distinct()
+            )
+            viewModel.updateEvent(updatedEvent, selectedImageUri)
+        } else {
+            val newEvent = Event(
+                title           = title,
+                description     = binding.etEventDescription.text.toString().trim(),
+                location        = binding.etEventLocation.text.toString().trim().ifBlank { null },
+                date            = cal.time,
+                durationMinutes = selectedDurationMinutes,
+                adminIds        = listOf(currentUserId),
+                memberIds       = selectedMemberIds.distinct(),
+                type            = EventType.DEFAULT
+            )
+            viewModel.createEvent(newEvent, selectedImageUri)
+        }
     }
 }

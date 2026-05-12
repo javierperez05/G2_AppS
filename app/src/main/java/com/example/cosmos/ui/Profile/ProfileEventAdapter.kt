@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Event.Event
-import com.example.cosmos.Model.Event.EventType
+import com.example.cosmos.R
 import com.example.cosmos.databinding.ItemEventGridBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -32,7 +33,23 @@ class ProfileEventAdapter(
         val event = getItem(position)
         val fmt = SimpleDateFormat("dd MMM", Locale.getDefault())
         with(holder.binding) {
-            tvGridEventEmoji.text = if (event.type == EventType.SECRET) "\uD83D\uDD2E" else "\uD83D\uDE80"
+            // Background image
+            if (!event.imageURL.isNullOrEmpty()) {
+                Glide.with(ivGridBg).load(event.imageURL).centerCrop()
+                    .placeholder(R.drawable.ic_circle_profile).into(ivGridBg)
+            } else {
+                ivGridBg.setImageResource(R.drawable.ic_circle_profile)
+            }
+
+            // Status badge
+            if (event.finished) {
+                tvGridBadge.text = "TERMINADO"
+                tvGridBadge.setTextColor(0xAAFFFFFF.toInt())
+            } else {
+                tvGridBadge.text = "ACTIVO"
+                tvGridBadge.setTextColor(0xFFB8FFD0.toInt())
+            }
+
             tvGridEventTitle.text = event.title ?: ""
             tvGridEventDate.text = event.date?.let { fmt.format(it) } ?: ""
             root.setOnClickListener { onEventClick(event) }
