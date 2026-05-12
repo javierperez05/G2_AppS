@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
-
+import androidx.fragment.app.activityViewModels
 @AndroidEntryPoint
 class CreateEventFragment : Fragment() {
 
@@ -42,7 +42,7 @@ class CreateEventFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: EventViewModel by viewModels()
-    private val groupViewModel: GroupViewModel by androidx.fragment.app.activityViewModels()
+    private val groupViewModel: GroupViewModel by activityViewModels()
 
     @Inject
     lateinit var userRepository: UserRepository
