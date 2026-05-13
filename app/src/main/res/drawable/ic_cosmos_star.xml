@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Estrella interior solida -->
+    <path
+        android:pathData="M12,3 Q12,12 21,12 Q12,12 12,21 Q12,12 3,12 Q12,12 12,3z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Contorno estrella exterior -->
+    <path
+        android:pathData="M12,0.5 Q13.2,9.5 21,10.8 L12,12 21,13.2 Q13.2,14.5 12,23.5 Q10.8,14.5 3,13.2 L12,12 3,10.8 Q10.8,9.5 12,0.5z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.8"
+        android:fillColor="@android:color/transparent" />
+
+</vector>
