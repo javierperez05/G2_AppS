@@ -1,4 +1,4 @@
-package com.example.cosmos.ui.Events.rvEvents
+package com.example.cosmos.ui.Events.Create
 
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -35,6 +35,9 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 import androidx.fragment.app.activityViewModels
+import com.example.cosmos.ui.Events.Home.EventViewModel
+import com.example.cosmos.ui.Events.Home.CreateEventUiState
+
 @AndroidEntryPoint
 class CreateEventFragment : Fragment() {
 

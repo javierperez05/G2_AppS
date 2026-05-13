@@ -117,13 +117,11 @@
     <!-- Botón nueva órbita -->
     <LinearLayout
         android:id="@+id/fabNewGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="52dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="22dp"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:gravity="center"
         android:background="@drawable/bg_fab_cosmos"
-        android:elevation="12dp"
+        android:elevation="16dp"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginEnd="20dp"
@@ -132,21 +130,10 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_nav_orbit"
-            app:tint="@android:color/white"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:src="@drawable/ic_fab_orbit"
             android:importantForAccessibility="no" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="NUEVA ÓRBITA"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.10" />
 
     </LinearLayout>
 

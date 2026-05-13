@@ -1,8 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.COSMOS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/app_color</item>
+        <item name="colorAccent">@color/app_color</item>
+        <item name="android:textColorHighlight">#331717AB</item>
+        <item name="android:colorControlActivated">@color/app_color</item>
+        <item name="android:autofillHighlightColor">#1A1717AB</item>
     </style>
 
     <style name="Theme.COSMOS" parent="Base.Theme.COSMOS" />

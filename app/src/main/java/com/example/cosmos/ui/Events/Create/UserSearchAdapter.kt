@@ -1,4 +1,4 @@
-package com.example.cosmos.ui.Events.rvEvents
+package com.example.cosmos.ui.Events.Create
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

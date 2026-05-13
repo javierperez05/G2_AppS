@@ -8,7 +8,7 @@
     <!-- EventFragment — pantalla principal de eventos -->
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.cosmos.ui.Events.EventFragment"
+        android:name="com.example.cosmos.ui.Events.Home.EventFragment"
         android:label="fragment_event"
         tools:layout="@layout/fragment_event">
 
@@ -25,7 +25,7 @@
     <!-- CreateEventFragment -->
     <fragment
         android:id="@+id/createEventFragment"
-        android:name="com.example.cosmos.ui.Events.rvEvents.CreateEventFragment"
+        android:name="com.example.cosmos.ui.Events.Create.CreateEventFragment"
         android:label="CreateEventFragment" />
 
     <!-- EventDetailFragment -->

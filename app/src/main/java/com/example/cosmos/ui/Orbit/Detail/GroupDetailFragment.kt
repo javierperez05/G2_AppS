@@ -20,8 +20,8 @@ import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentGroupDetailBinding
-import com.example.cosmos.ui.Events.rvEvents.EventAdapter
-import com.example.cosmos.ui.Events.rvEvents.UserSearchAdapter
+import com.example.cosmos.ui.Events.Home.EventAdapter
+import com.example.cosmos.ui.Events.Create.UserSearchAdapter
 import com.example.cosmos.ui.Orbit.GroupDetailActionState
 import com.example.cosmos.ui.Orbit.GroupEventsUiState
 import com.example.cosmos.ui.Orbit.GroupMembersUiState

@@ -1,4 +1,4 @@
-package com.example.cosmos.ui.Events
+package com.example.cosmos.ui.Events.Home
 
 /*
  * ═══════════════════════════════════════════════════════════════════
@@ -62,9 +62,6 @@ import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.databinding.FragmentEventBinding
 import com.example.cosmos.databinding.BottomSheetAlertsBinding
-import com.example.cosmos.ui.Events.rvEvents.EventAdapter
-import com.example.cosmos.ui.Events.rvEvents.EventUiState
-import com.example.cosmos.ui.Events.rvEvents.EventViewModel
 import com.example.cosmos.ui.Orbit.GroupViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog

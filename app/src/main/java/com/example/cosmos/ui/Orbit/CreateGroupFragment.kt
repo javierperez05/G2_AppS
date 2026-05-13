@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User
 import com.example.cosmos.databinding.FragmentCreateGroupBinding
-import com.example.cosmos.ui.Events.rvEvents.SelectedMembersAdapter
-import com.example.cosmos.ui.Events.rvEvents.UserSearchAdapter
+import com.example.cosmos.ui.Events.Create.SelectedMembersAdapter
+import com.example.cosmos.ui.Events.Create.UserSearchAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

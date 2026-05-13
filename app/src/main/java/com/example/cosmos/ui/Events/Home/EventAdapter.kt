@@ -1,4 +1,4 @@
-package com.example.cosmos.ui.Events.rvEvents
+package com.example.cosmos.ui.Events.Home
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
