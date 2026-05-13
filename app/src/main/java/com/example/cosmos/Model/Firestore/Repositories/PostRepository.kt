@@ -2,7 +2,6 @@ package com.example.cosmos.Model.Firestore.Repositories
 
 import com.example.cosmos.Model.Actions.Post
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,8 +28,6 @@ class PostRepository @Inject constructor(
 
         chunks.forEach { chunk ->
             db.whereIn("userId", chunk)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(50)
                 .get()
                 .addOnSuccessListener { snapshot ->
                     synchronized(collected) {
@@ -51,9 +48,10 @@ class PostRepository @Inject constructor(
     // Get posts by a specific user (for profile)
     fun getPostsByUser(userId: String, onResult: (List<Post>) -> Unit) {
         db.whereEqualTo("userId", userId)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
-            .addOnSuccessListener { onResult(it.toObjects(Post::class.java)) }
+            .addOnSuccessListener { posts ->
+                onResult(posts.toObjects(Post::class.java).sortedByDescending { it.createdAt })
+            }
             .addOnFailureListener { onResult(emptyList()) }
     }
 

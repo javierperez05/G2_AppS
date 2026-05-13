@@ -212,7 +212,7 @@ class EventDetailViewModel @Inject constructor(
                 _rateState.value = RateUiState.Success
                 val current = _uiState.value
                 if (current is EventDetailUiState.Success) {
-                    _uiState.value = current.copy(hasRated = true)
+                    _uiState.value = current.copy(hasRated = true, userRate = rate)
                 }
             } else {
                 _rateState.value = RateUiState.Error("Error al enviar valoración")
