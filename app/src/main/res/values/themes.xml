@@ -5,7 +5,7 @@
         <item name="colorAccent">@color/app_color</item>
         <item name="android:textColorHighlight">#331717AB</item>
         <item name="android:colorControlActivated">@color/app_color</item>
-        <item name="android:autofillHighlightColor">#1A1717AB</item>
+
     </style>
 
     <style name="Theme.COSMOS" parent="Base.Theme.COSMOS" />
