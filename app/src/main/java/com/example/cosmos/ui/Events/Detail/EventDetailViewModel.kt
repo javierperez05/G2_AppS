@@ -71,7 +71,9 @@ sealed class EventDetailUiState {
         val canFinish: Boolean = false,
         val hasRated: Boolean = false,
         val hasPosted: Boolean = false,
-        val userRate: Rate? = null
+        val userRate: Rate? = null,
+        val isMember: Boolean = true,
+        val isPending: Boolean = false
     ) : EventDetailUiState()
     data class Error(val message: String) : EventDetailUiState()
 }
@@ -159,12 +161,15 @@ class EventDetailViewModel @Inject constructor(
                     val hasRated = userRate != null
                     val canFinish = canFinishEvent(effectiveEvent)
 
+                    val isMember = effectiveEvent.memberIds.contains(currentUserId)
+                    val isPending = effectiveEvent.pendingIds.contains(currentUserId)
+
                     postRepository.hasPosted(currentUserId, eventId) { hasPosted ->
                         threadsListener?.remove()
                         threadsListener = forumRepository.listenThreads(eventId) { threads ->
                             _uiState.value = EventDetailUiState.Success(
                                 effectiveEvent, currentMembers, threads, memberNames,
-                                canFinish, hasRated, hasPosted, userRate
+                                canFinish, hasRated, hasPosted, userRate, isMember, isPending
                             )
                         }
                     }
@@ -227,7 +232,10 @@ class EventDetailViewModel @Inject constructor(
         eventId: String,
         userId: String,
         comment: String = "",
-        imageUris: List<Uri> = emptyList()
+        imageUris: List<Uri> = emptyList(),
+        showLocation: Boolean = true,
+        showDescription: Boolean = true,
+        showItems: Boolean = false
     ) {
         val event    = currentEvent ?: return
         val username = memberNames[userId] ?: userId
@@ -236,18 +244,25 @@ class EventDetailViewModel @Inject constructor(
         fun doPublish(imageUrls: List<String>) {
             val current = _uiState.value as? EventDetailUiState.Success
             val rating = current?.userRate?.rating ?: 0f
+            val itemSummaryText = if (showItems && event.items.isNotEmpty()) {
+                val total = event.items.sumOf { it.price }
+                val names = event.items.joinToString(", ") { it.name }
+                "$names — %.2f€".format(total)
+            } else null
+
             val post = Post(
                 userId           = userId,
                 username         = username,
                 eventId          = eventId,
                 eventTitle       = event.title,
-                eventDescription = event.description,
-                eventLocation    = event.location,
+                eventDescription = if (showDescription) event.description else null,
+                eventLocation    = if (showLocation) event.location else null,
                 rating           = rating,
                 comment          = comment.ifBlank { current?.userRate?.comment },
                 imageUrls        = imageUrls,
                 memberIds        = event.memberIds,
-                createdAt        = System.currentTimeMillis()
+                createdAt        = System.currentTimeMillis(),
+                itemSummary      = itemSummaryText
             )
             postRepository.createPost(post) { success ->
                 if (success) {
@@ -304,6 +319,16 @@ class EventDetailViewModel @Inject constructor(
             _deleteState.value = if (success) DeleteEventUiState.Success
             else DeleteEventUiState.Error("Error al eliminar el evento")
         }
+    }
+
+    fun acceptEventInvite(eventId: String, userId: String) {
+        eventRepository.acceptEventInvite(eventId, userId) { success ->
+            if (success) loadEvent(eventId, userId)
+        }
+    }
+
+    fun rejectEventInvite(eventId: String, userId: String) {
+        eventRepository.rejectEventInvite(eventId, userId) { /* ViewModel will be destroyed on popBackStack */ }
     }
 
     fun resetRateState() { _rateState.value = RateUiState.Idle }

@@ -117,31 +117,105 @@
 
             </LinearLayout>
 
-            <!-- Numero de miembros -->
+            <!-- Crew avatares + count -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center">
 
+                <FrameLayout
+                    android:id="@+id/layoutAvatars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="2dp">
+
+                    <ImageView
+                        android:id="@+id/ivAvatar1"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_circle_profile"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ivAvatar2"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="16dp"
+                        android:src="@drawable/ic_circle_profile"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ivAvatar3"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/ic_circle_profile"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
                 <TextView
                     android:id="@+id/tvMemberCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#CCFFFFFF"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="crew"
                     android:textSize="9sp"
                     android:textColor="#44FFFFFF"
                     android:gravity="center" />
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Banner INVITACION (oculto por defecto) -->
+        <LinearLayout
+            android:id="@+id/layoutPending"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#221717AB"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvPendingLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="INVITACION PENDIENTE"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#C4BCFF"
+                android:letterSpacing="0.12" />
+
+            <TextView
+                android:id="@+id/btnRejectInvite"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:paddingHorizontal="12dp"
+                android:gravity="center"
+                android:text="Rechazar"
+                android:textSize="10sp"
+                android:textColor="#88FFFFFF"
+                android:background="@drawable/bg_chip_glass"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnAcceptInvite"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:paddingHorizontal="12dp"
+                android:gravity="center"
+                android:text="Unirse"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_tab_selected" />
 
         </LinearLayout>
 

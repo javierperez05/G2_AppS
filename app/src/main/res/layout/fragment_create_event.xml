@@ -97,24 +97,48 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="6dp"
-            android:text="UBICACION"
+            android:text="NOMBRE DEL LUGAR"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
 
-        <!-- Campo ubicacion + botón preview en mapa -->
+        <!-- Campo nombre del lugar -->
+        <EditText
+            android:id="@+id/etEventLocation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_field_glass"
+            android:hint="ej. El parrillero, Casa de Juan..."
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#44FFFFFF"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp" />
+
+        <!-- Label direccion -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="6dp"
+            android:text="DIRECCION EN MAPA"
+            android:textColor="#66FFFFFF"
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
+
+        <!-- Campo direccion + botón Maps -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/etEventLocation"
+                android:id="@+id/etMapAddress"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_field_glass"
-                android:hint="ej. Sala de conferencias, Parque..."
+                android:hint="ej. Calle Mayor 5, Bilbao"
                 android:inputType="text"
                 android:textColor="@android:color/white"
                 android:textColorHint="#44FFFFFF"

@@ -19,8 +19,13 @@ import javax.inject.Inject
 sealed class EventUiState {
     object Loading : EventUiState()
     object Empty   : EventUiState()
-    data class Success(val events: List<Event>) : EventUiState()
-    data class Error(val message: String)       : EventUiState()
+    data class Success(
+        val events: List<Event>,
+        val pendingEvents: List<Event> = emptyList(),
+        val avatarUrls: Map<String, String> = emptyMap(),
+        val adminNames: Map<String, String> = emptyMap()
+    ) : EventUiState()
+    data class Error(val message: String) : EventUiState()
 }
 
 sealed class CreateEventUiState {
@@ -58,14 +63,48 @@ class EventViewModel @Inject constructor(
 
     // ── Lista de eventos ──────────────────────────────────────────────────────
 
+    private var memberEvents: List<Event>? = null
+    private var pendingEvents: List<Event>? = null
+
     fun loadEvents(userId: String) {
         if (userId.isEmpty()) {
             _uiState.value = EventUiState.Error("Usuario no identificado")
             return
         }
+        memberEvents = null
+        pendingEvents = null
+
         eventRepository.getUserEvents(userId) { events ->
-            _uiState.value = if (events.isEmpty()) EventUiState.Empty
-            else EventUiState.Success(events)
+            memberEvents = events
+            tryEmitEvents()
+        }
+        eventRepository.getPendingEvents(userId) { events ->
+            pendingEvents = events
+            tryEmitEvents()
+        }
+    }
+
+    private fun tryEmitEvents() {
+        val members = memberEvents ?: return
+        val pending = pendingEvents ?: return
+        if (members.isEmpty() && pending.isEmpty()) {
+            _uiState.value = EventUiState.Empty
+            return
+        }
+        // Cargar avatares de todos los miembros de todos los eventos
+        val allMemberIds = (members + pending)
+            .flatMap { it.memberIds + it.pendingIds + it.adminIds }
+            .distinct()
+        if (allMemberIds.isEmpty()) {
+            _uiState.value = EventUiState.Success(members, pending)
+            return
+        }
+        userRepository.getUsersByIds(allMemberIds) { users ->
+            val avatarUrls = users
+                .filter { !it.profilePictureUrl.isNullOrEmpty() }
+                .associate { (it.id ?: "") to (it.profilePictureUrl ?: "") }
+            val adminNames = users.associate { (it.id ?: "") to (it.username ?: "?") }
+            _uiState.value = EventUiState.Success(members, pending, avatarUrls, adminNames)
         }
     }
 
@@ -144,4 +183,14 @@ class EventViewModel @Inject constructor(
     }
 
     fun resetCreateState() { _createState.value = CreateEventUiState.Idle }
+
+    // ── Invitaciones a eventos ─────────────────────────────────────────────
+
+    fun acceptEventInvite(eventId: String, userId: String) {
+        eventRepository.acceptEventInvite(eventId, userId) { /* snapshotListener actualiza la lista */ }
+    }
+
+    fun rejectEventInvite(eventId: String, userId: String) {
+        eventRepository.rejectEventInvite(eventId, userId) { /* snapshotListener actualiza la lista */ }
+    }
 }

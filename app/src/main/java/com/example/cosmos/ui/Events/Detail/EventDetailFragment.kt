@@ -71,6 +71,7 @@ class EventDetailFragment : Fragment() {
 
     private var eventId: String = ""
     private var userId: String = ""
+    private var readOnly: Boolean = false
     private var replyingToThreadId: String? = null
 
     // Publicar en News — bottom sheet
@@ -99,6 +100,7 @@ class EventDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         eventId = arguments?.getString("eventId") ?: ""
         userId = activity?.intent?.getStringExtra("USER_ID") ?: ""
+        readOnly = arguments?.getBoolean("readOnly", false) ?: false
 
         initData()
         initUI()
@@ -127,7 +129,8 @@ class EventDetailFragment : Fragment() {
         itemAdapter = EventItemAdapter(
             currentUserId = userId,
             memberNames   = emptyMap(),
-            onDelete      = { item -> viewModel.removeItem(eventId, item.id) }
+            onDelete      = { item -> viewModel.removeItem(eventId, item.id) },
+            readOnly      = readOnly
         )
         binding.rvItems.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -212,7 +215,11 @@ class EventDetailFragment : Fragment() {
                         when (state) {
                             is EventDetailUiState.Success -> {
                                 bindEvent(state.event, state.memberNames)
-                                bindFinishState(state.event, state.canFinish, state.hasRated, state.hasPosted)
+                                bindFinishState(state.event, state.canFinish, state.hasRated, state.hasPosted, state.isMember)
+                                bindPendingState(state.isPending, state.memberNames, state.event.adminIds)
+
+                                // Items en modo reducido para no-miembros o readOnly
+                                itemAdapter.readOnly = readOnly || !state.isMember || state.isPending
 
                                 // Miembros (horizontal RV con avatares)
                                 currentMembers = state.members
@@ -225,8 +232,19 @@ class EventDetailFragment : Fragment() {
                                 binding.rvItems.isVisible = items.isNotEmpty()
                                 itemAdapter.submitList(items)
 
-                                // Cuentas
-                                bindSettlements(viewModel.computeSettlements(items), state.memberNames)
+                                // Total de items
+                                val total = items.sumOf { it.price }
+                                val hasItems = items.isNotEmpty() && total > 0
+                                binding.layoutTotal.isVisible = hasItems
+                                binding.dividerTotal.isVisible = hasItems
+                                if (hasItems) binding.tvItemsTotal.text = "%.2f€".format(total)
+
+                                // Cuentas (solo para miembros, no en readOnly)
+                                if (!readOnly && state.isMember && !state.isPending) {
+                                    bindSettlements(viewModel.computeSettlements(items), state.memberNames)
+                                } else {
+                                    binding.cardSettlements.isVisible = false
+                                }
 
                                 val threads = state.threads
                                 binding.progressThreads.isVisible = false
@@ -317,10 +335,14 @@ class EventDetailFragment : Fragment() {
         binding.tvEventTitle.text = event.title ?: ""
         binding.tvEventDate.text = event.date?.let { fmt.format(it) } ?: "Sin fecha"
         val location = event.location?.ifBlank { null }
+        val mapAddr = event.mapAddress?.ifBlank { null }
+        val mapQuery = mapAddr ?: location
         binding.tvEventLocation.text = location ?: "Sin ubicacion"
-        binding.btnOpenMap.isVisible = location != null
+        binding.tvMapAddress.isVisible = mapAddr != null && location != null
+        binding.tvMapAddress.text = mapAddr ?: ""
+        binding.btnOpenMap.isVisible = mapQuery != null
         binding.btnOpenMap.setOnClickListener {
-            val query = location ?: return@setOnClickListener
+            val query = mapQuery ?: return@setOnClickListener
             val uri = Uri.parse("geo:0,0?q=${Uri.encode(query)}")
             val intent = Intent(Intent.ACTION_VIEW, uri)
             if (intent.resolveActivity(requireContext().packageManager) != null) {
@@ -346,24 +368,59 @@ class EventDetailFragment : Fragment() {
         }
     }
 
-    private fun bindFinishState(event: Event, canFinish: Boolean, hasRated: Boolean, hasPosted: Boolean = false) {
+    private fun bindFinishState(
+        event: Event, canFinish: Boolean, hasRated: Boolean,
+        hasPosted: Boolean = false, isMember: Boolean = true
+    ) {
         val isAdmin = event.adminIds.contains(userId)
+        val canEdit = isAdmin && isMember && !readOnly
 
         // Botones de admin en toolbar
-        binding.btnEditEvent.isVisible   = isAdmin
-        binding.btnDeleteEvent.isVisible = isAdmin
+        binding.btnEditEvent.isVisible   = canEdit
+        binding.btnDeleteEvent.isVisible = canEdit
 
         // Boton finalizar: solo admin + tiempo pasado + no finalizado
-        binding.btnFinishEvent.isVisible = isAdmin && canFinish && !event.finished
+        binding.btnFinishEvent.isVisible = canEdit && canFinish && !event.finished
+
+        // Items: ocultar boton "+" en modo solo lectura o no-miembro
+        binding.btnAddItem.isVisible = isMember && !readOnly
+
+        // Foro: ocultar input en modo solo lectura o no-miembro
+        binding.layoutBottom.isVisible = isMember && !readOnly
 
         // Card mision completada
-        binding.cardFinished.isVisible = event.finished
-        if (event.finished) {
+        binding.cardFinished.isVisible = event.finished && isMember && !readOnly
+        if (event.finished && isMember && !readOnly) {
             binding.btnRate.isVisible = !hasRated
             binding.tvAlreadyRated.isVisible = hasRated
-            // Publicar: solo si ya ha valorado y no ha posteado
             binding.btnPublishPost.isVisible = hasRated && !hasPosted
             binding.tvAlreadyPosted.isVisible = hasPosted
+        }
+    }
+
+    private fun bindPendingState(isPending: Boolean, memberNames: Map<String, String> = emptyMap(), adminIds: List<String> = emptyList()) {
+        binding.cardPendingInvite.isVisible = isPending
+        if (isPending) {
+            // Mostrar quién invitó
+            val inviterName = adminIds.firstOrNull()?.let { memberNames[it] }
+            binding.tvPendingInviteLabel.text = if (!inviterName.isNullOrBlank())
+                "@$inviterName TE INVITA A ESTA MISION" else "TE HAN INVITADO A ESTA MISION"
+
+            // Ocultar todo lo interactivo: solo ver info + aceptar/rechazar
+            binding.layoutBottom.isVisible = false
+            binding.btnAddItem.isVisible = false
+            binding.btnEditEvent.isVisible = false
+            binding.btnDeleteEvent.isVisible = false
+            binding.btnFinishEvent.isVisible = false
+            binding.cardFinished.isVisible = false
+
+            binding.btnAcceptInvite.setOnClickListener {
+                viewModel.acceptEventInvite(eventId, userId)
+            }
+            binding.btnRejectInvite.setOnClickListener {
+                viewModel.rejectEventInvite(eventId, userId)
+                findNavController().popBackStack()
+            }
         }
     }
 
@@ -386,6 +443,43 @@ class EventDetailFragment : Fragment() {
         val llPhotos        = view.findViewById<LinearLayout>(R.id.llPhotos)
         publishPhotoContainer = llPhotos
 
+        // Chips de visibilidad (toggle)
+        val chipLocation    = view.findViewById<TextView>(R.id.chipShowLocation)
+        val chipDescription = view.findViewById<TextView>(R.id.chipShowDescription)
+        val chipItems       = view.findViewById<TextView>(R.id.chipShowItems)
+
+        var showLocation    = true
+        var showDescription = true
+        var showItems       = false
+
+        fun styleChip(chip: TextView, active: Boolean) {
+            if (active) {
+                chip.setBackgroundResource(R.drawable.bg_tab_selected)
+                chip.setTextColor(0xFFC4BCFF.toInt())
+            } else {
+                chip.setBackgroundResource(R.drawable.bg_chip_glass)
+                chip.setTextColor(0x88FFFFFF.toInt())
+            }
+        }
+
+        // Estado inicial
+        styleChip(chipLocation, showLocation)
+        styleChip(chipDescription, showDescription)
+        styleChip(chipItems, showItems)
+
+        // Ocultar chip items si no hay items
+        chipItems.isVisible = state.event.items.isNotEmpty()
+
+        chipLocation.setOnClickListener {
+            showLocation = !showLocation; styleChip(chipLocation, showLocation)
+        }
+        chipDescription.setOnClickListener {
+            showDescription = !showDescription; styleChip(chipDescription, showDescription)
+        }
+        chipItems.setOnClickListener {
+            showItems = !showItems; styleChip(chipItems, showItems)
+        }
+
         // Pre-fill rating
         val rate = state.userRate
         if (rate != null) {
@@ -401,7 +495,10 @@ class EventDetailFragment : Fragment() {
 
         btnPublish.setOnClickListener {
             val comment = etComment.text.toString().trim()
-            viewModel.publishPost(eventId, userId, comment, pendingPublishUris.toList())
+            viewModel.publishPost(
+                eventId, userId, comment, pendingPublishUris.toList(),
+                showLocation, showDescription, showItems
+            )
         }
 
         dialog.setOnDismissListener {

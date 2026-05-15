@@ -60,6 +60,9 @@ class NewsPostAdapter(
             val crewText = post.memberIds.mapNotNull { memberNames[it] }.joinToString(" \u00B7 ")
 
             // ── Footer ────────────────────────────────────────────────────────
+            binding.tvItemSummary.isVisible = !post.itemSummary.isNullOrBlank()
+            binding.tvItemSummary.text = post.itemSummary ?: ""
+
             binding.tvEventTitle.text = post.eventTitle ?: ""
             binding.tvTimeAgo.text    = getTimeAgo(post.createdAt)
 

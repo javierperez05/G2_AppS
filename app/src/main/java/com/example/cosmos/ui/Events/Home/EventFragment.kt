@@ -83,10 +83,20 @@ class EventFragment : Fragment() {
     // activityViewModels() → instancia compartida con GroupFragment para la señal de solicitudes
     private val groupViewModel: GroupViewModel by activityViewModels()
 
-    private val eventAdapter = EventAdapter { event ->
-        val bundle = Bundle().apply { putString("eventId", event.id ?: "") }
-        findNavController().navigate(R.id.action_eventFragment_to_eventDetailFragment, bundle)
-    }
+    private var currentUserId = ""
+
+    private val eventAdapter = EventAdapter(
+        onEventClick = { event ->
+            val bundle = Bundle().apply { putString("eventId", event.id ?: "") }
+            findNavController().navigate(R.id.action_eventFragment_to_eventDetailFragment, bundle)
+        },
+        onAcceptInvite = { event ->
+            viewModel.acceptEventInvite(event.id ?: "", currentUserId)
+        },
+        onRejectInvite = { event ->
+            viewModel.rejectEventInvite(event.id ?: "", currentUserId)
+        }
+    )
 
     // Handlers para los bucles de animación.
     // Se guardan como campos para poder cancelarlos en onDestroyView.
@@ -100,6 +110,7 @@ class EventFragment : Fragment() {
     private var currentAlerts:   List<AlertItem>     = emptyList()
     private var currentEvents:   List<Event>          = emptyList()
     private var currentRequests: List<FriendRequest>  = emptyList()
+    private var currentPendingAdminNames: Map<String, String> = emptyMap()
     private val dismissedAlertKeys = mutableSetOf<String>()
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
@@ -117,9 +128,9 @@ class EventFragment : Fragment() {
         initListeners()
         observeViewModel()
 
-        val userId = activity?.intent?.getStringExtra("USER_ID") ?: ""
-        viewModel.loadEvents(userId)
-        viewModel.loadIncomingRequests(userId)
+        currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
+        viewModel.loadEvents(currentUserId)
+        viewModel.loadIncomingRequests(currentUserId)
     }
 
     override fun onDestroyView() {
@@ -199,10 +210,18 @@ class EventFragment : Fragment() {
 
                         if (state is EventUiState.Success) {
                             currentEvents = state.events.filter { !it.finished }
+                            currentPendingAdminNames = state.adminNames
                             val sorted = currentEvents.sortedBy { it.date?.time ?: Long.MAX_VALUE }
-                            eventAdapter.submitList(sorted)
+                            val pendingSorted = state.pendingEvents.sortedBy { it.date?.time ?: Long.MAX_VALUE }
+                            val avatars = state.avatarUrls
+                            val names = state.adminNames
+
+                            val items = pendingSorted.map { EventListItem(it, isPending = true, avatarUrls = avatars, inviterName = names[it.adminIds.firstOrNull() ?: ""]) } +
+                                        sorted.map { EventListItem(it, isPending = false, avatarUrls = avatars) }
+                            eventAdapter.submitList(items)
                             setupNextEvent(sorted)
                             startCountdown()
+                            updateHomeBadge(state.pendingEvents.size + currentRequests.size)
                             rebuildAlerts()
                         } else {
                             binding.cardNextEvent.isVisible = false
@@ -214,6 +233,8 @@ class EventFragment : Fragment() {
                 launch {
                     viewModel.incomingRequests.collect { requests ->
                         currentRequests = requests
+                        val pendingCount = (viewModel.uiState.value as? EventUiState.Success)?.pendingEvents?.size ?: 0
+                        updateHomeBadge(pendingCount + requests.size)
                         rebuildAlerts()
                     }
                 }
@@ -338,6 +359,20 @@ class EventFragment : Fragment() {
                     alertKey  = "friend_requests"
                 ))
             }
+        }
+
+        // Invitaciones a eventos pendientes
+        val pendingEvts = (viewModel.uiState.value as? EventUiState.Success)?.pendingEvents ?: emptyList()
+        for (pending in pendingEvts) {
+            val inviterName = currentPendingAdminNames[pending.adminIds.firstOrNull() ?: ""] ?: "Alguien"
+            alerts.add(AlertItem(
+                iconRes   = R.drawable.ic_rocket,
+                title     = "$inviterName te invita a ${pending.title ?: "un evento"}",
+                subtitle  = "Invitacion pendiente",
+                timeLabel = "",
+                eventId   = pending.id,
+                alertKey  = "pending_${pending.id}"
+            ))
         }
 
         // Eventos próximos (solo los que aún no han pasado, ordenados por fecha)
@@ -514,6 +549,18 @@ class EventFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun updateHomeBadge(count: Int) {
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottom_menu) ?: return
+        val badge = bottomNav.getOrCreateBadge(R.id.navigation_home)
+        if (count > 0) {
+            badge.isVisible = true
+            badge.number = count
+            badge.backgroundColor = 0xFF7C6DF0.toInt()
+        } else {
+            bottomNav.removeBadge(R.id.navigation_home)
+        }
     }
 
     companion object {

@@ -147,13 +147,15 @@ class NewsViewModel @Inject constructor(
 
     fun proposeToGroup(post: Post, group: Group, currentUserId: String) {
         _proposeState.value = ProposeUiState.Loading
+        val otherMembers = group.memberIds.filter { it != currentUserId }
         val event = Event(
             title       = post.eventTitle,
             description = post.eventDescription ?: post.comment,
             location    = post.eventLocation,
             type        = EventType.DEFAULT,
             adminIds    = listOf(currentUserId),
-            memberIds   = group.memberIds.ifEmpty { listOf(currentUserId) }
+            memberIds   = listOf(currentUserId),
+            pendingIds  = otherMembers
         )
         eventRepository.createEventGetId(event) { eventId ->
             if (eventId == null) {
@@ -175,7 +177,8 @@ class NewsViewModel @Inject constructor(
             location    = post.eventLocation,
             type        = EventType.DEFAULT,
             adminIds    = listOf(currentUserId),
-            memberIds   = listOf(currentUserId, friend.id ?: "").filter { it.isNotEmpty() }
+            memberIds   = listOf(currentUserId),
+            pendingIds  = listOfNotNull(friend.id).filter { it.isNotEmpty() }
         )
         eventRepository.createEventGetId(event) { eventId ->
             _proposeState.value = if (eventId != null) ProposeUiState.Proposed

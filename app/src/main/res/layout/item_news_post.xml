@@ -187,6 +187,19 @@
                 android:ellipsize="end"
                 android:visibility="gone" />
 
+            <!-- Item summary -->
+            <TextView
+                android:id="@+id/tvItemSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="#88FFFFFF"
+                android:textSize="11sp"
+                android:drawablePadding="6dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:visibility="gone" />
+
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"

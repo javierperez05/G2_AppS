@@ -6,10 +6,12 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Event.EventType
 import com.example.cosmos.R
@@ -19,9 +21,18 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+data class EventListItem(
+    val event: Event,
+    val isPending: Boolean = false,
+    val avatarUrls: Map<String, String> = emptyMap(),
+    val inviterName: String? = null
+)
+
 class EventAdapter(
-    private val onEventClick: (Event) -> Unit
-) : ListAdapter<Event, EventAdapter.EventViewHolder>(EventDiffCallback()) {
+    private val onEventClick: (Event) -> Unit,
+    private val onAcceptInvite: ((Event) -> Unit)? = null,
+    private val onRejectInvite: ((Event) -> Unit)? = null
+) : ListAdapter<EventListItem, EventAdapter.EventViewHolder>(EventDiffCallback()) {
 
     companion object {
         private const val IMMINENT_THRESHOLD_MS = 24 * 60 * 60 * 1000L // 24h
@@ -39,7 +50,8 @@ class EventAdapter(
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        val event = getItem(position)
+        val item = getItem(position)
+        val event = item.event
         val now = System.currentTimeMillis()
 
         with(holder.binding) {
@@ -50,7 +62,33 @@ class EventAdapter(
             )
             tvEventLocation.text = event.location ?: ""
             tvEventLocation.isVisible = !event.location.isNullOrBlank()
-            tvMemberCount.text = "${event.memberIds.size}"
+            tvMemberCount.text = "${event.memberIds.size} crew"
+
+            // Avatares de miembros (max 3)
+            val avatarViews = listOf(ivAvatar1, ivAvatar2, ivAvatar3)
+            val memberAvatars = event.memberIds.mapNotNull { id ->
+                item.avatarUrls[id]?.ifEmpty { null }?.let { id to it }
+            }.take(3)
+            avatarViews.forEach { it.isVisible = false }
+            memberAvatars.forEachIndexed { i, (_, url) ->
+                avatarViews[i].isVisible = true
+                Glide.with(avatarViews[i])
+                    .load(url)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .into(avatarViews[i])
+            }
+
+            // Banner de invitación pendiente
+            layoutPending.isVisible = item.isPending
+            if (item.isPending) {
+                viewAccent.setBackgroundColor(Color.parseColor("#7C6DF0"))
+                root.alpha = 1f
+                tvPendingLabel.text = if (!item.inviterName.isNullOrBlank())
+                    "INVITADO POR @${item.inviterName}" else "INVITACION PENDIENTE"
+                btnAcceptInvite.setOnClickListener { onAcceptInvite?.invoke(event) }
+                btnRejectInvite.setOnClickListener { onRejectInvite?.invoke(event) }
+            }
 
             // Fecha
             val eventDate = event.date
@@ -63,24 +101,22 @@ class EventAdapter(
                 val isImminent = timeLeft in 1..IMMINENT_THRESHOLD_MS
                 val isPast = timeLeft <= 0
 
-                layoutImminent.isVisible = isImminent
-                if (isImminent) {
+                layoutImminent.isVisible = isImminent && !item.isPending
+                if (isImminent && !item.isPending) {
                     tvCountdown.text = formatCountdown(timeLeft)
-                    // Acento naranja para inminente
                     viewAccent.setBackgroundColor(Color.parseColor("#FF6B3D"))
-                    // Pulso en el dot
                     startPulse(dotPulse)
-                } else {
+                } else if (!item.isPending) {
                     viewAccent.setBackgroundColor(Color.parseColor("#1717AB"))
                     dotPulse.clearAnimation()
                 }
 
                 // Eventos pasados: estilo tenue
-                if (isPast) {
+                if (isPast && !item.isPending) {
                     tvEventDate.text = "Finalizado"
                     tvEventDate.setTextColor(Color.parseColor("#44FFFFFF"))
                     root.alpha = 0.6f
-                } else {
+                } else if (!item.isPending) {
                     root.alpha = 1f
                     tvEventDate.setTextColor(
                         if (isImminent) Color.parseColor("#FFCC80") else Color.parseColor("#66FFFFFF")
@@ -90,7 +126,7 @@ class EventAdapter(
                 tvEventDate.text = "Fecha por confirmar"
                 tvEventDate.isVisible = true
                 layoutImminent.isVisible = false
-                root.alpha = 1f
+                if (!item.isPending) root.alpha = 1f
             }
 
             root.setOnClickListener { onEventClick(event) }
@@ -116,8 +152,8 @@ class EventAdapter(
         }
     }
 
-    private class EventDiffCallback : DiffUtil.ItemCallback<Event>() {
-        override fun areItemsTheSame(old: Event, new: Event) = old.id == new.id
-        override fun areContentsTheSame(old: Event, new: Event) = old == new
+    private class EventDiffCallback : DiffUtil.ItemCallback<EventListItem>() {
+        override fun areItemsTheSame(old: EventListItem, new: EventListItem) = old.event.id == new.event.id
+        override fun areContentsTheSame(old: EventListItem, new: EventListItem) = old == new
     }
 }

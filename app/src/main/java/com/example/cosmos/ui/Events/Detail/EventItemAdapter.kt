@@ -2,6 +2,7 @@ package com.example.cosmos.ui.Events.Detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,8 @@ import com.example.cosmos.databinding.ItemEventItemBinding
 class EventItemAdapter(
     private val currentUserId: String,
     private var memberNames: Map<String, String>,
-    private val onDelete: (EventItem) -> Unit
+    private val onDelete: (EventItem) -> Unit,
+    var readOnly: Boolean = false
 ) : ListAdapter<EventItem, EventItemAdapter.ItemViewHolder>(DiffCallback()) {
 
     fun updateMemberNames(names: Map<String, String>) {
@@ -35,17 +37,26 @@ class EventItemAdapter(
 
         fun bind(item: EventItem) {
             binding.tvItemName.text = item.name
-
             binding.tvItemPrice.text = if (item.price > 0) "%.2f€".format(item.price) else ""
 
-            val payerName = memberNames[item.paidByUserId] ?: "?"
-            binding.tvItemPayer.text = "Paga: $payerName"
+            if (readOnly) {
+                // Solo nombre + precio, sin info de quién paga
+                binding.tvItemPayer.isVisible = false
+                binding.tvItemSplit.isVisible = false
+                binding.btnDeleteItem.isVisible = false
+            } else {
+                binding.tvItemPayer.isVisible = true
+                binding.tvItemSplit.isVisible = true
+                binding.btnDeleteItem.isVisible = true
 
-            val splitCount = item.splitBetweenUserIds.size
-            binding.tvItemSplit.text = if (splitCount > 0) "÷ $splitCount" else ""
+                val payerName = memberNames[item.paidByUserId] ?: "?"
+                binding.tvItemPayer.text = "Paga: $payerName"
 
-            // Solo puede borrar quien lo creó (el que paga) o cualquier miembro
-            binding.btnDeleteItem.setOnClickListener { onDelete(item) }
+                val splitCount = item.splitBetweenUserIds.size
+                binding.tvItemSplit.text = if (splitCount > 0) "÷ $splitCount" else ""
+
+                binding.btnDeleteItem.setOnClickListener { onDelete(item) }
+            }
         }
     }
 

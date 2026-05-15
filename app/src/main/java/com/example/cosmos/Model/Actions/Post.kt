@@ -12,5 +12,6 @@ data class Post(
     val comment: String? = null,
     val imageUrls: List<String> = emptyList(),
     val memberIds: List<String> = emptyList(),
-    val createdAt: Long = 0L
+    val createdAt: Long = 0L,
+    val itemSummary: String? = null
 )

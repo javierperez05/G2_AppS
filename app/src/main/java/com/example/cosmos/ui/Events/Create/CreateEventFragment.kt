@@ -180,9 +180,9 @@ class CreateEventFragment : Fragment() {
         // Crear evento
         binding.btnCreateEvent.setOnClickListener { saveEvent() }
 
-        // Preview de ubicacion en el mapa
+        // Preview de ubicacion en el mapa (usa la dirección, no el nombre)
         binding.btnPreviewLocation.setOnClickListener {
-            val query = binding.etEventLocation.text.toString().trim()
+            val query = binding.etMapAddress.text.toString().trim()
             if (query.isEmpty()) return@setOnClickListener
             openInMaps(query)
         }
@@ -259,6 +259,7 @@ class CreateEventFragment : Fragment() {
         binding.etEventName.setText(event.title ?: "")
         binding.etEventDescription.setText(event.description ?: "")
         binding.etEventLocation.setText(event.location ?: "")
+        binding.etMapAddress.setText(event.mapAddress ?: "")
 
         if (event.date != null) {
             selectedDate = event.date
@@ -484,20 +485,24 @@ class CreateEventFragment : Fragment() {
                 title           = title,
                 description     = binding.etEventDescription.text.toString().trim(),
                 location        = binding.etEventLocation.text.toString().trim().ifBlank { null },
+                mapAddress      = binding.etMapAddress.text.toString().trim().ifBlank { null },
                 date            = cal.time,
                 durationMinutes = selectedDurationMinutes,
                 memberIds       = selectedMemberIds.distinct()
             )
             viewModel.updateEvent(updatedEvent, selectedImageUri)
         } else {
+            val allIds = selectedMemberIds.distinct()
             val newEvent = Event(
                 title           = title,
                 description     = binding.etEventDescription.text.toString().trim(),
                 location        = binding.etEventLocation.text.toString().trim().ifBlank { null },
+                mapAddress      = binding.etMapAddress.text.toString().trim().ifBlank { null },
                 date            = cal.time,
                 durationMinutes = selectedDurationMinutes,
                 adminIds        = listOf(currentUserId),
-                memberIds       = selectedMemberIds.distinct(),
+                memberIds       = listOf(currentUserId),
+                pendingIds      = allIds.filter { it != currentUserId },
                 type            = EventType.DEFAULT
             )
             viewModel.createEvent(newEvent, selectedImageUri)

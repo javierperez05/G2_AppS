@@ -63,7 +63,10 @@ class NewsFragment : Fragment() {
     // ── Init ──────────────────────────────────────────────────────────────────
 
     fun navigateToEvent(eventId: String) {
-        val bundle = Bundle().apply { putString("eventId", eventId) }
+        val bundle = Bundle().apply {
+            putString("eventId", eventId)
+            putBoolean("readOnly", true)
+        }
         findNavController().navigate(R.id.action_newsFragment_to_eventDetailFragment, bundle)
     }
 

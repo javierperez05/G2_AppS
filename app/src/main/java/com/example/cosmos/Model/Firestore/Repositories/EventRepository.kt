@@ -44,6 +44,7 @@ package com.example.cosmos.Model.Firestore.Repositories
 import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.Model.Event.EventItem
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -152,6 +153,36 @@ class EventRepository @Inject constructor(
 
     fun deleteEvent(eventId: String, onResult: (Boolean) -> Unit) {
         db.document(eventId).delete()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // ── Invitaciones a eventos ─────────────────────────────────────────────
+
+    // Eventos donde el usuario está invitado (pendiente de aceptar)
+    fun getPendingEvents(userId: String, onResult: (List<Event>) -> Unit) {
+        db.whereArrayContains("pendingIds", userId)
+            .addSnapshotListener { snapshot, _ ->
+                val events = snapshot?.toObjects(Event::class.java) ?: emptyList()
+                onResult(events.sortedBy { it.date })
+            }
+    }
+
+    // Aceptar invitación: mover de pendingIds a memberIds (batch atómico)
+    fun acceptEventInvite(eventId: String, userId: String, onResult: (Boolean) -> Unit) {
+        val batch = firestore.batch()
+        val ref = db.document(eventId)
+        batch.update(ref, "pendingIds", FieldValue.arrayRemove(userId))
+        batch.update(ref, "memberIds", FieldValue.arrayUnion(userId))
+        batch.commit()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    // Rechazar invitación: quitar de pendingIds
+    fun rejectEventInvite(eventId: String, userId: String, onResult: (Boolean) -> Unit) {
+        db.document(eventId)
+            .update("pendingIds", FieldValue.arrayRemove(userId))
             .addOnSuccessListener { onResult(true) }
             .addOnFailureListener { onResult(false) }
     }

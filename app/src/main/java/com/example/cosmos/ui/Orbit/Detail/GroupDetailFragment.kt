@@ -21,6 +21,7 @@ import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentGroupDetailBinding
 import com.example.cosmos.ui.Events.Home.EventAdapter
+import com.example.cosmos.ui.Events.Home.EventListItem
 import com.example.cosmos.ui.Events.Create.UserSearchAdapter
 import com.example.cosmos.ui.Orbit.GroupDetailActionState
 import com.example.cosmos.ui.Orbit.GroupEventsUiState
@@ -201,7 +202,7 @@ class GroupDetailFragment : Fragment() {
                         binding.layoutEmpty.isVisible = state is GroupEventsUiState.Empty
                         binding.rvGroupEvents.isVisible = state is GroupEventsUiState.Success
                         if (state is GroupEventsUiState.Success) {
-                            eventAdapter.submitList(state.events)
+                            eventAdapter.submitList(state.events.map { EventListItem(it) })
                         }
                     }
                 }

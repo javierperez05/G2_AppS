@@ -111,6 +111,62 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp" />
 
+    <!-- Controles de visibilidad -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="INCLUIR EN LA PUBLICACION"
+        android:textColor="#55FFFFFF"
+        android:textSize="10sp"
+        android:letterSpacing="0.12" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/chipShowLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="14dp"
+            android:gravity="center"
+            android:text="Ubicacion"
+            android:textSize="11sp"
+            android:textColor="#88FFFFFF"
+            android:background="@drawable/bg_chip_glass"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/chipShowDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="14dp"
+            android:gravity="center"
+            android:text="Descripcion"
+            android:textSize="11sp"
+            android:textColor="#88FFFFFF"
+            android:background="@drawable/bg_chip_glass"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/chipShowItems"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="14dp"
+            android:gravity="center"
+            android:text="Items"
+            android:textSize="11sp"
+            android:textColor="#88FFFFFF"
+            android:background="@drawable/bg_chip_glass" />
+
+    </LinearLayout>
+
     <!-- Fotos añadidas -->
     <TextView
         android:layout_width="wrap_content"
