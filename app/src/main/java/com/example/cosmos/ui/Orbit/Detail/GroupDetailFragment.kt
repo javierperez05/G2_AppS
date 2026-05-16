@@ -57,10 +57,14 @@ class GroupDetailFragment : Fragment() {
     private var currentTab = Tab.MISSIONS
     private enum class Tab { MISSIONS, MEMBERS }
 
-    private val eventAdapter = EventAdapter { event ->
-        val bundle = Bundle().apply { putString("eventId", event.id ?: "") }
-        findNavController().navigate(R.id.action_groupDetailFragment_to_eventDetailFragment, bundle)
-    }
+    private val eventAdapter = EventAdapter(
+        onEventClick = { event ->
+            val bundle = Bundle().apply { putString("eventId", event.id ?: "") }
+            findNavController().navigate(R.id.action_groupDetailFragment_to_eventDetailFragment, bundle)
+        },
+        onAcceptInvite = null,
+        onRejectInvite = null
+    )
 
     private lateinit var memberAdapter: GroupMemberAdapter
 
