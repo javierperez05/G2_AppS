@@ -1,5 +1,38 @@
 package com.example.cosmos.ui.Events.Home
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Doble flujo: EventUiState + CreateEventUiState
+ *      EventUiState maneja la lista de eventos (Home screen).
+ *      CreateEventUiState maneja el formulario de crear/editar evento.
+ *      Son independientes porque crear un evento no debe resetear la
+ *      lista, y viceversa.
+ *
+ *  tryEmitEvents() — "zip manual"
+ *      loadEvents() lanza DOS queries en paralelo: eventos del usuario
+ *      (memberIds) y eventos pendientes de aceptar (pendingIds).
+ *      Cada query guarda su resultado en un campo nullable. tryEmit
+ *      comprueba si AMBOS ya están listos (?: return si alguno es null)
+ *      y solo entonces emite el estado Success. Es un patrón de
+ *      sincronización sin coroutines.
+ *
+ *  avatarUrls y adminNames en Success
+ *      Una vez tenemos los eventos, cargamos los User de todos los
+ *      memberIds para obtener sus fotos de perfil y nombres. Se
+ *      guardan en mapas userId→url y userId→username dentro del
+ *      estado, para que el Fragment/Adapter no tenga que hacer más
+ *      queries.
+ *
+ *  selectedMembers (para CreateEventFragment)
+ *      Al crear un evento, el usuario busca y añade miembros. La
+ *      lista vive en el ViewModel para sobrevivir a rotaciones.
+ *      addMember/removeMember usan .update{} que es thread-safe.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Actions.FriendRequest

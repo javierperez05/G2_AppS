@@ -348,7 +348,8 @@ class EventFragment : Fragment() {
                     title     = getString(R.string.alert_friend_want, req.fromUsername),
                     subtitle  = getString(R.string.alert_friend_request),
                     timeLabel = "",
-                    alertKey  = "friend_requests"
+                    alertKey  = "friend_requests",
+                    type      = AlertType.FRIEND_REQUEST
                 ))
             } else {
                 alerts.add(AlertItem(
@@ -356,7 +357,8 @@ class EventFragment : Fragment() {
                     title     = getString(R.string.alert_friend_requests_count, currentRequests.size),
                     subtitle  = currentRequests.take(3).joinToString(", ") { it.fromUsername },
                     timeLabel = "",
-                    alertKey  = "friend_requests"
+                    alertKey  = "friend_requests",
+                    type      = AlertType.FRIEND_REQUEST
                 ))
             }
         }
@@ -371,7 +373,8 @@ class EventFragment : Fragment() {
                 subtitle  = getString(R.string.alert_pending_invite),
                 timeLabel = "",
                 eventId   = pending.id,
-                alertKey  = "pending_${pending.id}"
+                alertKey  = "pending_${pending.id}",
+                type      = AlertType.EVENT_INVITE
             ))
         }
 
@@ -387,28 +390,29 @@ class EventFragment : Fragment() {
             val iconRes: Int
             val subtitle: String
             val timeLabel: String
+            val alertType: AlertType
 
             when {
                 timeLeft <= IMMINENT_MS -> {
-                    // Menos de 24h: alerta urgente con icono rojo
                     val hours = TimeUnit.MILLISECONDS.toHours(timeLeft)
                     val mins  = TimeUnit.MILLISECONDS.toMinutes(timeLeft) % 60
                     iconRes   = R.drawable.ic_alert_urgent
                     subtitle  = getString(R.string.alert_imminent_launch)
                     timeLabel = if (hours > 0) "${hours}h ${mins}m" else "${mins}m"
+                    alertType = AlertType.IMMINENT
                 }
                 timeLeft <= 3 * 24 * 60 * 60 * 1000L -> {
-                    // Entre 24h y 3 días: alerta moderada
                     val days  = TimeUnit.MILLISECONDS.toDays(timeLeft)
                     iconRes   = R.drawable.ic_signal
                     subtitle  = if (days <= 1) getString(R.string.alert_tomorrow) else getString(R.string.alert_in_days, days)
                     timeLabel = "${days}d"
+                    alertType = AlertType.UPCOMING
                 }
-                else -> continue  // Más de 3 días: no aparece en alertas urgentes
+                else -> continue
             }
             alerts.add(AlertItem(iconRes = iconRes, title = event.title ?: getString(R.string.event_fallback),
                 subtitle = subtitle, timeLabel = timeLabel, eventId = event.id,
-                alertKey = "event_${event.id}"))
+                alertKey = "event_${event.id}", type = alertType))
         }
 
         // Eventos lejanos (>3 días): aparecen en el marquee como info general
@@ -421,13 +425,44 @@ class EventFragment : Fragment() {
                     subtitle  = "${event.memberIds.size} crew · ${SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)}",
                     timeLabel = "",
                     eventId   = event.id,
-                    alertKey  = "event_${event.id}"
+                    alertKey  = "event_${event.id}",
+                    type      = AlertType.INFO
                 ))
             }
         }
 
         currentAlerts = alerts.filter { it.alertKey !in dismissedAlertKeys }
         updateMarquee()
+    }
+
+    // Construye la lista con cabeceras de sección agrupando alertas por tipo.
+    // Orden: solicitudes/invitaciones → inminentes → próximos → info
+    private fun buildSectionedList(alerts: List<AlertItem>): List<AlertListItem> {
+        val result = mutableListOf<AlertListItem>()
+        val grouped = alerts.groupBy { it.type }
+
+        // Agrupar FRIEND_REQUEST y EVENT_INVITE bajo la misma sección "INCOMING"
+        val incomingItems = (grouped[AlertType.FRIEND_REQUEST] ?: emptyList()) +
+                            (grouped[AlertType.EVENT_INVITE] ?: emptyList())
+        if (incomingItems.isNotEmpty()) {
+            val dotColor = AlertType.FRIEND_REQUEST.dotColor
+            result.add(AlertListItem.Section(getString(R.string.alert_section_incoming), incomingItems.size, dotColor))
+            incomingItems.forEach { result.add(AlertListItem.Alert(it)) }
+        }
+
+        // Resto de secciones
+        val remainingTypes = listOf(
+            AlertType.IMMINENT  to getString(R.string.alert_section_imminent),
+            AlertType.UPCOMING  to getString(R.string.alert_section_upcoming),
+            AlertType.INFO      to getString(R.string.alert_section_scheduled)
+        )
+        for ((type, title) in remainingTypes) {
+            val items = grouped[type] ?: continue
+            result.add(AlertListItem.Section(title, items.size, type.dotColor))
+            items.forEach { result.add(AlertListItem.Alert(it)) }
+        }
+
+        return result
     }
 
     // ── Marquee ───────────────────────────────────────────────────────────────
@@ -499,26 +534,31 @@ class EventFragment : Fragment() {
         val sheetBinding = BottomSheetAlertsBinding.inflate(layoutInflater)
         dialog.setContentView(sheetBinding.root)
 
-        sheetBinding.tvNoAlerts.isVisible  = currentAlerts.isEmpty()
-        sheetBinding.rvAlerts.isVisible    = currentAlerts.isNotEmpty()
-        sheetBinding.btnClearAll.isVisible = currentAlerts.isNotEmpty()
+        val hasAlerts = currentAlerts.isNotEmpty()
+        sheetBinding.layoutNoAlerts.isVisible = !hasAlerts
+        sheetBinding.rvAlerts.isVisible       = hasAlerts
+        sheetBinding.btnClearAll.isVisible    = hasAlerts
+        sheetBinding.tvAlertCount.isVisible   = hasAlerts
+        if (hasAlerts) sheetBinding.tvAlertCount.text = "${currentAlerts.size}"
 
-        if (currentAlerts.isNotEmpty()) {
+        if (hasAlerts) {
             val alertAdapter = AlertAdapter(
                 showDismiss = true,
                 onAlertClick = { alert ->
                     dialog.dismiss()
-                    when {
-                        alert.iconRes == R.drawable.ic_person_add -> {
+                    when (alert.type) {
+                        AlertType.FRIEND_REQUEST -> {
                             activity?.findViewById<BottomNavigationView>(R.id.bottom_menu)
                                 ?.selectedItemId = R.id.navigation_orbit
                             groupViewModel.signalOpenRequests()
                         }
-                        alert.eventId != null -> {
-                            val bundle = Bundle().apply { putString("eventId", alert.eventId) }
-                            findNavController().navigate(
-                                R.id.action_eventFragment_to_eventDetailFragment, bundle
-                            )
+                        else -> {
+                            if (alert.eventId != null) {
+                                val bundle = Bundle().apply { putString("eventId", alert.eventId) }
+                                findNavController().navigate(
+                                    R.id.action_eventFragment_to_eventDetailFragment, bundle
+                                )
+                            }
                         }
                     }
                 },
@@ -526,24 +566,27 @@ class EventFragment : Fragment() {
                     if (alert.alertKey.isNotEmpty()) {
                         dismissedAlertKeys.add(alert.alertKey)
                         rebuildAlerts()
-                        // Actualizar la lista en el sheet
-                        sheetBinding.tvNoAlerts.isVisible  = currentAlerts.isEmpty()
-                        sheetBinding.rvAlerts.isVisible    = currentAlerts.isNotEmpty()
-                        sheetBinding.btnClearAll.isVisible  = currentAlerts.isNotEmpty()
-                        (sheetBinding.rvAlerts.adapter as? AlertAdapter)?.submitList(currentAlerts)
+                        val sectionedList = buildSectionedList(currentAlerts)
+                        sheetBinding.layoutNoAlerts.isVisible = currentAlerts.isEmpty()
+                        sheetBinding.rvAlerts.isVisible       = currentAlerts.isNotEmpty()
+                        sheetBinding.btnClearAll.isVisible    = currentAlerts.isNotEmpty()
+                        sheetBinding.tvAlertCount.isVisible   = currentAlerts.isNotEmpty()
+                        if (currentAlerts.isNotEmpty()) sheetBinding.tvAlertCount.text = "${currentAlerts.size}"
+                        (sheetBinding.rvAlerts.adapter as? AlertAdapter)?.submitList(sectionedList)
                     }
                 }
             )
             sheetBinding.rvAlerts.layoutManager = LinearLayoutManager(requireContext())
             sheetBinding.rvAlerts.adapter        = alertAdapter
-            alertAdapter.submitList(currentAlerts)
+            alertAdapter.submitList(buildSectionedList(currentAlerts))
 
             sheetBinding.btnClearAll.setOnClickListener {
                 currentAlerts.forEach { dismissedAlertKeys.add(it.alertKey) }
                 rebuildAlerts()
-                sheetBinding.tvNoAlerts.isVisible  = true
-                sheetBinding.rvAlerts.isVisible    = false
-                sheetBinding.btnClearAll.isVisible  = false
+                sheetBinding.layoutNoAlerts.isVisible = true
+                sheetBinding.rvAlerts.isVisible       = false
+                sheetBinding.btnClearAll.isVisible    = false
+                sheetBinding.tvAlertCount.isVisible   = false
                 alertAdapter.submitList(emptyList())
             }
         }

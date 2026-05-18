@@ -1,5 +1,37 @@
 package com.example.cosmos.ui.Events.Create
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Modo crear vs modo editar
+ *      Si llega el argumento "editEventId", el Fragment entra en modo
+ *      edición: carga los datos existentes con loadEventForEdit() y
+ *      los rellena con prefillEvent(). Si no, es modo creación normal.
+ *
+ *  groupId (argumento opcional)
+ *      Si se navega desde GroupDetail, llega el groupId. Al crear el
+ *      evento, se vincula al grupo con groupViewModel.linkEventToGroup().
+ *
+ *  pendingIds vs memberIds
+ *      Al crear un evento, el creador va directo a memberIds (es miembro).
+ *      Los demás invitados van a pendingIds: tienen que aceptar la
+ *      invitación antes de pasar a memberIds.
+ *
+ *  Orbit chips (toggleGroup)
+ *      El usuario puede seleccionar órbitas enteras como invitados.
+ *      addGroupMembers() carga los User de ese grupo y los añade.
+ *      removeGroupMembers() los quita, pero solo si no pertenecen
+ *      a otra órbita seleccionada (para evitar borrar duplicados).
+ *
+ *  @Inject userRepository / orbitRepository
+ *      Se inyectan directamente en el Fragment (no via ViewModel)
+ *      porque son operaciones puntuales de búsqueda de usuarios y
+ *      carga de grupos. El ViewModel maneja la creación del evento.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri

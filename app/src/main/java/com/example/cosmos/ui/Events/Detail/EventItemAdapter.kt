@@ -1,5 +1,22 @@
 package com.example.cosmos.ui.Events.Detail
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  EventItem — gastos compartidos (estilo Tricount)
+ *      Cada item tiene: nombre, precio, quién pagó (paidByUserId)
+ *      y entre quiénes se reparte (splitBetweenUserIds).
+ *      El adapter muestra la info + botón eliminar (solo para
+ *      el pagador y si no es readOnly).
+ *
+ *  memberNames (Map<String, String>)
+ *      Se actualiza externamente para resolver IDs a nombres.
+ *      Se usa para mostrar "Pagado por @nombre" y "Reparto: a, b, c".
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible

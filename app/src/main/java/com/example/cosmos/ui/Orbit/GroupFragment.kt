@@ -1,5 +1,39 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Dos ViewModels: activityViewModels vs viewModels
+ *      - GroupViewModel (activityViewModels): compartido con toda la
+ *        Activity. GroupFragment escribe (selectGroup), GroupDetailFragment
+ *        lee (selectedGroup). También recibe señales de EventFragment
+ *        (openRequestsSignal) para abrir el bottom sheet de solicitudes.
+ *      - FriendViewModel (viewModels): exclusivo de este Fragment.
+ *        Muere al salir de la pantalla. Maneja amigos y solicitudes.
+ *
+ *  OrbitalLayoutManager
+ *      LayoutManager custom que coloca las cards de órbitas en una
+ *      curva parabólica. Las cards del centro están más arriba y las
+ *      de los bordes más abajo, creando un efecto visual orbital.
+ *
+ *  FriendSheetMode (bottom sheet de amigos)
+ *      El mismo bottom sheet tiene 3 modos intercambiables:
+ *      - FRIENDS: lista de amigos actuales (buscar + eliminar)
+ *      - EXPLORE: buscar usuarios en toda la app (enviar solicitud)
+ *      - REQUESTS: solicitudes entrantes (aceptar / rechazar)
+ *      switchMode() cambia el modo y recarga los datos apropiados.
+ *
+ *  openRequestsSignal
+ *      Cuando EventFragment detecta que hay solicitudes y el usuario
+ *      pulsa la alerta, escribe true en el signal. GroupFragment lo
+ *      lee aquí y abre el bottom sheet directamente en modo REQUESTS.
+ *      consumeOpenRequestsSignal() lo resetea a false para que no
+ *      se re-ejecute.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher

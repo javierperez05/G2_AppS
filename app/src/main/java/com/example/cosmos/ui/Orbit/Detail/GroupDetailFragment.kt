@@ -1,5 +1,32 @@
 package com.example.cosmos.ui.Orbit.Detail
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  activityViewModels (GroupViewModel)
+ *      El grupo seleccionado se comparte entre GroupFragment y
+ *      GroupDetailFragment via GroupViewModel.selectedGroup.
+ *      GroupFragment escribe con selectGroup(), este Fragment lee.
+ *
+ *  Dos tabs: MISIONES / TRIPULACIÓN
+ *      - MISIONES: lista de eventos del grupo (EventAdapter reutilizado)
+ *      - TRIPULACIÓN: lista de miembros con avatares (GroupMemberAdapter)
+ *        + botón invitar (abre bottom sheet de búsqueda)
+ *        + botón salir / expulsar (solo admins pueden expulsar)
+ *
+ *  Invitar miembros
+ *      Al buscar e invitar, el usuario va a invitedIds del grupo
+ *      (no directamente a memberIds). Tiene que aceptar la invitación
+ *      desde su pantalla de Orbits.
+ *
+ *  Crear evento desde el grupo
+ *      El FAB navega a CreateEventFragment pasando el groupId.
+ *      Al crear, el evento se vincula al grupo automáticamente.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher

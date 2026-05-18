@@ -1,5 +1,29 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Tres estados del botón de acción (modo normal)
+ *      Se determina por los Sets que recibe del ViewModel:
+ *      - friendIds contiene el ID → "Amigo" (ya son amigos)
+ *      - pendingSentIds contiene el ID → "Pendiente" (solicitud enviada)
+ *      - Ninguno de los dos → "Enviar" (puede enviar solicitud)
+ *
+ *  isRequestMode (modo solicitudes)
+ *      Cuando GroupFragment activa el modo REQUESTS, se muestra
+ *      cada usuario con dos botones: Aceptar y Rechazar. El requestId
+ *      se obtiene de incomingRequestMap[userId] y se pasa al callback.
+ *
+ *  Propiedades var con notifyDataSetChanged
+ *      friendIds, pendingSentIds, incomingRequestMap se actualizan
+ *      desde fuera (collected de StateFlows en GroupFragment).
+ *      Cada cambio fuerza un redibujado para que los botones
+ *      reflejen el estado actual.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible

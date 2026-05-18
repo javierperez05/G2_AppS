@@ -1,5 +1,37 @@
 package com.example.cosmos.ui.Profile.Config
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  switchesReady — flag anti-loop
+ *      Los switches de Material tienen setOnCheckedChangeListener que
+ *      dispara cuando se cambia el valor PROGRAMÁTICAMENTE (no solo
+ *      por el usuario). Al cargar el perfil, rellenamos los switches
+ *      y cada uno dispararía saveConfigField() sin necesidad.
+ *      switchesReady = false bloquea los listeners durante la carga.
+ *      Se pone a true solo cuando todos los campos están rellenos.
+ *
+ *  Idioma — doble almacenamiento
+ *      El idioma se guarda en SharedPreferences (para que esté
+ *      disponible antes de Firestore en el arranque) Y en Firestore
+ *      config.language (para sincronizar entre dispositivos).
+ *      applyLanguage() guarda en ambos y recrea la Activity para
+ *      aplicar el nuevo Locale inmediatamente.
+ *
+ *  cosmos://invite/{userId}
+ *      El usuario puede compartir un enlace de amistad. Quien lo
+ *      abra y esté logueado en COSMOS enviará automáticamente una
+ *      solicitud de amistad (procesado en NavigationHUD).
+ *
+ *  Cerrar sesión
+ *      Borra SharedPreferences (elimina USER_ID) y navega a
+ *      LoginActivity con FLAG_ACTIVITY_CLEAR_TASK para limpiar
+ *      todo el back stack.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri

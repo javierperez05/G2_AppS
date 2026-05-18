@@ -1,5 +1,38 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  FriendUiState vs FriendActionState
+ *      FriendUiState: estado de la LISTA (loading/empty/success)
+ *      FriendActionState: resultado de una ACCIÓN puntual (enviar
+ *      solicitud, aceptar, rechazar, eliminar). Son separados porque
+ *      una acción exitosa no cambia el estado de carga de la lista.
+ *
+ *  Tres caches como StateFlow
+ *      - friendIds: IDs de amigos actuales. FriendAdapter los usa
+ *        para mostrar el botón correcto (amigo/enviar/pendiente).
+ *      - pendingSentIds: IDs de usuarios a los que ya enviamos
+ *        solicitud. El botón muestra "Pendiente" en vez de "Enviar".
+ *      - incomingRequestMap: fromId -> requestId de solicitudes
+ *        entrantes. Se necesita el requestId para aceptar/rechazar.
+ *      Los tres se actualizan OPTIMISTAMENTE: al enviar/aceptar,
+ *      se actualiza el Set local inmediatamente sin esperar a Firestore.
+ *
+ *  cachedUsername
+ *      Para enviar una solicitud necesitamos el nombre del usuario
+ *      actual (fromUsername en FriendRequest). Se carga una sola vez
+ *      con loadUsername() y se cachea aquí.
+ *
+ *  Tres modos de búsqueda
+ *      - searchFriends: busca DENTRO de tus amigos (filtro local)
+ *      - searchAllUsers: busca en toda la app (Firestore, usernameLower)
+ *      - loadIncomingRequests: carga solicitudes pendientes de aceptar
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Firestore.Repositories.FriendRepository

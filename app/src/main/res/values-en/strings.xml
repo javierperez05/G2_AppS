@@ -265,6 +265,11 @@
     <string name="transmission_log">TRANSMISSION LOG</string>
     <string name="btn_clear">Clear</string>
     <string name="no_transmissions_alerts">No transmissions</string>
+    <string name="alert_empty_subtitle">Orbit stable, all clear</string>
+    <string name="alert_section_incoming">INCOMING</string>
+    <string name="alert_section_imminent">IMMINENT</string>
+    <string name="alert_section_upcoming">UPCOMING</string>
+    <string name="alert_section_scheduled">SCHEDULED</string>
 
     <!-- Crew rates bottom sheet -->
     <string name="label_crew_rates">CREW</string>

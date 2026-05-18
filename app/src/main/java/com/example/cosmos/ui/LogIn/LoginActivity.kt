@@ -1,5 +1,34 @@
 package com.example.cosmos.ui.LogIn
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Auto-login con SharedPreferences
+ *      Al hacer login exitoso guardamos USER_ID en "cosmos_session".
+ *      Cuando la Activity se abre, si ya hay un ID guardado saltamos
+ *      directo a NavigationHUD sin mostrar la pantalla de login.
+ *      Cerrar sesión (ConfigFragment) hace prefs.clear() para borrar
+ *      el ID y forzar el login la próxima vez.
+ *
+ *  Tabs custom (no TabLayout de Material)
+ *      El login y registro se muestran en la misma Activity. Dos
+ *      TextViews hacen de tabs: switchTab(0) muestra login,
+ *      switchTab(1) muestra registro. Se cambian estilos manualmente.
+ *
+ *  LocaleHelper.applyLocale en attachBaseContext
+ *      Se aplica el idioma guardado ANTES de que Android cree las
+ *      vistas. Así los strings.xml del idioma correcto se cargan
+ *      desde el principio. Todas las Activities deben hacer esto.
+ *
+ *  lifecycleScope + repeatOnLifecycle
+ *      En Activities se usa lifecycleScope directamente (no
+ *      viewLifecycleOwner como en Fragments) porque la Activity
+ *      tiene un solo ciclo de vida.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log

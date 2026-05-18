@@ -1,5 +1,36 @@
 package com.example.cosmos.ui.News
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Feed de posts sociales
+ *      Muestra posts de todos los miembros de las órbitas del usuario.
+ *      NewsViewModel carga: órbitas -> memberIds -> posts -> usernames.
+ *
+ *  Tres bottom sheets independientes
+ *      - Crew (showCrewBottomSheet): muestra la tripulación del evento
+ *        con sus valoraciones. Tap en un miembro -> overlay de detalle.
+ *      - Propose (showProposeSheet): permite proponer el evento a un
+ *        grupo o amigo. Crea un evento nuevo con el mismo título/descripción
+ *        y los miembros del destino en pendingIds.
+ *      - PostDetail (PostDetailBottomSheet): detalle completo del post
+ *        con fotos e info (se abre como DialogFragment separado).
+ *
+ *  Rate overlay
+ *      overlayRateDetail es un FrameLayout invisible sobre toda la
+ *      pantalla. Cuando se toca un miembro en el crew sheet, se hace
+ *      visible con los datos de su rate. Tap en el fondo lo cierra.
+ *      No es un Dialog porque así el background dimming y la animación
+ *      son más fáciles de controlar.
+ *
+ *  readOnly = true al navegar a EventDetail
+ *      Desde News siempre se pasa readOnly=true porque el usuario
+ *      está viendo el post de otro, no su propio evento.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

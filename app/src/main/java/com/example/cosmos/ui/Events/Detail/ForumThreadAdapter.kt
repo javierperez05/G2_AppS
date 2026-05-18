@@ -1,5 +1,24 @@
 package com.example.cosmos.ui.Events.Detail
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Threads con replies embebidas
+ *      Cada ForumThread tiene un campo replies: List<ForumReply>.
+ *      Las replies NO son items separados del RecyclerView — se
+ *      añaden dinámicamente como TextViews dentro de un LinearLayout
+ *      en cada ViewHolder. Esto simplifica el adapter y evita
+ *      anidación de RecyclerViews.
+ *
+ *  onReplyClick callback
+ *      Al pulsar "Responder" en un thread, el callback pasa el
+ *      thread al Fragment, que guarda replyingToThreadId y cambia
+ *      el hint del input para indicar que se está respondiendo.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView

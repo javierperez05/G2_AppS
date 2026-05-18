@@ -1,5 +1,32 @@
 package com.example.cosmos.ui.News
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Dual layout: posts míos vs posts de otros
+ *      getItemViewType() devuelve TYPE_MINE o TYPE_OTHER según si
+ *      el userId del post coincide con currentUserId. Cada tipo
+ *      infla un layout distinto (alineación izquierda vs derecha).
+ *
+ *  Datos resueltos externamente
+ *      memberNames y avatarUrls se pasan al constructor (no se
+ *      cargan aquí). NewsViewModel los resuelve una sola vez para
+ *      todo el feed. El adapter solo los consulta por userId.
+ *
+ *  Time ago display
+ *      formatTimeAgo() convierte el timestamp del post a texto
+ *      relativo ("hace 5 min", "hace 2h", "hace 3d").
+ *
+ *  Acciones por post
+ *      - onCrewClick: abre bottom sheet con las rates de la tripulación
+ *      - onViewEvent: navega a EventDetail en readOnly
+ *      - onProposeClick: abre bottom sheet para proponer a grupo/amigo
+ *      - onCardClick: abre PostDetailBottomSheet con detalle completo
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View

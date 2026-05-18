@@ -1,5 +1,44 @@
 package com.example.cosmos.ui.Events
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  readOnly (argumento Bundle)
+ *      Cuando se navega desde News (ver post de otro usuario), el
+ *      Fragment se abre en modo solo lectura: no se puede valorar,
+ *      publicar, ni interactuar con el foro. Se pasa como Boolean
+ *      en el Bundle.
+ *
+ *  isPending (estado del ViewModel)
+ *      Si el usuario está en pendingIds del evento (invitado pero no
+ *      aceptado), se muestra una card de invitación con aceptar/rechazar.
+ *      Todo lo interactivo se oculta hasta que acepte.
+ *
+ *  Flujo post-evento: finished -> rate -> publish
+ *      1. Admin finaliza el evento (btnFinishEvent)
+ *      2. Cada miembro puede valorar (btnRate -> showRateDialog)
+ *      3. Tras valorar, puede publicar en News (btnPublishPost -> showPublishSheet)
+ *      Los botones se muestran/ocultan según el progreso en bindFinishState().
+ *
+ *  Mini-foro (threads + replies)
+ *      ForumThreadAdapter muestra los hilos. Al tocar "Responder",
+ *      replyingToThreadId guarda a qué hilo se responde. btnSend
+ *      usa ese ID para decidir si crear un thread nuevo o una reply.
+ *
+ *  EventItems + Settlements (cuentas)
+ *      Cada evento puede tener items con precio, pagador y reparto.
+ *      computeSettlements() calcula quién debe a quién (estilo Tricount).
+ *      Se muestra en bindSettlements() como una lista de deudas.
+ *
+ *  publishSheet con fotos
+ *      pickPostImages usa GetMultipleContents para seleccionar fotos.
+ *      Las URIs se guardan en pendingPublishUris y se suben al publicar.
+ *      addPhotoThumb() genera miniaturas con Glide. Tap para eliminar.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater

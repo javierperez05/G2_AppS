@@ -1,5 +1,35 @@
 package com.example.cosmos.ui.News
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Tres estados independientes
+ *      - NewsUiState: feed principal (lista de posts)
+ *      - CrewUiState: datos para el bottom sheet de tripulación
+ *      - ProposeUiState: datos + flujo para proponer evento
+ *      Son independientes porque se activan en momentos distintos
+ *      y no deben interferir entre sí.
+ *
+ *  loadNews() — cadena de callbacks
+ *      1. Carga órbitas del usuario (orbitRepository)
+ *      2. Extrae todos los memberIds de todas las órbitas
+ *      3. Busca posts de esos IDs (postRepository, chunked por 10)
+ *      4. Resuelve nombres y avatares (userRepository)
+ *      Cada paso depende del anterior, por eso son callbacks anidados.
+ *
+ *  proposeToGroup / proposeToFriend
+ *      Crea un Event nuevo copiando título/descripción del post.
+ *      El creador es memberIds, los destinatarios van a pendingIds.
+ *      Si es a un grupo, también vincula el evento con addEventToGroup.
+ *
+ *  allMemberNames (campo de clase)
+ *      Se guarda como caché para que loadCrewRates pueda re-resolver
+ *      nombres sin hacer otra query si ya los tiene del feed.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Actions.Post
 import com.example.cosmos.Model.Actions.Rate

@@ -1,5 +1,25 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  LayoutManager custom — curva parabólica
+ *      En vez de colocar las cards en una lista vertical recta, las
+ *      desplaza horizontalmente según su distancia al centro de la
+ *      pantalla. Las cards centrales se alinean al centro, las de
+ *      arriba/abajo se desplazan creando una forma de parábola.
+ *      El desplazamiento máximo es 64dp (configurable).
+ *
+ *  onLayoutChildren / scrollVerticallyBy
+ *      onLayoutChildren: posiciona todos los hijos cuando el RV
+ *      se dibuja por primera vez o cambia de tamaño.
+ *      scrollVerticallyBy: recalcula el offset X de cada hijo
+ *      cuando el usuario hace scroll vertical.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

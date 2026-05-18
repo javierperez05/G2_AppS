@@ -1,5 +1,30 @@
 package com.example.cosmos.Model.Firestore.Repositories
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Subcolección: events/{eventId}/threads/{threadId}
+ *      Cada thread tiene texto, autor y un array de replies embebidas.
+ *      Las replies son objetos dentro del campo "replies" del thread
+ *      (no documentos separados).
+ *
+ *  listenThreads — listener en tiempo real
+ *      Devuelve un ListenerRegistration que escucha cambios en los
+ *      threads. Cada vez que alguien publica o responde, el callback
+ *      se invoca automáticamente con la lista actualizada.
+ *      EventDetailViewModel guarda la referencia y llama .remove()
+ *      en onCleared() para limpiar el listener.
+ *
+ *  postReply — runTransaction
+ *      Las replies se añaden con una transacción Firestore para
+ *      evitar race conditions: si dos personas responden al mismo
+ *      tiempo, la transacción lee el estado actual, añade la reply
+ *      y escribe. Si hubo un cambio concurrente, Firestore reintenta.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import com.example.cosmos.Model.Event.ForumReply
 import com.example.cosmos.Model.Event.ForumThread
 import com.google.firebase.firestore.FirebaseFirestore

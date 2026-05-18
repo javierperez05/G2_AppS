@@ -1,5 +1,33 @@
 package com.example.cosmos.Model.Firestore.Repositories
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Colección: friendRequests/{id}
+ *      Cada documento tiene: fromId, toId, fromUsername, status.
+ *      status puede ser "pending", "accepted" o "rejected".
+ *
+ *  sendRequest — comprobación de duplicados
+ *      Antes de crear, busca si ya existe una solicitud pending con
+ *      el mismo fromId+toId. Si existe, devuelve false.
+ *
+ *  acceptRequest — batch de 3 operaciones
+ *      1. Cambia status a "accepted"
+ *      2. Añade toId al array friends del fromId (arrayUnion)
+ *      3. Añade fromId al array friends del toId (arrayUnion)
+ *      Las 3 operaciones van en un batch (atómico): o todas se
+ *      aplican o ninguna. Esto evita estados inconsistentes donde
+ *      un usuario tiene al otro como amigo pero no al revés.
+ *
+ *  getSentPendingIds
+ *      Devuelve solo los toId de solicitudes pending enviadas por
+ *      el usuario. Se usa en FriendAdapter para mostrar el botón
+ *      "Pendiente" en vez de "Enviar".
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import com.example.cosmos.Model.Actions.FriendRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore

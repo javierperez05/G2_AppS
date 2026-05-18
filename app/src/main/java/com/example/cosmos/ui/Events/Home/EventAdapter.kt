@@ -1,5 +1,37 @@
 package com.example.cosmos.ui.Events.Home
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  EventListItem — wrapper sobre Event
+ *      Envuelve el Event con metadatos de presentación: isPending
+ *      (muestra banner de invitación), avatarUrls (miniaturas de
+ *      miembros), inviterName (quién te invitó). El adapter trabaja
+ *      con esta clase en vez de Event directamente.
+ *
+ *  Dos estados visuales: evento normal vs invitación pendiente
+ *      Si isPending=true: fondo con borde púrpura, banner animado
+ *      "Invited by @username" con botones aceptar/rechazar.
+ *      Si isPending=false: card normal con info del evento.
+ *
+ *  Avatar stack (3 máximo)
+ *      Muestra hasta 3 avatares apilados (solapados) de los miembros.
+ *      Se cargan con Glide desde avatarUrls. Si hay más de 3, se
+ *      muestra un contador "+N".
+ *
+ *  Countdown en cada card
+ *      Cada item muestra cuánto falta para el evento. Se calcula
+ *      en bindCountdown() y se actualiza cuando el adapter recibe
+ *      notifyDataSetChanged() del countdown timer de EventFragment.
+ *
+ *  badge IMMINENT
+ *      Si faltan <24h para el evento, se muestra un badge naranja
+ *      con animación de pulso para llamar la atención.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.graphics.Color

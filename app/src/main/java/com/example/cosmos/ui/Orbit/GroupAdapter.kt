@@ -1,5 +1,22 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  ListAdapter con DiffUtil
+ *      Extiende ListAdapter en vez de RecyclerView.Adapter.
+ *      submitList() calcula diferencias automáticamente y anima
+ *      los cambios (inserciones, eliminaciones, movimientos).
+ *
+ *  invitedGroupIds
+ *      Set de IDs de grupos donde el usuario está invitado (no
+ *      aceptado). Se muestra un indicador visual diferente para
+ *      distinguir órbitas activas de invitaciones pendientes.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View

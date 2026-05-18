@@ -1,5 +1,22 @@
 package com.example.cosmos.ui.Orbit
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Crear órbita (grupo)
+ *      Formulario simple: nombre, descripción, imagen (opcional).
+ *      El usuario que crea es admin y miembro automáticamente.
+ *      La imagen se sube a Cloudinary y la URL se guarda en imageUrl.
+ *
+ *  activityViewModels (GroupViewModel)
+ *      Se usa el ViewModel compartido para que al crear el grupo,
+ *      la lista de órbitas en GroupFragment se actualice
+ *      automáticamente (el listener de Firestore lo detecta).
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable

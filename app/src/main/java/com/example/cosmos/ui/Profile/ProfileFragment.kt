@@ -1,5 +1,31 @@
 package com.example.cosmos.ui.Profile
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Stats en paralelo (tryEmit en ProfileViewModel)
+ *      El perfil muestra 3 stats: eventos, amigos, órbitas. Se cargan
+ *      en paralelo con 3 queries. ProfileViewModel usa tryEmit() que
+ *      solo emite cuando los 3 resultados están listos (ver ProfileViewModel).
+ *
+ *  Avatar — gallery picker
+ *      Tap en el avatar abre la galería (GetContent). La URI se pasa
+ *      al ViewModel que la sube a Cloudinary. AvatarState (Uploading/
+ *      Success/Error) controla el feedback visual (Snackbar).
+ *      Glide muestra la imagen remota con circleCrop().
+ *
+ *  Grid de misiones
+ *      ProfileEventAdapter muestra los eventos en un grid de 3 columnas
+ *      (GridLayoutManager). Tap en un evento navega a EventDetailFragment.
+ *
+ *  Navegación a Config
+ *      Botón settings navega a ConfigFragment. Botón "Editar perfil"
+ *      también va a Config (mismo destino, mismo action en el NavGraph).
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle

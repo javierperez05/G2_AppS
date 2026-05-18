@@ -265,6 +265,11 @@
     <string name="transmission_log">TRANSMISIO ERREGISTROA</string>
     <string name="btn_clear">Garbitu</string>
     <string name="no_transmissions_alerts">Transmisiorik gabe</string>
+    <string name="alert_empty_subtitle">Orbita egonkorra, dena ondo</string>
+    <string name="alert_section_incoming">SARRERAK</string>
+    <string name="alert_section_imminent">BEREHALAKOA</string>
+    <string name="alert_section_upcoming">HURRENGOA</string>
+    <string name="alert_section_scheduled">PROGRAMATUA</string>
 
     <!-- Crew rates bottom sheet -->
     <string name="label_crew_rates">TRIPULAZIOA</string>

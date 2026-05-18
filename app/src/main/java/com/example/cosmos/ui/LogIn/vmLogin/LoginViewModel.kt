@@ -1,5 +1,28 @@
 package com.example.cosmos.ui.LogIn.vmLogin
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Dos sealed class (LoginUiState, RegisterUiState)
+ *      La pantalla tiene dos flujos independientes: login y registro.
+ *      Cada uno tiene su propio estado porque ocurren en tabs distintas
+ *      y no deben interferir entre sí. Si el registro falla, el estado
+ *      del login no cambia.
+ *
+ *  Auth propia (NO Firebase Auth)
+ *      La autenticación compara email+password contra documentos en la
+ *      colección "users" de Firestore. loginUser() busca el documento
+ *      y compara campos directamente.
+ *
+ *  resetLoginState() / resetRegisterState()
+ *      StateFlow guarda el último valor. Si el usuario vuelve a la
+ *      pantalla tras un login exitoso, el Success anterior se
+ *      re-emitiría y navegaría de nuevo. Reset lo devuelve a Idle.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import androidx.lifecycle.ViewModel
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.Model.Users.User

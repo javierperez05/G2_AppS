@@ -1,5 +1,21 @@
 package com.example.cosmos.ui.News
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  CrewRateItem — modelo local del bottom sheet
+ *      Combina userId, username, rate (puede ser null si no ha
+ *      valorado) y avatarUrl. Se construye en NewsFragment a partir
+ *      de los datos que devuelve CrewUiState.Ready.
+ *
+ *  onItemClick
+ *      Al pulsar un miembro, NewsFragment abre el overlay de detalle
+ *      con la rate completa (estrellas, comentario, avatar).
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

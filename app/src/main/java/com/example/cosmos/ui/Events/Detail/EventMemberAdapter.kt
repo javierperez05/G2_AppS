@@ -1,5 +1,17 @@
 package com.example.cosmos.ui.Events.Detail
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Lista horizontal de avatares de tripulación
+ *      Se muestra debajo del título del evento. Cada item es un
+ *      avatar circular cargado con Glide. ListAdapter con DiffUtil
+ *      para animaciones suaves al cambiar la lista de miembros.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

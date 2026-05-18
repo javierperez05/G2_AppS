@@ -1,5 +1,23 @@
 package com.example.cosmos.ui.News
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  BottomSheetDialogFragment
+ *      A diferencia de los otros bottom sheets que se crean con
+ *      BottomSheetDialog dentro del Fragment, este hereda de
+ *      BottomSheetDialogFragment: se muestra como un DialogFragment
+ *      independiente con su propio ciclo de vida.
+ *
+ *  Acceso al post via NewsViewModel
+ *      El post seleccionado se obtiene de NewsViewModel.selectedPost
+ *      (compartido con NewsFragment vía viewModels del parent).
+ *      Así no hay que serializar el Post y pasarlo por Bundle.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater

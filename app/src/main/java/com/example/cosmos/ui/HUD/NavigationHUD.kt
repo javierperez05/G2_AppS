@@ -1,5 +1,34 @@
 package com.example.cosmos.ui.HUD
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  NavigationHUD — Activity principal de la app
+ *      Contiene un NavHostFragment (el contenedor donde se cargan
+ *      los Fragments) y un BottomNavigationView para navegar entre
+ *      las 4 tabs: Home, Orbits, News, Profile.
+ *      Sobrevive toda la sesión del usuario (no se destruye al
+ *      cambiar de tab).
+ *
+ *  USER_ID por Intent
+ *      LoginActivity pasa el userId como Intent extra. Todos los
+ *      Fragments lo leen con activity?.intent?.getStringExtra("USER_ID").
+ *      Es el mecanismo central de identidad — nunca usamos FirebaseAuth.
+ *
+ *  setupWithNavController
+ *      Conecta el BottomNavigationView al NavController. Cuando el
+ *      usuario pulsa una tab, el NavController reemplaza el Fragment
+ *      automáticamente según el NavGraph (main_graph.xml).
+ *
+ *  processPendingInvite()
+ *      Cuando un enlace cosmos://invite/{userId} abre la app, MainActivity
+ *      guarda el ID en SharedPreferences. NavigationHUD lo lee y envía
+ *      una solicitud de amistad automáticamente.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge

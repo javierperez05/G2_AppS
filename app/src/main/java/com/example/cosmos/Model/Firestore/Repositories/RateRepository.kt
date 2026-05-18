@@ -1,5 +1,19 @@
 package com.example.cosmos.Model.Firestore.Repositories
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Subcolección: events/{eventId}/rates/{userId}
+ *      El userId se usa como ID del documento. Esto garantiza una
+ *      sola valoración por usuario por evento: un segundo set()
+ *      sobreescribe el anterior en vez de crear un duplicado.
+ *      Si usáramos IDs autogenerados habría que comprobar duplicados
+ *      manualmente.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import com.example.cosmos.Model.Actions.Rate
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject

@@ -1,5 +1,17 @@
 package com.example.cosmos.ui.Orbit.Detail
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Lista de miembros de la órbita (tab TRIPULACIÓN)
+ *      Muestra avatar + username + rol (admin/miembro).
+ *      El callback onKick permite a los admins expulsar miembros.
+ *      isAdmin controla si se muestra el botón de expulsión.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible

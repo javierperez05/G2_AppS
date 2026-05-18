@@ -1,5 +1,32 @@
 package com.example.cosmos.Model.Firestore.Repositories
 
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  MINI DICCIONARIO — lee esto antes de leer el código
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Colección: groups/{id} ("órbitas" en la UI)
+ *      Cada grupo tiene: memberIds, adminIds, invitedIds, eventIds.
+ *      memberIds son miembros activos, invitedIds son pendientes.
+ *
+ *  Dos formas de obtener grupos: callback vs Flow
+ *      - getUserGroups(callback): usa addSnapshotListener con callback
+ *        directo. Compatible con el código existente que no usa coroutines.
+ *      - getUserGroupsFlow(): devuelve Flow<List<Group>> usando
+ *        callbackFlow. Mejor para ViewModels que colectan con StateFlow.
+ *      Ambas son listeners en tiempo real (se actualizan automáticamente).
+ *
+ *  acceptGroupInvite — batch
+ *      Quita al usuario de invitedIds y lo añade a memberIds en una
+ *      sola operación atómica (batch). Evita el estado intermedio
+ *      donde no está ni invitado ni como miembro.
+ *
+ *  addEventToGroup
+ *      Cuando se crea un evento desde GroupDetail, se vincula al grupo
+ *      añadiendo el eventId al array eventIds con arrayUnion.
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
 import android.util.Log
 import com.example.cosmos.Model.Users.Group
 import com.google.firebase.firestore.FieldValue
