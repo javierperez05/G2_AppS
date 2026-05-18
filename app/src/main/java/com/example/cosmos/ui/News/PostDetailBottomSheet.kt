@@ -164,10 +164,10 @@ class PostDetailBottomSheet : BottomSheetDialogFragment() {
         val hours   = minutes / 60
         val days    = hours / 24
         return when {
-            days > 0    -> "hace ${days}d"
-            hours > 0   -> "hace ${hours}h"
-            minutes > 0 -> "hace ${minutes}min"
-            else        -> "ahora"
+            days > 0    -> getString(R.string.time_days_ago, days.toInt())
+            hours > 0   -> getString(R.string.time_hours_ago, hours.toInt())
+            minutes > 0 -> getString(R.string.time_minutes_ago, minutes.toInt())
+            else        -> getString(R.string.time_now)
         }
     }
 

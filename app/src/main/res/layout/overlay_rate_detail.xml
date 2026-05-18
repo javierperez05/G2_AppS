@@ -78,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Aun no ha valorado esta mision"
+                android:text="@string/not_rated_mission"
                 android:textColor="#55FFFFFF"
                 android:textSize="13sp"
                 android:visibility="gone" />

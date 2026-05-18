@@ -46,7 +46,7 @@ class FriendAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
-            binding.tvFriendUsername.text = user.username ?: "Sin nombre"
+            binding.tvFriendUsername.text = user.username ?: binding.root.context.getString(R.string.no_name)
             binding.tvFriendEmail.text = user.email ?: ""
 
             // Avatar con Glide
@@ -78,17 +78,17 @@ class FriendAdapter(
 
                 when {
                     isFriend -> {
-                        binding.btnFriendAction.text = "\u2713 Amigo"
+                        binding.btnFriendAction.text = binding.root.context.getString(R.string.btn_friend)
                         binding.btnFriendAction.alpha = 0.5f
                         binding.btnFriendAction.setOnClickListener { onRemoveClick(user) }
                     }
                     isPending -> {
-                        binding.btnFriendAction.text = "Pendiente"
+                        binding.btnFriendAction.text = binding.root.context.getString(R.string.btn_pending)
                         binding.btnFriendAction.alpha = 0.4f
                         binding.btnFriendAction.setOnClickListener { /* noop */ }
                     }
                     else -> {
-                        binding.btnFriendAction.text = "+ Enviar"
+                        binding.btnFriendAction.text = binding.root.context.getString(R.string.btn_send_request)
                         binding.btnFriendAction.alpha = 1f
                         binding.btnFriendAction.setOnClickListener { onAddClick(user) }
                     }

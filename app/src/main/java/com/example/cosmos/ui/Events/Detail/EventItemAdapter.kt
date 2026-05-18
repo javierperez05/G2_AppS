@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cosmos.Model.Event.EventItem
+import com.example.cosmos.R
 import com.example.cosmos.databinding.ItemEventItemBinding
 
 class EventItemAdapter(
@@ -50,7 +51,7 @@ class EventItemAdapter(
                 binding.btnDeleteItem.isVisible = true
 
                 val payerName = memberNames[item.paidByUserId] ?: "?"
-                binding.tvItemPayer.text = "Paga: $payerName"
+                binding.tvItemPayer.text = binding.root.context.getString(R.string.pays_format, payerName)
 
                 val splitCount = item.splitBetweenUserIds.size
                 binding.tvItemSplit.text = if (splitCount > 0) "÷ $splitCount" else ""

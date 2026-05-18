@@ -124,7 +124,7 @@ class CreateGroupFragment : Fragment() {
                     when (state) {
                         is GroupActionState.Loading -> {
                             binding.btnCreateGroup.isEnabled = false
-                            binding.btnCreateGroup.text = "Lanzando..."
+                            binding.btnCreateGroup.text = getString(R.string.launching)
                         }
                         is GroupActionState.Success -> {
                             groupViewModel.resetActionState()
@@ -132,13 +132,13 @@ class CreateGroupFragment : Fragment() {
                         }
                         is GroupActionState.Error -> {
                             binding.btnCreateGroup.isEnabled = true
-                            binding.btnCreateGroup.text = "LANZAR ORBITA"
+                            binding.btnCreateGroup.text = getString(R.string.btn_launch_orbit)
                             Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                             groupViewModel.resetActionState()
                         }
                         else -> {
                             binding.btnCreateGroup.isEnabled = true
-                            binding.btnCreateGroup.text = "LANZAR ORBITA"
+                            binding.btnCreateGroup.text = getString(R.string.btn_launch_orbit)
                         }
                     }
                 }

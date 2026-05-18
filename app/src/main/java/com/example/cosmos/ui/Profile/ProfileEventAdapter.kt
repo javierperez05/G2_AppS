@@ -43,10 +43,10 @@ class ProfileEventAdapter(
 
             // Status badge
             if (event.finished) {
-                tvGridBadge.text = "TERMINADO"
+                tvGridBadge.text = root.context.getString(R.string.badge_finished)
                 tvGridBadge.setTextColor(0xAAFFFFFF.toInt())
             } else {
-                tvGridBadge.text = "ACTIVO"
+                tvGridBadge.text = root.context.getString(R.string.badge_active)
                 tvGridBadge.setTextColor(0xFFB8FFD0.toInt())
             }
 

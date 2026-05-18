@@ -187,9 +187,9 @@ class GroupDetailFragment : Fragment() {
 
         binding.btnRejectInvite.setOnClickListener {
             showConfirmDialog(
-                title = "Rechazar invitacion",
-                message = "¿Rechazar la invitacion a esta orbita?",
-                confirmText = "Rechazar"
+                title = getString(R.string.confirm_reject_title),
+                message = getString(R.string.confirm_reject_msg),
+                confirmText = getString(R.string.confirm_reject_btn)
             ) { viewModel.rejectGroupInvite(currentGroupId, currentUserId) }
         }
     }
@@ -307,9 +307,9 @@ class GroupDetailFragment : Fragment() {
 
     private fun confirmKick(user: User) {
         showConfirmDialog(
-            title = "Expulsar de la orbita",
-            message = "¿Expulsar a @${user.username}?",
-            confirmText = "Expulsar"
+            title = getString(R.string.confirm_kick_title),
+            message = getString(R.string.confirm_kick_msg, user.username ?: ""),
+            confirmText = getString(R.string.confirm_kick_btn)
         ) { viewModel.kickMember(currentGroupId, user.id ?: return@showConfirmDialog) }
     }
 
@@ -329,8 +329,8 @@ class GroupDetailFragment : Fragment() {
         sheetView.findViewById<android.widget.TextView>(R.id.chipExplore).isVisible = false
         sheetView.findViewById<android.widget.TextView>(R.id.chipRequests).isVisible = false
 
-        tvLabel.text = "INVITAR A LA ÓRBITA"
-        etSearch.hint = "Buscar usuarios..."
+        tvLabel.text = getString(R.string.invite_to_orbit)
+        etSearch.hint = getString(R.string.hint_search_users)
 
         val group = viewModel.selectedGroup.value
         val existingMemberAndInvitedIds = ((group?.memberIds ?: emptyList()) + (group?.invitedIds ?: emptyList())).toSet()
@@ -362,7 +362,7 @@ class GroupDetailFragment : Fragment() {
                     searchAdapter.updateList(filtered)
                     rv.isVisible = filtered.isNotEmpty()
                     tvEmpty.isVisible = filtered.isEmpty()
-                    if (filtered.isEmpty()) tvEmpty.text = "Sin resultados"
+                    if (filtered.isEmpty()) tvEmpty.text = getString(R.string.no_results)
                 }
             }
         })

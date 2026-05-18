@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="24dp"
-        android:text="PROPONER MISIÓN"
+        android:text="@string/propose_mission"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -54,7 +54,7 @@
             android:background="@drawable/bg_tab_selected"
             android:gravity="center"
             android:paddingHorizontal="16dp"
-            android:text="ÓRBITAS"
+            android:text="@string/chip_orbits"
             android:textColor="#FFC4BCFF"
             android:textSize="11sp"
             android:textStyle="bold" />
@@ -67,7 +67,7 @@
             android:background="@drawable/bg_chip_glass"
             android:gravity="center"
             android:paddingHorizontal="16dp"
-            android:text="AMIGOS"
+            android:text="@string/chip_friends"
             android:textColor="#88FFFFFF"
             android:textSize="11sp"
             android:textStyle="bold" />
@@ -92,7 +92,7 @@
         android:paddingHorizontal="24dp"
         android:paddingVertical="24dp"
         android:gravity="center"
-        android:text="Sin órbitas todavía"
+        android:text="@string/no_orbits_yet"
         android:textColor="#55FFFFFF"
         android:textSize="13sp"
         android:visibility="gone" />

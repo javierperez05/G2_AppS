@@ -245,11 +245,11 @@ class NewsFragment : Fragment() {
             val padV = (0 * density).toInt()
 
             if (showingGroups) {
-                tvEmpty.text = "Sin órbitas todavía"
+                tvEmpty.text = getString(R.string.no_orbits_yet)
                 tvEmpty.isVisible = groups.isEmpty()
                 groups.forEach { group ->
                     val row = TextView(ctx).apply {
-                        text = group.name ?: "Órbita"
+                        text = group.name ?: getString(R.string.orbit_fallback)
                         setTextColor(0xEEFFFFFF.toInt())
                         textSize = 14f
                         gravity = android.view.Gravity.CENTER_VERTICAL
@@ -266,7 +266,7 @@ class NewsFragment : Fragment() {
                     llItems.addView(row)
                 }
             } else {
-                tvEmpty.text = "Sin amigos todavía"
+                tvEmpty.text = getString(R.string.no_friends_yet)
                 tvEmpty.isVisible = friends.isEmpty()
                 friends.forEach { friend ->
                     val row = TextView(ctx).apply {

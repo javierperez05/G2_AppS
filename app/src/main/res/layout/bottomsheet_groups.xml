@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tus órbitas"
+        android:text="@string/your_orbits"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"

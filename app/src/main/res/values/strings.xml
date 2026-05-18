@@ -1,5 +1,311 @@
 <resources>
     <string name="app_name">COSMOS</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cosmos_title">COSMOS.</string>
+    <string name="cosmos_subtitle">EXPLORE THE UNIVERSE</string>
+
+    <!-- Login -->
+    <string name="tab_login">Entrar</string>
+    <string name="tab_register">Registro</string>
+    <string name="label_email">EMAIL</string>
+    <string name="label_password">CONTRASE\u00D1A</string>
+    <string name="label_user">USUARIO</string>
+    <string name="hint_email">tu@email.com</string>
+    <string name="hint_password">\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022</string>
+    <string name="hint_username">cosmonauta42</string>
+    <string name="btn_login">Iniciar sesi\u00F3n</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="no_account">\u00BFSin cuenta?</string>
+    <string name="go_to_register">Crear una cuenta \u2192</string>
+    <string name="terms">Al registrarte aceptas los t\u00E9rminos de uso</string>
+    <string name="fill_all_fields">Rellena todos los campos</string>
+    <string name="login_error">Usuario o contrase\u00F1a incorrectos</string>
+    <string name="logging_in">Entrando...</string>
+    <string name="registering">Creando...</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_news">Noticias</string>
+    <string name="nav_orbit">Orbita</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Home / Events -->
+    <string name="next_up">Next Up</string>
+    <string name="upcoming_missions">Proximas Misiones</string>
+    <string name="no_upcoming_missions">Sin misiones proximas</string>
+    <string name="create_with_button">Crea una con el boton +</string>
+    <string name="no_title">Sin titulo</string>
+    <string name="finished">Finalizado</string>
+    <string name="date_tbc">Fecha por confirmar</string>
+    <string name="imminent">INMINENTE</string>
+    <string name="pending_invitation">INVITACION PENDIENTE</string>
+    <string name="btn_reject">Rechazar</string>
+    <string name="btn_join">Unirse</string>
+    <string name="content_desc_alerts">Alertas</string>
+    <string name="content_desc_no_missions">Sin misiones</string>
+    <string name="crew_format">%d astronautas</string>
+    <string name="friend_request_sent">Solicitud de amistad enviada</string>
+
+    <!-- Create Event -->
+    <string name="new_mission">NUEVA MISI\u00D3N</string>
+    <string name="label_event_name">NOMBRE DEL EVENTO</string>
+    <string name="hint_event_name">ej. Reuni\u00F3n Gal\u00E1ctica</string>
+    <string name="label_description">DESCRIPCI\u00D3N</string>
+    <string name="hint_event_description">\u00BFQu\u00E9 ocurre en el cosmos?</string>
+    <string name="label_place_name">NOMBRE DEL LUGAR</string>
+    <string name="hint_place_name">ej. El parrillero, Casa de Juan...</string>
+    <string name="label_map_address">DIRECCION EN MAPA</string>
+    <string name="hint_map_address">ej. Calle Mayor 5, Bilbao</string>
+    <string name="select_date">Seleccionar fecha</string>
+    <string name="select_time">Seleccionar hora</string>
+    <string name="label_duration">DURACION APROXIMADA</string>
+    <string name="hint_duration">Seleccionar duracion...</string>
+    <string name="duration_30">30 min</string>
+    <string name="duration_60">1h</string>
+    <string name="duration_120">2h</string>
+    <string name="duration_180">3h</string>
+    <string name="label_invite_orbits">INVITAR ORBITAS</string>
+    <string name="label_invite_crew">INVITAR TRIPULACION</string>
+    <string name="hint_search_user">Buscar por usuario...</string>
+    <string name="label_selected_crew">TRIPULACI\u00D3N SELECCIONADA</string>
+    <string name="btn_launch_mission">LANZAR MISI\u00D3N</string>
+    <string name="btn_save_changes">Guardar cambios</string>
+    <string name="content_desc_add_image">A\u00F1adir imagen</string>
+    <string name="error_mission_name">El nombre de la mision es obligatorio</string>
+    <string name="error_select_date">Selecciona una fecha</string>
+    <string name="error_launch_event">Error al lanzar el evento</string>
+    <string name="error_update_event">Error al actualizar el evento</string>
+
+    <!-- Event Detail -->
+    <string name="label_crew">TRIPULACION</string>
+    <string name="label_equipment">EQUIPAMIENTO</string>
+    <string name="empty_items">Sin items aun. Pulsa + para a\u00F1adir.</string>
+    <string name="label_total">TOTAL</string>
+    <string name="label_accounts">CUENTAS</string>
+    <string name="label_transmissions">TRANSMISIONES</string>
+    <string name="empty_transmissions">Se el primero en transmitir algo</string>
+    <string name="hint_transmit">Transmite algo...</string>
+    <string name="hint_reply">Responder...</string>
+    <string name="finish_mission">FINALIZAR MISION</string>
+    <string name="mission_completed">MISION COMPLETADA</string>
+    <string name="rate_mission">VALORAR MISION</string>
+    <string name="already_rated">Ya has valorado esta mision</string>
+    <string name="publish_to_news">PUBLICAR EN NEWS</string>
+    <string name="already_posted">Ya publicaste esta mision</string>
+    <string name="invited_to_mission">TE HAN INVITADO A ESTA MISION</string>
+    <string name="invited_by_to_mission">@%s TE INVITA A ESTA MISION</string>
+    <string name="btn_reject_upper">RECHAZAR</string>
+    <string name="btn_join_upper">UNIRSE</string>
+    <string name="no_date">Sin fecha</string>
+    <string name="no_location">Sin ubicacion</string>
+    <string name="event_fallback">Evento</string>
+    <string name="transmissions_count">%d transmisiones</string>
+    <string name="duration_approx">Duracion aproximada: %s</string>
+    <string name="rate_sent">Valoracion enviada</string>
+    <string name="transmission_published">Transmision publicada</string>
+    <string name="confirm_finish_title">Finalizar mision</string>
+    <string name="confirm_finish_msg">Esto marcara el evento como completado para todos los miembros.</string>
+    <string name="confirm_finish_btn">Finalizar</string>
+    <string name="confirm_delete_title">Eliminar evento</string>
+    <string name="confirm_delete_msg">Esta accion es irreversible. Se eliminara el evento para todos los miembros.</string>
+    <string name="confirm_delete_btn">Eliminar</string>
+
+    <!-- Add Item -->
+    <string name="add_item_title">A\u00D1ADIR ITEM</string>
+    <string name="hint_item_name">Nombre del item</string>
+    <string name="hint_item_price">Precio total (\u20AC)</string>
+    <string name="label_who_pays">QUI\u00C9N PAGA</string>
+    <string name="label_split_between">DIVIDIR ENTRE</string>
+    <string name="btn_add">A\u00D1ADIR</string>
+
+    <!-- Rate -->
+    <string name="label_score">PUNTUACION</string>
+    <string name="label_comment">COMENTARIO</string>
+    <string name="hint_comment_optional">Comentario (opcional)</string>
+    <string name="btn_send_rate">ENVIAR VALORACION</string>
+
+    <!-- Publish Post -->
+    <string name="publish_transmission">PUBLICAR TRANSMISI\u00D3N</string>
+    <string name="btn_publish">PUBLICAR</string>
+    <string name="hint_post_comment">\u00BFQu\u00E9 quieres transmitir al cosmos?</string>
+    <string name="label_include_in_post">INCLUIR EN LA PUBLICACION</string>
+    <string name="chip_location">Ubicacion</string>
+    <string name="chip_description">Descripcion</string>
+    <string name="chip_items">Items</string>
+    <string name="label_photos">FOTOS</string>
+    <string name="publishing">Publicando...</string>
+
+    <!-- Propose -->
+    <string name="propose_mission">PROPONER MISI\u00D3N</string>
+    <string name="chip_orbits">ORBITAS</string>
+    <string name="chip_friends">AMIGOS</string>
+    <string name="no_orbits_yet">Sin \u00F3rbitas todav\u00EDa</string>
+    <string name="no_friends_yet">Sin amigos todav\u00EDa</string>
+
+    <!-- News -->
+    <string name="news_title">REGISTRO DE MISIONES</string>
+    <string name="news_subtitle">Posts de tus orbitas</string>
+    <string name="no_transmissions">Sin transmisiones</string>
+    <string name="no_transmissions_desc">Aqui apareceran los posts\nde tu tripulacion</string>
+    <string name="btn_view">VER \u25B8</string>
+    <string name="btn_propose">PROPONER +</string>
+    <string name="btn_view_mission">VER MISI\u00D3N \u25B8</string>
+    <string name="no_rated">Sin valorar</string>
+    <string name="not_rated_mission">Aun no ha valorado esta mision</string>
+
+    <!-- Time ago -->
+    <string name="time_days_ago">hace %dd</string>
+    <string name="time_hours_ago">hace %dh</string>
+    <string name="time_minutes_ago">hace %dmin</string>
+    <string name="time_now">ahora</string>
+
+    <!-- Orbits / Groups -->
+    <string name="hint_search">Buscar...</string>
+    <string name="content_desc_groups">Grupos</string>
+    <string name="content_desc_friends">Amigos</string>
+    <string name="no_orbits_empty">Sin \u00F3rbitas todav\u00EDa</string>
+    <string name="create_orbit_hint">Crea una con el bot\u00F3n +</string>
+
+    <!-- Create Group -->
+    <string name="new_orbit">NUEVA ORBITA</string>
+    <string name="label_orbit_name">NOMBRE DE LA ORBITA</string>
+    <string name="hint_orbit_name">ej. Exploradores Estelares</string>
+    <string name="label_orbit_description">DESCRIPCION</string>
+    <string name="hint_orbit_description">Describe tu orbita...</string>
+    <string name="label_orbit_crew">INVITAR TRIPULACION</string>
+    <string name="label_orbit_selected">TRIPULACION SELECCIONADA</string>
+    <string name="btn_launch_orbit">LANZAR ORBITA</string>
+    <string name="content_desc_group_image">Imagen del grupo</string>
+    <string name="error_orbit_name">El nombre es obligatorio</string>
+
+    <!-- Group Detail -->
+    <string name="tab_missions">MISIONES</string>
+    <string name="tab_crew">TRIPULACI\u00D3N</string>
+    <string name="btn_invite">+ INVITAR</string>
+    <string name="btn_new_mission">+ MISION</string>
+    <string name="btn_leave">SALIR</string>
+    <string name="no_missions_orbit">Sin misiones en esta \u00F3rbita</string>
+    <string name="orbit_fallback">\u00D3rbita</string>
+    <string name="invited_to_join">Has sido invitado a unirte</string>
+    <string name="btn_accept">ACEPTAR</string>
+    <string name="content_desc_back">Volver</string>
+    <string name="confirm_leave_title">Salir de la orbita</string>
+    <string name="confirm_leave_btn">Salir</string>
+    <string name="confirm_reject_title">Rechazar invitacion</string>
+    <string name="confirm_reject_btn">Rechazar</string>
+    <string name="confirm_kick_title">Expulsar de la orbita</string>
+    <string name="confirm_kick_btn">Expulsar</string>
+    <string name="no_results">Sin resultados</string>
+    <string name="badge_invited">Invitado</string>
+    <string name="badge_admin">Admin</string>
+    <string name="no_description">Sin descripci\u00F3n</string>
+
+    <!-- Friends -->
+    <string name="chip_explore">Explorar</string>
+    <string name="chip_requests">Solicitudes</string>
+    <string name="label_your_friends">TUS AMIGOS</string>
+    <string name="no_friends_results">Sin resultados</string>
+    <string name="btn_pending">Pendiente</string>
+    <string name="no_name">Sin nombre</string>
+    <string name="request_sent">Solicitud enviada</string>
+    <string name="request_accepted">Solicitud aceptada</string>
+    <string name="error_request_exists">Ya existe una solicitud pendiente</string>
+    <string name="error_accept_request">Error al aceptar solicitud</string>
+    <string name="error_reject_request">Error al rechazar solicitud</string>
+    <string name="error_remove_friend">Error al eliminar amigo</string>
+
+    <!-- Profile -->
+    <string name="stat_events">eventos</string>
+    <string name="stat_friends">amigos</string>
+    <string name="stat_orbits">\u00F3rbitas</string>
+    <string name="default_username">usuario</string>
+    <string name="default_bio">Explorando el cosmos...</string>
+    <string name="btn_edit_profile">Editar perfil</string>
+    <string name="label_my_missions">MIS MISIONES</string>
+    <string name="no_missions_yet">A\u00FAn no has lanzado misiones</string>
+    <string name="create_first_event">Crea tu primer evento desde la pantalla principal</string>
+    <string name="content_desc_config">Configuraci\u00F3n</string>
+    <string name="avatar_updated">Avatar actualizado</string>
+    <string name="error_user_not_found">Usuario no identificado</string>
+    <string name="error_save_avatar">Error al guardar avatar</string>
+
+    <!-- Config -->
+    <string name="config_title">CONFIGURACION</string>
+    <string name="section_profile">PERFIL</string>
+    <string name="label_username">Nombre de usuario</string>
+    <string name="btn_save">Guardar</string>
+    <string name="saving">Guardando...</string>
+    <string name="saved">Guardado</string>
+    <string name="error_empty_name">El nombre no puede estar vac\u00EDo</string>
+    <string name="error_save">Error al guardar</string>
+    <string name="switch_private_title">Perfil privado</string>
+    <string name="switch_private_desc">No apareces en busquedas de otros usuarios</string>
+    <string name="switch_email_title">Mostrar email en perfil</string>
+    <string name="switch_email_desc">Visible para tus amigos</string>
+    <string name="share_invite_title">Compartir enlace de amistad</string>
+    <string name="share_invite_desc">Quien abra el enlace podra enviarte una solicitud</string>
+    <string name="share_invite_text">Seamos amigos en COSMOS: %s</string>
+    <string name="share_chooser">Compartir enlace</string>
+    <string name="section_notifications">NOTIFICACIONES</string>
+    <string name="switch_notify_requests_title">Solicitudes de amistad</string>
+    <string name="switch_notify_requests_desc">Notificar cuando alguien te envie una solicitud</string>
+    <string name="switch_notify_events_title">Recordatorios de eventos</string>
+    <string name="switch_notify_events_desc">Avisar cuando un evento este cerca</string>
+    <string name="section_account">CUENTA</string>
+    <string name="btn_logout">Cerrar sesion</string>
+    <string name="error_load_profile">No se pudo cargar el perfil</string>
+
+    <!-- Config: Language -->
+    <string name="section_language">IDIOMA</string>
+    <string name="language_system">Sistema</string>
+    <string name="language_es">Espa\u00F1ol</string>
+    <string name="language_en">English</string>
+    <string name="language_eu">Euskera</string>
+
+    <!-- Alerts bottom sheet -->
+    <string name="transmission_log">TRANSMISSION LOG</string>
+    <string name="btn_clear">Limpiar</string>
+    <string name="no_transmissions_alerts">No transmissions</string>
+
+    <!-- Crew rates bottom sheet -->
+    <string name="label_crew_rates">TRIPULACION</string>
+
+    <!-- Groups bottom sheet -->
+    <string name="your_orbits">Tus \u00F3rbitas</string>
+
+    <!-- Dialog -->
+    <string name="btn_cancel">Cancelar</string>
+
+    <!-- Alerts -->
+    <string name="alert_friend_request">Solicitud de amistad pendiente</string>
+    <string name="alert_pending_invite">Invitacion pendiente</string>
+    <string name="alert_imminent_launch">Lanzamiento inminente</string>
+    <string name="alert_tomorrow">Ma\u00F1ana</string>
+    <string name="alert_in_days">En %d d\u00EDas</string>
+    <string name="alert_someone">Alguien</string>
+    <string name="alert_new_event">Nuevo evento</string>
+
+    <!-- Misc -->
+    <string name="orbit_label">Orbita</string>
+    <string name="edit_mission">EDITAR MISI\u00D3N</string>
+    <string name="in_progress">EN CURSO</string>
+    <string name="orbit_stable">Orbita estable \u00B7 Sin transmisiones pendientes</string>
+    <string name="pays_format">Paga: %s</string>
+    <string name="no_pending_requests">Sin solicitudes pendientes</string>
+    <string name="exploring_cosmos">EXPLORANDO EL COSMOS</string>
+    <string name="pending_requests">SOLICITUDES PENDIENTES</string>
+    <string name="launching">Lanzando...</string>
+    <string name="invite_to_orbit">INVITAR A LA ORBITA</string>
+    <string name="badge_finished">TERMINADO</string>
+    <string name="badge_active">ACTIVO</string>
+    <string name="alert_friend_want">%s quiere ser tu amigo</string>
+    <string name="alert_friend_requests_count">%d solicitudes de amistad</string>
+    <string name="alert_invites_you">%s te invita a %s</string>
+    <string name="an_event">un evento</string>
+    <string name="btn_friend">&#10003; Amigo</string>
+    <string name="btn_send_request">+ Enviar</string>
+    <string name="hint_search_users">Buscar usuarios...</string>
+    <string name="hint_filter_requests">Filtrar solicitudes...</string>
+    <string name="confirm_reject_msg">\u00BFRechazar la invitacion a esta orbita?</string>
+    <string name="confirm_kick_msg">\u00BFExpulsar a %s de la orbita?</string>
+    <string name="confirm_leave_msg">\u00BFSalir de esta orbita?</string>
 </resources>

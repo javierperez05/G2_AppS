@@ -1,0 +1,311 @@
+<resources>
+    <string name="app_name">COSMOS</string>
+    <string name="cosmos_title">COSMOS.</string>
+    <string name="cosmos_subtitle">ESPLORATU UNIBERTSOA</string>
+
+    <!-- Login -->
+    <string name="tab_login">Sartu</string>
+    <string name="tab_register">Erregistratu</string>
+    <string name="label_email">EMAILA</string>
+    <string name="label_password">PASAHITZA</string>
+    <string name="label_user">ERABILTZAILEA</string>
+    <string name="hint_email">zure@emaila.com</string>
+    <string name="hint_password">\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022</string>
+    <string name="hint_username">kosmonauta42</string>
+    <string name="btn_login">Hasi saioa</string>
+    <string name="btn_register">Kontua sortu</string>
+    <string name="no_account">Konturik gabe?</string>
+    <string name="go_to_register">Kontua sortu \u2192</string>
+    <string name="terms">Erregistratzean erabilera baldintzak onartzen dituzu</string>
+    <string name="fill_all_fields">Bete eremu guztiak</string>
+    <string name="login_error">Erabiltzaile edo pasahitz okerra</string>
+    <string name="logging_in">Sartzen...</string>
+    <string name="registering">Sortzen...</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">Hasiera</string>
+    <string name="nav_news">Berriak</string>
+    <string name="nav_orbit">Orbita</string>
+    <string name="nav_profile">Profila</string>
+
+    <!-- Home / Events -->
+    <string name="next_up">Hurrengoa</string>
+    <string name="upcoming_missions">Hurrengo Misioak</string>
+    <string name="no_upcoming_missions">Ez dago misiorik</string>
+    <string name="create_with_button">Sortu bat + botoiarekin</string>
+    <string name="no_title">Izenbururik gabe</string>
+    <string name="finished">Amaituta</string>
+    <string name="date_tbc">Data baieztatu gabe</string>
+    <string name="imminent">BEREHALAKOA</string>
+    <string name="pending_invitation">GONBIDAPEN ZAIN</string>
+    <string name="btn_reject">Baztertu</string>
+    <string name="btn_join">Sartu</string>
+    <string name="content_desc_alerts">Alertak</string>
+    <string name="content_desc_no_missions">Misiorik gabe</string>
+    <string name="crew_format">%d astronauta</string>
+    <string name="friend_request_sent">Lagun eskaera bidalia</string>
+
+    <!-- Create Event -->
+    <string name="new_mission">MISIO BERRIA</string>
+    <string name="label_event_name">EKITALDIAREN IZENA</string>
+    <string name="hint_event_name">adib. Bilera Galaktikoa</string>
+    <string name="label_description">DESKRIBAPENA</string>
+    <string name="hint_event_description">Zer gertatzen da kosmosean?</string>
+    <string name="label_place_name">LEKUAREN IZENA</string>
+    <string name="hint_place_name">adib. Parrilla, Joneren etxea...</string>
+    <string name="label_map_address">MAPAKO HELBIDEA</string>
+    <string name="hint_map_address">adib. Kale Nagusia 5, Bilbo</string>
+    <string name="select_date">Data aukeratu</string>
+    <string name="select_time">Ordua aukeratu</string>
+    <string name="label_duration">GUTXI GORABEHERAKO IRAUPENA</string>
+    <string name="hint_duration">Iraupena aukeratu...</string>
+    <string name="duration_30">30 min</string>
+    <string name="duration_60">1h</string>
+    <string name="duration_120">2h</string>
+    <string name="duration_180">3h</string>
+    <string name="label_invite_orbits">ORBITAK GONBIDATU</string>
+    <string name="label_invite_crew">TRIPULAZIOA GONBIDATU</string>
+    <string name="hint_search_user">Erabiltzailez bilatu...</string>
+    <string name="label_selected_crew">HAUTATUTAKO TRIPULAZIOA</string>
+    <string name="btn_launch_mission">MISIOA ABIARAZI</string>
+    <string name="btn_save_changes">Aldaketak gorde</string>
+    <string name="content_desc_add_image">Irudia gehitu</string>
+    <string name="error_mission_name">Misioaren izena beharrezkoa da</string>
+    <string name="error_select_date">Aukeratu data bat</string>
+    <string name="error_launch_event">Errorea ekitaldia abiaraztean</string>
+    <string name="error_update_event">Errorea ekitaldia eguneratzean</string>
+
+    <!-- Event Detail -->
+    <string name="label_crew">TRIPULAZIOA</string>
+    <string name="label_equipment">EKIPAMENDUA</string>
+    <string name="empty_items">Elementurik gabe oraindik. Sakatu + gehitzeko.</string>
+    <string name="label_total">GUZTIRA</string>
+    <string name="label_accounts">KONTUAK</string>
+    <string name="label_transmissions">TRANSMISIOAK</string>
+    <string name="empty_transmissions">Izan zaitez lehena zerbait transmititzen</string>
+    <string name="hint_transmit">Zerbait transmititu...</string>
+    <string name="hint_reply">Erantzun...</string>
+    <string name="finish_mission">MISIOA AMAITU</string>
+    <string name="mission_completed">MISIOA OSATUTA</string>
+    <string name="rate_mission">MISIOA BALORATU</string>
+    <string name="already_rated">Misio hau dagoeneko baloratu duzu</string>
+    <string name="publish_to_news">BERRIETAN ARGITARATU</string>
+    <string name="already_posted">Misio hau dagoeneko argitaratu duzu</string>
+    <string name="invited_to_mission">MISIO HONETARA GONBIDATU ZAITUZTE</string>
+    <string name="invited_by_to_mission">@%s MISIO HONETARA GONBIDATZEN ZAITU</string>
+    <string name="btn_reject_upper">BAZTERTU</string>
+    <string name="btn_join_upper">SARTU</string>
+    <string name="no_date">Datarik gabe</string>
+    <string name="no_location">Kokapenik gabe</string>
+    <string name="event_fallback">Ekitaldia</string>
+    <string name="transmissions_count">%d transmisio</string>
+    <string name="duration_approx">Gutxi gorabeherako iraupena: %s</string>
+    <string name="rate_sent">Balorazioa bidalia</string>
+    <string name="transmission_published">Transmisioa argitaratua</string>
+    <string name="confirm_finish_title">Misioa amaitu</string>
+    <string name="confirm_finish_msg">Ekitaldia osatutako gisa markatuko da kide guztientzat.</string>
+    <string name="confirm_finish_btn">Amaitu</string>
+    <string name="confirm_delete_title">Ekitaldia ezabatu</string>
+    <string name="confirm_delete_msg">Ekintza hau itzulezina da. Ekitaldia kide guztientzat ezabatuko da.</string>
+    <string name="confirm_delete_btn">Ezabatu</string>
+
+    <!-- Add Item -->
+    <string name="add_item_title">ELEMENTUA GEHITU</string>
+    <string name="hint_item_name">Elementuaren izena</string>
+    <string name="hint_item_price">Prezio totala (\u20AC)</string>
+    <string name="label_who_pays">NORK ORDAINTZEN DU</string>
+    <string name="label_split_between">BANATU ARTEAN</string>
+    <string name="btn_add">GEHITU</string>
+
+    <!-- Rate -->
+    <string name="label_score">PUNTUAZIOA</string>
+    <string name="label_comment">IRUZKINA</string>
+    <string name="hint_comment_optional">Iruzkina (aukerakoa)</string>
+    <string name="btn_send_rate">BALORAZIOA BIDALI</string>
+
+    <!-- Publish Post -->
+    <string name="publish_transmission">TRANSMISIOA ARGITARATU</string>
+    <string name="btn_publish">ARGITARATU</string>
+    <string name="hint_post_comment">Zer transmititu nahi duzu kosmosera?</string>
+    <string name="label_include_in_post">ARGITALPENEAN SARTU</string>
+    <string name="chip_location">Kokapena</string>
+    <string name="chip_description">Deskribapena</string>
+    <string name="chip_items">Elementuak</string>
+    <string name="label_photos">ARGAZKIAK</string>
+    <string name="publishing">Argitaratzen...</string>
+
+    <!-- Propose -->
+    <string name="propose_mission">MISIOA PROPOSATU</string>
+    <string name="chip_orbits">ORBITAK</string>
+    <string name="chip_friends">LAGUNAK</string>
+    <string name="no_orbits_yet">Oraindik orbitarik gabe</string>
+    <string name="no_friends_yet">Oraindik lagunik gabe</string>
+
+    <!-- News -->
+    <string name="news_title">MISIOEN ERREGISTROA</string>
+    <string name="news_subtitle">Zure orbitetako argitalpenak</string>
+    <string name="no_transmissions">Transmisiorik gabe</string>
+    <string name="no_transmissions_desc">Hemen agertuko dira zure\ntripulazioaren argitalpenak</string>
+    <string name="btn_view">IKUSI \u25B8</string>
+    <string name="btn_propose">PROPOSATU +</string>
+    <string name="btn_view_mission">MISIOA IKUSI \u25B8</string>
+    <string name="no_rated">Baloratu gabe</string>
+    <string name="not_rated_mission">Oraindik ez du misio hau baloratu</string>
+
+    <!-- Time ago -->
+    <string name="time_days_ago">duela %de</string>
+    <string name="time_hours_ago">duela %do</string>
+    <string name="time_minutes_ago">duela %dmin</string>
+    <string name="time_now">orain</string>
+
+    <!-- Orbits / Groups -->
+    <string name="hint_search">Bilatu...</string>
+    <string name="content_desc_groups">Taldeak</string>
+    <string name="content_desc_friends">Lagunak</string>
+    <string name="no_orbits_empty">Oraindik orbitarik gabe</string>
+    <string name="create_orbit_hint">Sortu bat + botoiarekin</string>
+
+    <!-- Create Group -->
+    <string name="new_orbit">ORBITA BERRIA</string>
+    <string name="label_orbit_name">ORBITAREN IZENA</string>
+    <string name="hint_orbit_name">adib. Izar Esploratzaileak</string>
+    <string name="label_orbit_description">DESKRIBAPENA</string>
+    <string name="hint_orbit_description">Deskribatu zure orbita...</string>
+    <string name="label_orbit_crew">TRIPULAZIOA GONBIDATU</string>
+    <string name="label_orbit_selected">HAUTATUTAKO TRIPULAZIOA</string>
+    <string name="btn_launch_orbit">ORBITA ABIARAZI</string>
+    <string name="content_desc_group_image">Taldearen irudia</string>
+    <string name="error_orbit_name">Izena beharrezkoa da</string>
+
+    <!-- Group Detail -->
+    <string name="tab_missions">MISIOAK</string>
+    <string name="tab_crew">TRIPULAZIOA</string>
+    <string name="btn_invite">+ GONBIDATU</string>
+    <string name="btn_new_mission">+ MISIOA</string>
+    <string name="btn_leave">IRTEN</string>
+    <string name="no_missions_orbit">Orbita honetan misiorik gabe</string>
+    <string name="orbit_fallback">Orbita</string>
+    <string name="invited_to_join">Sartzera gonbidatu zaituzte</string>
+    <string name="btn_accept">ONARTU</string>
+    <string name="content_desc_back">Atzera</string>
+    <string name="confirm_leave_title">Orbitatik irten</string>
+    <string name="confirm_leave_btn">Irten</string>
+    <string name="confirm_reject_title">Gonbidapena baztertu</string>
+    <string name="confirm_reject_btn">Baztertu</string>
+    <string name="confirm_kick_title">Orbitatik kanporatu</string>
+    <string name="confirm_kick_btn">Kanporatu</string>
+    <string name="no_results">Emaitzarik gabe</string>
+    <string name="badge_invited">Gonbidatua</string>
+    <string name="badge_admin">Admin</string>
+    <string name="no_description">Deskribapenik gabe</string>
+
+    <!-- Friends -->
+    <string name="chip_explore">Esploratu</string>
+    <string name="chip_requests">Eskaerak</string>
+    <string name="label_your_friends">ZURE LAGUNAK</string>
+    <string name="no_friends_results">Emaitzarik gabe</string>
+    <string name="btn_pending">Zain</string>
+    <string name="no_name">Izenik gabe</string>
+    <string name="request_sent">Eskaera bidalia</string>
+    <string name="request_accepted">Eskaera onartua</string>
+    <string name="error_request_exists">Dagoeneko eskaera bat dago zain</string>
+    <string name="error_accept_request">Errorea eskaera onartzean</string>
+    <string name="error_reject_request">Errorea eskaera baztertzean</string>
+    <string name="error_remove_friend">Errorea laguna ezabatzean</string>
+
+    <!-- Profile -->
+    <string name="stat_events">ekitaldiak</string>
+    <string name="stat_friends">lagunak</string>
+    <string name="stat_orbits">orbitak</string>
+    <string name="default_username">erabiltzailea</string>
+    <string name="default_bio">Kosmosa esploratzen...</string>
+    <string name="btn_edit_profile">Profila editatu</string>
+    <string name="label_my_missions">NIRE MISIOAK</string>
+    <string name="no_missions_yet">Oraindik ez duzu misiorik abiarazi</string>
+    <string name="create_first_event">Sortu zure lehen ekitaldia pantaila nagusitik</string>
+    <string name="content_desc_config">Ezarpenak</string>
+    <string name="avatar_updated">Avatarra eguneratua</string>
+    <string name="error_user_not_found">Erabiltzailea ez da identifikatu</string>
+    <string name="error_save_avatar">Errorea avatarra gordetzean</string>
+
+    <!-- Config -->
+    <string name="config_title">EZARPENAK</string>
+    <string name="section_profile">PROFILA</string>
+    <string name="label_username">Erabiltzaile izena</string>
+    <string name="btn_save">Gorde</string>
+    <string name="saving">Gordetzen...</string>
+    <string name="saved">Gordeta</string>
+    <string name="error_empty_name">Izena ezin da hutsik egon</string>
+    <string name="error_save">Errorea gordetzean</string>
+    <string name="switch_private_title">Profil pribatua</string>
+    <string name="switch_private_desc">Ez zara beste erabiltzaileen bilaketetan agertuko</string>
+    <string name="switch_email_title">Emaila profilean erakutsi</string>
+    <string name="switch_email_desc">Zure lagunentzat ikusgai</string>
+    <string name="share_invite_title">Adiskidetasun esteka partekatu</string>
+    <string name="share_invite_desc">Esteka irekitzen duenak eskaera bat bidali ahal izango dizu</string>
+    <string name="share_invite_text">Izan gaitezen lagunak COSMOSen: %s</string>
+    <string name="share_chooser">Esteka partekatu</string>
+    <string name="section_notifications">JAKINARAZPENAK</string>
+    <string name="switch_notify_requests_title">Lagun eskaerak</string>
+    <string name="switch_notify_requests_desc">Jakinarazi norbaitek eskaera bidaltzen dizunean</string>
+    <string name="switch_notify_events_title">Ekitaldi oroigarriak</string>
+    <string name="switch_notify_events_desc">Jakinarazi ekitaldi bat gertu dagoenean</string>
+    <string name="section_account">KONTUA</string>
+    <string name="btn_logout">Saioa itxi</string>
+    <string name="error_load_profile">Ezin izan da profila kargatu</string>
+
+    <!-- Config: Language -->
+    <string name="section_language">HIZKUNTZA</string>
+    <string name="language_system">Sistema</string>
+    <string name="language_es">Espa\u00F1ol</string>
+    <string name="language_en">English</string>
+    <string name="language_eu">Euskera</string>
+
+    <!-- Alerts bottom sheet -->
+    <string name="transmission_log">TRANSMISIO ERREGISTROA</string>
+    <string name="btn_clear">Garbitu</string>
+    <string name="no_transmissions_alerts">Transmisiorik gabe</string>
+
+    <!-- Crew rates bottom sheet -->
+    <string name="label_crew_rates">TRIPULAZIOA</string>
+
+    <!-- Groups bottom sheet -->
+    <string name="your_orbits">Zure orbitak</string>
+
+    <!-- Dialog -->
+    <string name="btn_cancel">Utzi</string>
+
+    <!-- Alerts -->
+    <string name="alert_friend_request">Lagun eskaera zain</string>
+    <string name="alert_pending_invite">Gonbidapena zain</string>
+    <string name="alert_imminent_launch">Berehalako abiatzea</string>
+    <string name="alert_tomorrow">Bihar</string>
+    <string name="alert_in_days">%d egunetan</string>
+    <string name="alert_someone">Norbait</string>
+    <string name="alert_new_event">Ekitaldi berria</string>
+
+    <!-- Misc -->
+    <string name="orbit_label">Orbita</string>
+    <string name="edit_mission">MISIOA EDITATU</string>
+    <string name="in_progress">MARTXAN</string>
+    <string name="orbit_stable">Orbita egonkorra \u00B7 Transmisio pendenterik ez</string>
+    <string name="pays_format">Ordaintzen du: %s</string>
+    <string name="no_pending_requests">Eskaera pendenterik ez</string>
+    <string name="exploring_cosmos">KOSMOSA ESPLORATZEN</string>
+    <string name="pending_requests">ESKAERA PENDENTEAK</string>
+    <string name="launching">Abiatzen...</string>
+    <string name="invite_to_orbit">ORBITARA GONBIDATU</string>
+    <string name="badge_finished">AMAITUTA</string>
+    <string name="badge_active">AKTIBO</string>
+    <string name="alert_friend_want">%s zure laguna izan nahi du</string>
+    <string name="alert_friend_requests_count">%d adiskidetza eskaera</string>
+    <string name="alert_invites_you">%s-(e)k %s-(e)ra gonbidatzen zaitu</string>
+    <string name="an_event">ekitaldi bat</string>
+    <string name="btn_friend">&#10003; Laguna</string>
+    <string name="btn_send_request">+ Bidali</string>
+    <string name="hint_search_users">Erabiltzaileak bilatu...</string>
+    <string name="hint_filter_requests">Eskaerak iragazi...</string>
+    <string name="confirm_reject_msg">Orbita honetako gonbidapena baztertu?</string>
+    <string name="confirm_kick_msg">%s orbitatik kanporatu?</string>
+    <string name="confirm_leave_msg">Orbita honetatik irten?</string>
+</resources>

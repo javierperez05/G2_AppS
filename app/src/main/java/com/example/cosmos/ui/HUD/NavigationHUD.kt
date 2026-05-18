@@ -13,11 +13,17 @@ import com.example.cosmos.Model.Actions.FriendRequest
 import com.example.cosmos.Model.Firestore.Repositories.FriendRequestRepository
 import com.example.cosmos.Model.Firestore.Repositories.UserRepository
 import com.example.cosmos.R
+import android.content.Context
+import com.example.cosmos.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class NavigationHUD : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase))
+    }
 
     private lateinit var binding: com.example.cosmos.databinding.ActivityNavigationHudBinding
     private lateinit var navController: NavController
@@ -75,8 +81,8 @@ class NavigationHUD : AppCompatActivity() {
                 fromUsername = me.username ?: ""
             )
             friendRequestRepository.sendRequest(request) { success ->
-                val msg = if (success) "Solicitud de amistad enviada"
-                          else "No se pudo enviar la solicitud (quizás ya existe)"
+                val msg = if (success) getString(R.string.friend_request_sent)
+                          else getString(R.string.error_request_exists)
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
             }
         }

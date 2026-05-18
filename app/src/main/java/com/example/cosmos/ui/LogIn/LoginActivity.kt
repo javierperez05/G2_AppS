@@ -16,11 +16,17 @@ import com.example.cosmos.ui.HUD.NavigationHUD
 import com.example.cosmos.ui.LogIn.vmLogin.LoginUiState
 import com.example.cosmos.ui.LogIn.vmLogin.LoginViewModel
 import com.example.cosmos.ui.LogIn.vmLogin.RegisterUiState
+import android.content.Context
+import com.example.cosmos.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase))
+    }
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
@@ -58,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
             if (email.isNotEmpty() && pass.isNotEmpty()) {
                 viewModel.login(email, pass)
             } else {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -69,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
             if (name.isNotEmpty() && email.isNotEmpty() && pass.isNotEmpty()) {
                 viewModel.register(name, email, pass)
             } else {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -100,13 +106,16 @@ class LoginActivity : AppCompatActivity() {
                         when (state) {
                             is LoginUiState.Loading -> {
                                 binding.btnLogin.isEnabled = false
-                                binding.btnLogin.text = "Entrando..."
+                                binding.btnLogin.text = getString(R.string.logging_in)
                             }
                             is LoginUiState.Success -> {
                                 viewModel.resetLoginState()
                                 // Guardar sesión en SharedPreferences
                                 getSharedPreferences("cosmos_session", MODE_PRIVATE)
                                     .edit().putString("USER_ID", state.user.id).apply()
+                                // Sincronizar idioma del usuario
+                                val userLang = state.user.config.language
+                                LocaleHelper.saveLanguage(this@LoginActivity, userLang)
                                 startActivity(
                                     Intent(this@LoginActivity, NavigationHUD::class.java).apply {
                                         putExtra("USER_ID", state.user.id)
@@ -117,13 +126,13 @@ class LoginActivity : AppCompatActivity() {
                             }
                             is LoginUiState.Error -> {
                                 binding.btnLogin.isEnabled = true
-                                binding.btnLogin.text = "Iniciar sesión"
+                                binding.btnLogin.text = getString(R.string.btn_login)
                                 viewModel.resetLoginState()
                                 Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_SHORT).show()
                             }
                             else -> {
                                 binding.btnLogin.isEnabled = true
-                                binding.btnLogin.text = "Iniciar sesión"
+                                binding.btnLogin.text = getString(R.string.btn_login)
                             }
                         }
                     }
@@ -134,24 +143,24 @@ class LoginActivity : AppCompatActivity() {
                         when (state) {
                             is RegisterUiState.Loading -> {
                                 binding.btnRegister.isEnabled = false
-                                binding.btnRegister.text = "Creando cuenta..."
+                                binding.btnRegister.text = getString(R.string.registering)
                             }
                             is RegisterUiState.Success -> {
                                 binding.btnRegister.isEnabled = true
-                                binding.btnRegister.text = "Crear cuenta"
+                                binding.btnRegister.text = getString(R.string.btn_register)
                                 viewModel.resetRegisterState()
                                 Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_SHORT).show()
                                 switchTab(0)
                             }
                             is RegisterUiState.Error -> {
                                 binding.btnRegister.isEnabled = true
-                                binding.btnRegister.text = "Crear cuenta"
+                                binding.btnRegister.text = getString(R.string.btn_register)
                                 viewModel.resetRegisterState()
                                 Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_SHORT).show()
                             }
                             else -> {
                                 binding.btnRegister.isEnabled = true
-                                binding.btnRegister.text = "Crear cuenta"
+                                binding.btnRegister.text = getString(R.string.btn_register)
                             }
                         }
                     }

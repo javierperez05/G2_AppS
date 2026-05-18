@@ -114,8 +114,8 @@ class CreateEventFragment : Fragment() {
         if (editEventId != null) {
             // Edit mode: load event data into ViewModel (members will be loaded too)
             viewModel.loadEventForEdit(editEventId!!)
-            binding.tvCreateEventTitle.text = "EDITAR MISIÓN"
-            binding.btnCreateEvent.text = "Guardar cambios"
+            binding.tvCreateEventTitle.text = getString(R.string.edit_mission)
+            binding.btnCreateEvent.text = getString(R.string.btn_save_changes)
         } else if (currentUserId.isNotEmpty()) {
             selectedMemberIds.add(currentUserId)
         }
@@ -207,11 +207,11 @@ class CreateEventFragment : Fragment() {
                         when (state) {
                             is CreateEventUiState.Idle -> {
                                 binding.btnCreateEvent.isEnabled = true
-                                if (editEventId == null) binding.btnCreateEvent.text = "Launch Event"
+                                if (editEventId == null) binding.btnCreateEvent.text = getString(R.string.btn_launch_mission)
                             }
                             is CreateEventUiState.Loading -> {
                                 binding.btnCreateEvent.isEnabled = false
-                                binding.btnCreateEvent.text = if (editEventId != null) "Guardando..." else "Launching..."
+                                binding.btnCreateEvent.text = if (editEventId != null) getString(R.string.saving) else getString(R.string.launching)
                             }
                             is CreateEventUiState.Success -> {
                                 val gId = groupId

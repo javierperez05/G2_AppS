@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.cosmos.LocaleHelper
+import com.example.cosmos.R
 import com.example.cosmos.databinding.FragmentConfigBinding
 import com.example.cosmos.ui.LogIn.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,6 +84,9 @@ class ConfigFragment : Fragment() {
             if (switchesReady) viewModel.saveConfigField(userId, "notifyEvents", checked)
         }
 
+        // ── Idioma ──
+        setupLanguageChips()
+
         binding.cardShareInvite.setOnClickListener {
             // Genera cosmos://invite/{userId} y abre el selector de apps para compartir.
             // Quien reciba el enlace y lo abra tendrá que estar logueado en COSMOS;
@@ -138,12 +144,12 @@ class ConfigFragment : Fragment() {
         when (state) {
             is SaveUsernameState.Saving -> {
                 binding.tvUsernameStatus.visibility = View.VISIBLE
-                binding.tvUsernameStatus.text       = "Guardando..."
+                binding.tvUsernameStatus.text       = getString(R.string.saving)
                 binding.tvUsernameStatus.setTextColor(0x88FFFFFF.toInt())
             }
             is SaveUsernameState.Success -> {
                 binding.tvUsernameStatus.visibility = View.VISIBLE
-                binding.tvUsernameStatus.text       = "Guardado"
+                binding.tvUsernameStatus.text       = getString(R.string.saved)
                 binding.tvUsernameStatus.setTextColor(0xFF7BC67E.toInt())
                 viewModel.resetSaveUsernameState()
             }
@@ -157,6 +163,47 @@ class ConfigFragment : Fragment() {
                 binding.tvUsernameStatus.visibility = View.GONE
             }
         }
+    }
+
+    // ── Idioma ─────────────────────────────────────────────────────────────────
+
+    private fun setupLanguageChips() {
+        val chips = mapOf(
+            "" to binding.chipLangSystem,
+            "es" to binding.chipLangEs,
+            "en" to binding.chipLangEn,
+            "eu" to binding.chipLangEu
+        )
+        val current = LocaleHelper.getSavedLanguage(requireContext())
+        highlightLangChip(chips, current)
+
+        chips.forEach { (lang, chip) ->
+            chip.setOnClickListener {
+                highlightLangChip(chips, lang)
+                applyLanguage(lang)
+            }
+        }
+    }
+
+    private fun highlightLangChip(chips: Map<String, TextView>, selected: String) {
+        chips.forEach { (lang, chip) ->
+            if (lang == selected) {
+                chip.setBackgroundResource(R.drawable.bg_tab_selected)
+                chip.setTextColor(0xFFC4BCFF.toInt())
+            } else {
+                chip.setBackgroundResource(R.drawable.bg_chip_glass)
+                chip.setTextColor(0x88FFFFFF.toInt())
+            }
+        }
+    }
+
+    private fun applyLanguage(lang: String) {
+        // Guardar en SharedPreferences (para que esté disponible al arrancar)
+        LocaleHelper.saveLanguage(requireContext(), lang)
+        // Guardar en Firestore (para que se sincronice entre dispositivos)
+        viewModel.saveConfigField(userId, "language", lang)
+        // Recrear la activity para aplicar el nuevo idioma
+        requireActivity().recreate()
     }
 
     private fun hideKeyboard() {

@@ -140,7 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="12dp"
-        android:text="TRIPULACION"
+        android:text="@string/label_crew"
         android:textColor="#44FFFFFF"
         android:textSize="9sp"
         android:letterSpacing="0.12" />
@@ -184,7 +184,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_chip_glass"
             android:gravity="center"
-            android:text="VER MISIÓN ▸"
+            android:text="@string/btn_view_mission"
             android:textColor="#AAFFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.08" />
@@ -197,7 +197,7 @@
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_chip_glass"
             android:gravity="center"
-            android:text="PROPONER +"
+            android:text="@string/btn_propose"
             android:textColor="#AAC4BCFF"
             android:textSize="11sp"
             android:letterSpacing="0.08" />

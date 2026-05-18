@@ -203,7 +203,7 @@ class GroupFragment : Fragment() {
             friendAdapter.submitList(filtered)
             tvEmpty.isVisible = filtered.isEmpty()
             rvFriends.isVisible = filtered.isNotEmpty()
-            if (filtered.isEmpty()) tvEmpty.text = "Sin solicitudes pendientes"
+            if (filtered.isEmpty()) tvEmpty.text = getString(R.string.no_pending_requests)
         }
 
         fun switchMode(mode: FriendSheetMode) {
@@ -217,19 +217,19 @@ class GroupFragment : Fragment() {
 
             when (currentMode) {
                 FriendSheetMode.FRIENDS -> {
-                    tvLabel.text = "TUS AMIGOS"
-                    etSearch.hint = "Buscar..."
+                    tvLabel.text = getString(R.string.label_your_friends)
+                    etSearch.hint = getString(R.string.hint_search)
                     friendViewModel.loadFriends(currentUserId)
                 }
                 FriendSheetMode.EXPLORE -> {
-                    tvLabel.text = "EXPLORANDO EL COSMOS"
-                    etSearch.hint = "Buscar usuarios..."
+                    tvLabel.text = getString(R.string.exploring_cosmos)
+                    etSearch.hint = getString(R.string.hint_search_users)
                     val query = etSearch.text.toString().trim()
                     friendViewModel.searchAllUsers(currentUserId, query)
                 }
                 FriendSheetMode.REQUESTS -> {
-                    tvLabel.text = "SOLICITUDES PENDIENTES"
-                    etSearch.hint = "Filtrar solicitudes..."
+                    tvLabel.text = getString(R.string.pending_requests)
+                    etSearch.hint = getString(R.string.hint_filter_requests)
                     friendViewModel.loadIncomingRequests(currentUserId)
                 }
             }

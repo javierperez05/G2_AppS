@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="PUBLICAR TRANSMISIÓN"
+            android:text="@string/publish_transmission"
             android:textColor="#EEFFFFFF"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -43,7 +43,7 @@
             android:paddingHorizontal="20dp"
             android:background="@drawable/bg_tab_selected"
             android:gravity="center"
-            android:text="PUBLICAR"
+            android:text="@string/btn_publish"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/bg_field_glass"
-        android:hint="¿Qué quieres transmitir al cosmos?"
+        android:hint="@string/hint_post_comment"
         android:inputType="textMultiLine|textCapSentences"
         android:minLines="3"
         android:maxLines="6"
@@ -118,7 +118,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="INCLUIR EN LA PUBLICACION"
+        android:text="@string/label_include_in_post"
         android:textColor="#55FFFFFF"
         android:textSize="10sp"
         android:letterSpacing="0.12" />
@@ -136,7 +136,7 @@
             android:layout_height="32dp"
             android:paddingHorizontal="14dp"
             android:gravity="center"
-            android:text="Ubicacion"
+            android:text="@string/chip_location"
             android:textSize="11sp"
             android:textColor="#88FFFFFF"
             android:background="@drawable/bg_chip_glass"
@@ -148,7 +148,7 @@
             android:layout_height="32dp"
             android:paddingHorizontal="14dp"
             android:gravity="center"
-            android:text="Descripcion"
+            android:text="@string/chip_description"
             android:textSize="11sp"
             android:textColor="#88FFFFFF"
             android:background="@drawable/bg_chip_glass"
@@ -160,7 +160,7 @@
             android:layout_height="32dp"
             android:paddingHorizontal="14dp"
             android:gravity="center"
-            android:text="Items"
+            android:text="@string/chip_items"
             android:textSize="11sp"
             android:textColor="#88FFFFFF"
             android:background="@drawable/bg_chip_glass" />
@@ -174,7 +174,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="FOTOS"
+        android:text="@string/label_photos"
         android:textColor="#55FFFFFF"
         android:textSize="10sp"
         android:letterSpacing="0.12" />
@@ -232,7 +232,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Publicando..."
+            android:text="@string/publishing"
             android:textColor="#88FFFFFF"
             android:textSize="13sp" />
 

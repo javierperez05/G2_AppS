@@ -17,7 +17,7 @@
         android:background="@drawable/bg_chip_glass"
         android:src="@drawable/ic_settings"
         android:padding="9dp"
-        android:contentDescription="Configuración"
+        android:contentDescription="@string/content_desc_config"
         android:elevation="4dp" />
 
     <androidx.core.widget.NestedScrollView
@@ -79,7 +79,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="eventos"
+                            android:text="@string/stat_events"
                             android:textColor="#55FFFFFF"
                             android:textSize="11sp"
                             android:letterSpacing="0.05" />
@@ -106,7 +106,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="amigos"
+                            android:text="@string/stat_friends"
                             android:textColor="#55FFFFFF"
                             android:textSize="11sp"
                             android:letterSpacing="0.05" />
@@ -133,7 +133,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="órbitas"
+                            android:text="@string/stat_orbits"
                             android:textColor="#55FFFFFF"
                             android:textSize="11sp"
                             android:letterSpacing="0.05" />
@@ -156,7 +156,7 @@
                     android:id="@+id/tvProfileUsername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="usuario"
+                    android:text="@string/default_username"
                     android:textColor="#FFFFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -166,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Explorando el cosmos..."
+                    android:text="@string/default_bio"
                     android:textColor="#77FFFFFF"
                     android:textSize="13sp" />
 
@@ -181,7 +181,7 @@
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/bg_chip_glass"
                 android:gravity="center"
-                android:text="Editar perfil"
+                android:text="@string/btn_edit_profile"
                 android:textColor="#AAFFFFFF"
                 android:textSize="13sp"
                 android:textStyle="bold"
@@ -198,7 +198,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MIS MISIONES"
+                android:text="@string/label_my_missions"
                 android:textColor="#44FFFFFF"
                 android:textSize="10sp"
                 android:letterSpacing="0.18"
@@ -235,7 +235,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Aún no has lanzado misiones"
+                    android:text="@string/no_missions_yet"
                     android:textColor="#AAFFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -244,7 +244,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Crea tu primer evento desde la pantalla principal"
+                    android:text="@string/create_first_event"
                     android:textColor="#55FFFFFF"
                     android:textSize="13sp"
                     android:gravity="center"

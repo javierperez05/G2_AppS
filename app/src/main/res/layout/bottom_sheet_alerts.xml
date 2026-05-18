@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TRANSMISSION LOG"
+            android:text="@string/transmission_log"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="#88FFFFFF"
@@ -41,7 +41,7 @@
             android:paddingHorizontal="12dp"
             android:gravity="center"
             android:background="@drawable/bg_chip_glass"
-            android:text="Limpiar"
+            android:text="@string/btn_clear"
             android:textSize="11sp"
             android:textColor="#66FFFFFF"
             android:visibility="gone" />
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingVertical="32dp"
-        android:text="No transmissions"
+        android:text="@string/no_transmissions_alerts"
         android:textSize="13sp"
         android:textColor="#44FFFFFF"
         android:visibility="gone" />

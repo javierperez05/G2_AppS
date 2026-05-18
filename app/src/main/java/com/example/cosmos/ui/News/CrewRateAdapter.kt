@@ -55,7 +55,7 @@ class CrewRateAdapter(
                 binding.tvCrewStars.text = "\u2605".repeat(filled) + "\u2606".repeat(5 - filled)
                 binding.tvCrewStars.setTextColor(0xFFFFD700.toInt())
             } else {
-                binding.tvCrewStars.text = "Sin valorar"
+                binding.tvCrewStars.text = binding.root.context.getString(R.string.no_rated)
                 binding.tvCrewStars.setTextColor(0x55FFFFFF)
             }
 

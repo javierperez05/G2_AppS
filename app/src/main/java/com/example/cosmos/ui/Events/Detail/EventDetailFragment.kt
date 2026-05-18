@@ -172,9 +172,9 @@ class EventDetailFragment : Fragment() {
 
         binding.btnFinishEvent.setOnClickListener {
             showConfirmDialog(
-                title = "Finalizar mision",
-                message = "Esto marcara el evento como completado para todos los miembros.",
-                confirmText = "Finalizar"
+                title = getString(R.string.confirm_finish_title),
+                message = getString(R.string.confirm_finish_msg),
+                confirmText = getString(R.string.confirm_finish_btn)
             ) { viewModel.finishEvent(eventId) }
         }
 
@@ -194,9 +194,9 @@ class EventDetailFragment : Fragment() {
 
         binding.btnDeleteEvent.setOnClickListener {
             showConfirmDialog(
-                title = "Eliminar evento",
-                message = "Esta accion es irreversible. Se eliminara el evento para todos los miembros.",
-                confirmText = "Eliminar"
+                title = getString(R.string.confirm_delete_title),
+                message = getString(R.string.confirm_delete_msg),
+                confirmText = getString(R.string.confirm_delete_btn)
             ) { viewModel.deleteEvent(eventId) }
         }
     }
@@ -362,7 +362,7 @@ class EventDetailFragment : Fragment() {
             binding.tvDuration.isVisible = true
             val label = if (dur < 60) "$dur min"
                         else "${dur / 60}h" + if (dur % 60 > 0) " ${dur % 60}min" else ""
-            binding.tvDuration.text = "Duracion aproximada: $label"
+            binding.tvDuration.text = getString(R.string.duration_approx, label)
         } else {
             binding.tvDuration.isVisible = false
         }

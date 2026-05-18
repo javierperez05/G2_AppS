@@ -100,4 +100,8 @@ class ConfigViewModel @Inject constructor(
     fun saveConfigField(userId: String, field: String, value: Boolean) {
         userRepository.updateUserFields(userId, mapOf("config.$field" to value)) { /* fire and forget */ }
     }
+
+    fun saveConfigField(userId: String, field: String, value: String) {
+        userRepository.updateUserFields(userId, mapOf("config.$field" to value)) { /* fire and forget */ }
+    }
 }

@@ -34,7 +34,7 @@
             android:layout_width="120dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_chip_glass"
-            android:hint="Buscar..."
+            android:hint="@string/hint_search"
             android:textColorHint="#55FFFFFF"
             android:textColor="@android:color/white"
             android:textSize="12sp"
@@ -52,7 +52,7 @@
             android:background="@drawable/bg_chip_glass"
             android:src="@drawable/ic_groups"
             android:padding="8dp"
-            android:contentDescription="Grupos" />
+            android:contentDescription="@string/content_desc_groups" />
 
         <!-- Chip amigos / explorar -->
         <ImageView
@@ -63,7 +63,7 @@
             android:background="@drawable/bg_chip_glass"
             android:src="@drawable/ic_person_search"
             android:padding="8dp"
-            android:contentDescription="Amigos" />
+            android:contentDescription="@string/content_desc_friends" />
 
     </LinearLayout>
 
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Sin órbitas todavía"
+            android:text="@string/no_orbits_empty"
             android:textSize="16sp"
             android:textColor="@android:color/white" />
 
@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Crea una con el botón +"
+            android:text="@string/create_orbit_hint"
             android:textSize="13sp"
             android:textColor="#55FFFFFF" />
 

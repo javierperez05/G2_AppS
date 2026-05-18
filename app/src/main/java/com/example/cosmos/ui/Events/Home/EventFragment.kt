@@ -275,7 +275,7 @@ class EventFragment : Fragment() {
                 binding.tvNextCountdown.setTextColor(Color.parseColor("#FFCC80"))
             }
         } else {
-            binding.tvNextEventDate.text = "Fecha por confirmar"
+            binding.tvNextEventDate.text = getString(R.string.date_tbc)
             binding.tvNextCountdown.text = "---"
         }
     }
@@ -283,7 +283,7 @@ class EventFragment : Fragment() {
     private fun updateNextCountdown(eventDate: Date) {
         val timeLeft = eventDate.time - System.currentTimeMillis()
         if (timeLeft <= 0) {
-            binding.tvNextCountdown.text       = "EN CURSO"
+            binding.tvNextCountdown.text       = getString(R.string.in_progress)
             binding.layoutNextCountdown.isVisible = true
             return
         }
@@ -345,15 +345,15 @@ class EventFragment : Fragment() {
                 val req = currentRequests.first()
                 alerts.add(AlertItem(
                     iconRes   = R.drawable.ic_person_add,
-                    title     = "${req.fromUsername} quiere ser tu amigo",
-                    subtitle  = "Solicitud de amistad pendiente",
+                    title     = getString(R.string.alert_friend_want, req.fromUsername),
+                    subtitle  = getString(R.string.alert_friend_request),
                     timeLabel = "",
                     alertKey  = "friend_requests"
                 ))
             } else {
                 alerts.add(AlertItem(
                     iconRes   = R.drawable.ic_person_add,
-                    title     = "${currentRequests.size} solicitudes de amistad",
+                    title     = getString(R.string.alert_friend_requests_count, currentRequests.size),
                     subtitle  = currentRequests.take(3).joinToString(", ") { it.fromUsername },
                     timeLabel = "",
                     alertKey  = "friend_requests"
@@ -364,11 +364,11 @@ class EventFragment : Fragment() {
         // Invitaciones a eventos pendientes
         val pendingEvts = (viewModel.uiState.value as? EventUiState.Success)?.pendingEvents ?: emptyList()
         for (pending in pendingEvts) {
-            val inviterName = currentPendingAdminNames[pending.adminIds.firstOrNull() ?: ""] ?: "Alguien"
+            val inviterName = currentPendingAdminNames[pending.adminIds.firstOrNull() ?: ""] ?: getString(R.string.alert_someone)
             alerts.add(AlertItem(
                 iconRes   = R.drawable.ic_rocket,
-                title     = "$inviterName te invita a ${pending.title ?: "un evento"}",
-                subtitle  = "Invitacion pendiente",
+                title     = getString(R.string.alert_invites_you, inviterName, pending.title ?: getString(R.string.an_event)),
+                subtitle  = getString(R.string.alert_pending_invite),
                 timeLabel = "",
                 eventId   = pending.id,
                 alertKey  = "pending_${pending.id}"
@@ -394,19 +394,19 @@ class EventFragment : Fragment() {
                     val hours = TimeUnit.MILLISECONDS.toHours(timeLeft)
                     val mins  = TimeUnit.MILLISECONDS.toMinutes(timeLeft) % 60
                     iconRes   = R.drawable.ic_alert_urgent
-                    subtitle  = "Lanzamiento inminente"
+                    subtitle  = getString(R.string.alert_imminent_launch)
                     timeLabel = if (hours > 0) "${hours}h ${mins}m" else "${mins}m"
                 }
                 timeLeft <= 3 * 24 * 60 * 60 * 1000L -> {
                     // Entre 24h y 3 días: alerta moderada
                     val days  = TimeUnit.MILLISECONDS.toDays(timeLeft)
                     iconRes   = R.drawable.ic_signal
-                    subtitle  = if (days <= 1) "Mañana" else "En ${days} días"
+                    subtitle  = if (days <= 1) getString(R.string.alert_tomorrow) else getString(R.string.alert_in_days, days)
                     timeLabel = "${days}d"
                 }
                 else -> continue  // Más de 3 días: no aparece en alertas urgentes
             }
-            alerts.add(AlertItem(iconRes = iconRes, title = event.title ?: "Evento",
+            alerts.add(AlertItem(iconRes = iconRes, title = event.title ?: getString(R.string.event_fallback),
                 subtitle = subtitle, timeLabel = timeLabel, eventId = event.id,
                 alertKey = "event_${event.id}"))
         }
@@ -417,7 +417,7 @@ class EventFragment : Fragment() {
             if (date != null && date.time > now && (date.time - now) > 3 * 24 * 60 * 60 * 1000L) {
                 alerts.add(AlertItem(
                     iconRes   = R.drawable.ic_rocket,
-                    title     = event.title ?: "Nuevo evento",
+                    title     = event.title ?: getString(R.string.alert_new_event),
                     subtitle  = "${event.memberIds.size} crew · ${SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)}",
                     timeLabel = "",
                     eventId   = event.id,
@@ -436,7 +436,7 @@ class EventFragment : Fragment() {
         if (_binding == null) return
 
         if (currentAlerts.isEmpty()) {
-            binding.tvMarquee.text        = "Órbita estable · Sin transmisiones pendientes"
+            binding.tvMarquee.text        = getString(R.string.orbit_stable)
             binding.tvMarqueeBadge.isVisible = false
             startAutoScroll()
             return

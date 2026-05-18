@@ -57,7 +57,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:background="@drawable/bg_chip_glass"
-            android:text="Cancelar"
+            android:text="@string/btn_cancel"
             android:textColor="#88FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold"

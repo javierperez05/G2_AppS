@@ -15,7 +15,7 @@
         android:background="@drawable/bg_chip_glass"
         android:src="@drawable/ic_arrow_back"
         android:padding="8dp"
-        android:contentDescription="Volver"
+        android:contentDescription="@string/content_desc_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -40,7 +40,7 @@
             android:layout_marginEnd="6dp"
             android:background="@drawable/bg_chip_glass"
             android:gravity="center"
-            android:text="+ INVITAR"
+            android:text="@string/btn_invite"
             android:textColor="#AAFFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.06"
@@ -54,7 +54,7 @@
             android:layout_marginHorizontal="3dp"
             android:background="@drawable/bg_tab_selected"
             android:gravity="center"
-            android:text="+ MISION"
+            android:text="@string/btn_new_mission"
             android:textColor="#FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.06"
@@ -68,7 +68,7 @@
             android:layout_marginStart="6dp"
             android:background="@drawable/bg_chip_glass"
             android:gravity="center"
-            android:text="SALIR"
+            android:text="@string/btn_leave"
             android:textColor="#FF6B6B"
             android:textSize="11sp"
             android:letterSpacing="0.06"
@@ -167,7 +167,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Has sido invitado a unirte"
+                        android:text="@string/invited_to_join"
                         android:textColor="#BBFFFFFF"
                         android:textSize="13sp"
                         android:gravity="center" />
@@ -184,7 +184,7 @@
                             android:layout_height="36dp"
                             android:background="@drawable/bg_tab_selected"
                             android:gravity="center"
-                            android:text="ACEPTAR"
+                            android:text="@string/btn_accept"
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -196,7 +196,7 @@
                             android:layout_marginStart="12dp"
                             android:background="@drawable/bg_chip_glass"
                             android:gravity="center"
-                            android:text="RECHAZAR"
+                            android:text="@string/btn_reject_upper"
                             android:textColor="#88FFFFFF"
                             android:textSize="12sp" />
 
@@ -221,7 +221,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="MISIONES"
+                    android:text="@string/tab_missions"
                     android:textSize="11sp"
                     android:letterSpacing="0.08"
                     android:background="@drawable/bg_tab_selected"
@@ -233,7 +233,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="TRIPULACIÓN"
+                    android:text="@string/tab_crew"
                     android:textSize="11sp"
                     android:letterSpacing="0.08"
                     android:background="@android:color/transparent"
@@ -282,7 +282,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sin misiones en esta órbita"
+                    android:text="@string/no_missions_orbit"
                     android:textSize="14sp"
                     android:textColor="#BBBBBB" />
 

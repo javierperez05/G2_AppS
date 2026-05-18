@@ -49,7 +49,7 @@
         android:layout_height="30dp"
         android:paddingHorizontal="12dp"
         android:gravity="center"
-        android:text="Expulsar"
+        android:text="@string/confirm_kick_btn"
         android:textSize="11sp"
         android:textColor="#88FFFFFF"
         android:background="@drawable/bg_chip_glass"

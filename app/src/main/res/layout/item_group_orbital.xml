@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="INVITADO"
+                android:text="@string/badge_invited"
                 android:textColor="#FFC4BCFF"
                 android:textSize="8sp"
                 android:textStyle="bold"

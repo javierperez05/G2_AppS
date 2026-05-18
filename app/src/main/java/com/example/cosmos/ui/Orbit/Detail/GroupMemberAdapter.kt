@@ -55,12 +55,12 @@ class GroupMemberAdapter(
             when {
                 item.isInvited -> {
                     binding.tvMemberBadge.isVisible = true
-                    binding.tvMemberBadge.text = "Invitado"
+                    binding.tvMemberBadge.text = binding.root.context.getString(R.string.badge_invited)
                     binding.tvMemberBadge.setTextColor(0x88FFFFFF.toInt())
                 }
                 item.isAdmin -> {
                     binding.tvMemberBadge.isVisible = true
-                    binding.tvMemberBadge.text = "Admin"
+                    binding.tvMemberBadge.text = binding.root.context.getString(R.string.badge_admin)
                     binding.tvMemberBadge.setTextColor(0xFFC4BCFF.toInt())
                 }
                 else -> {

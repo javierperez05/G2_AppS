@@ -22,7 +22,7 @@
             android:layout_gravity="center_horizontal"
             android:paddingBottom="28dp"
             android:paddingTop="8dp"
-            android:text="NUEVA MISIÓN"
+            android:text="@string/new_mission"
             android:textColor="@android:color/white"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -35,7 +35,7 @@
             android:layout_height="88dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_chip_glass"
-            android:contentDescription="Añadir imagen"
+            android:contentDescription="@string/content_desc_add_image"
             android:padding="20dp"
             android:src="@drawable/ic_add_image"
             app:tint="@color/app_color" />
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:layout_marginBottom="6dp"
-            android:text="NOMBRE DEL EVENTO"
+            android:text="@string/label_event_name"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_field_glass"
-            android:hint="ej. Reunión Galáctica"
+            android:hint="@string/hint_event_name"
             android:inputType="textPersonName"
             android:textColor="@android:color/white"
             android:textColorHint="#44FFFFFF"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="6dp"
-            android:text="DESCRIPCIÓN"
+            android:text="@string/label_description"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_field_glass"
             android:gravity="top"
-            android:hint="¿Qué ocurre en el cosmos?"
+            android:hint="@string/hint_event_description"
             android:inputType="textMultiLine"
             android:minLines="3"
             android:textColor="@android:color/white"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="6dp"
-            android:text="NOMBRE DEL LUGAR"
+            android:text="@string/label_place_name"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -108,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_field_glass"
-            android:hint="ej. El parrillero, Casa de Juan..."
+            android:hint="@string/hint_place_name"
             android:inputType="text"
             android:textColor="@android:color/white"
             android:textColorHint="#44FFFFFF"
@@ -121,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="6dp"
-            android:text="DIRECCION EN MAPA"
+            android:text="@string/label_map_address"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -138,7 +138,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_field_glass"
-                android:hint="ej. Calle Mayor 5, Bilbao"
+                android:hint="@string/hint_map_address"
                 android:inputType="text"
                 android:textColor="@android:color/white"
                 android:textColorHint="#44FFFFFF"
@@ -188,7 +188,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Seleccionar fecha"
+                    android:text="@string/select_date"
                     android:textColor="#AAFFFFFF"
                     android:textSize="12sp"
                     android:gravity="center" />
@@ -219,7 +219,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Seleccionar hora"
+                    android:text="@string/select_time"
                     android:textColor="#AAFFFFFF"
                     android:textSize="12sp"
                     android:gravity="center" />
@@ -234,7 +234,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="6dp"
-            android:text="DURACION APROXIMADA"
+            android:text="@string/label_duration"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -253,7 +253,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Seleccionar duracion..."
+                android:text="@string/hint_duration"
                 android:textColor="#44FFFFFF"
                 android:textSize="14sp" />
 
@@ -280,7 +280,7 @@
                 android:layout_marginEnd="6dp"
                 android:background="@drawable/bg_chip_glass"
                 android:gravity="center"
-                android:text="30 min"
+                android:text="@string/duration_30"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp" />
 
@@ -292,7 +292,7 @@
                 android:layout_marginHorizontal="3dp"
                 android:background="@drawable/bg_chip_glass"
                 android:gravity="center"
-                android:text="1h"
+                android:text="@string/duration_60"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp" />
 
@@ -304,7 +304,7 @@
                 android:layout_marginHorizontal="3dp"
                 android:background="@drawable/bg_chip_glass"
                 android:gravity="center"
-                android:text="2h"
+                android:text="@string/duration_120"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp" />
 
@@ -316,7 +316,7 @@
                 android:layout_marginStart="6dp"
                 android:background="@drawable/bg_chip_glass"
                 android:gravity="center"
-                android:text="3h"
+                android:text="@string/duration_180"
                 android:textColor="#88FFFFFF"
                 android:textSize="12sp" />
 
@@ -335,7 +335,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:text="INVITAR ORBITAS"
+            android:text="@string/label_invite_orbits"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12"
@@ -364,7 +364,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:text="INVITAR TRIPULACION"
+            android:text="@string/label_invite_crew"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -375,7 +375,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_field_glass"
-            android:hint="Buscar por usuario..."
+            android:hint="@string/hint_search_user"
             android:inputType="text"
             android:textColor="@android:color/white"
             android:textColorHint="#44FFFFFF"
@@ -400,7 +400,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="6dp"
-            android:text="TRIPULACIÓN SELECCIONADA"
+            android:text="@string/label_selected_crew"
             android:textColor="#66FFFFFF"
             android:textSize="11sp"
             android:letterSpacing="0.12" />
@@ -421,7 +421,7 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/bg_tab_selected"
             android:gravity="center"
-            android:text="LANZAR MISIÓN"
+            android:text="@string/btn_launch_mission"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold"

@@ -113,7 +113,7 @@ class EventAdapter(
 
                 // Eventos pasados: estilo tenue
                 if (isPast && !item.isPending) {
-                    tvEventDate.text = "Finalizado"
+                    tvEventDate.text = root.context.getString(R.string.finished)
                     tvEventDate.setTextColor(Color.parseColor("#44FFFFFF"))
                     root.alpha = 0.6f
                 } else if (!item.isPending) {
@@ -123,7 +123,7 @@ class EventAdapter(
                     )
                 }
             } else {
-                tvEventDate.text = "Fecha por confirmar"
+                tvEventDate.text = root.context.getString(R.string.date_tbc)
                 tvEventDate.isVisible = true
                 layoutImminent.isVisible = false
                 if (!item.isPending) root.alpha = 1f

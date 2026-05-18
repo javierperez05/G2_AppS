@@ -8,5 +8,7 @@ data class UserConfig(
     // Recibir notificaciones de nuevas solicitudes de amistad (para FCM futuro)
     val notifyRequests: Boolean = true,
     // Recibir notificaciones de eventos próximos (para FCM futuro)
-    val notifyEvents: Boolean = true
+    val notifyEvents: Boolean = true,
+    // Idioma de la app: "" = sistema, "es", "en", "eu"
+    val language: String = ""
 )

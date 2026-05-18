@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TRIPULACION"
+        android:text="@string/label_crew_rates"
         android:textColor="#44FFFFFF"
         android:textSize="10sp"
         android:letterSpacing="0.15"
