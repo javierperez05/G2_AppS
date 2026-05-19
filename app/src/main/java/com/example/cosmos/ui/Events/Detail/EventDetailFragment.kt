@@ -375,7 +375,7 @@ class EventDetailFragment : Fragment() {
         binding.tvEventDate.text = event.date?.let { fmt.format(it) } ?: "Sin fecha"
         val location = event.location?.ifBlank { null }
         val mapAddr = event.mapAddress?.ifBlank { null }
-        val mapQuery = mapAddr ?: location
+        val mapQuery = mapAddr
         binding.tvEventLocation.text = location ?: "Sin ubicacion"
         binding.tvMapAddress.isVisible = mapAddr != null && location != null
         binding.tvMapAddress.text = mapAddr ?: ""
