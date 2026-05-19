@@ -17,6 +17,19 @@ package com.example.cosmos.ui.Orbit
  *      se dibuja por primera vez o cambia de tamaño.
  *      scrollVerticallyBy: recalcula el offset X de cada hijo
  *      cuando el usuario hace scroll vertical.
+ *
+ *  GUÍA DE AJUSTE RÁPIDO
+ *      density * 64f (línea ~38):
+ *          Desplazamiento máximo en dp de las cards centrales.
+ *          Subir (ej: 96f) = curva más pronunciada.
+ *          Bajar (ej: 32f) = curva más suave.
+ *      1f - normalized * normalized (línea ~64):
+ *          Forma de la curva. normalized² = parábola suave (U).
+ *          Cambiar a normalized (sin cuadrado) = V recta.
+ *          Invertir a normalized * normalized = extremos desplazados, centro quieto.
+ *      Signo de maxShiftPx:
+ *          Positivo = cards centrales a la derecha.
+ *          Negativo = cards centrales a la izquierda.
  * ═══════════════════════════════════════════════════════════════════
  */
 
