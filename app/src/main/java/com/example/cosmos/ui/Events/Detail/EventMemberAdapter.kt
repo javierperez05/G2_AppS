@@ -41,15 +41,12 @@ class EventMemberAdapter : ListAdapter<User, EventMemberAdapter.MemberViewHolder
 
         fun bind(user: User) {
             binding.tvMemberUsername.text = user.username ?: "?"
-            if (!user.profilePictureUrl.isNullOrBlank()) {
-                Glide.with(binding.ivMemberAvatar)
-                    .load(user.profilePictureUrl)
-                    .circleCrop()
-                    .placeholder(R.drawable.ic_circle_profile)
-                    .into(binding.ivMemberAvatar)
-            } else {
-                binding.ivMemberAvatar.setImageResource(R.drawable.ic_circle_profile)
-            }
+            Glide.with(binding.ivMemberAvatar)
+                .load(user.profilePictureUrl.takeUnless { it.isNullOrBlank() })
+                .circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .error(R.drawable.ic_circle_profile)
+                .into(binding.ivMemberAvatar)
         }
     }
 
