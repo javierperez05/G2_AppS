@@ -94,6 +94,9 @@ class EventViewModel @Inject constructor(
     private val _incomingRequests = MutableStateFlow<List<FriendRequest>>(emptyList())
     val incomingRequests: StateFlow<List<FriendRequest>> = _incomingRequests.asStateFlow()
 
+    private val _currentUserAvatarUrl = MutableStateFlow<String?>(null)
+    val currentUserAvatarUrl: StateFlow<String?> = _currentUserAvatarUrl.asStateFlow()
+
     // ── Lista de eventos ──────────────────────────────────────────────────────
 
     private var memberEvents: List<Event>? = null
@@ -138,6 +141,13 @@ class EventViewModel @Inject constructor(
                 .associate { (it.id ?: "") to (it.profilePictureUrl ?: "") }
             val adminNames = users.associate { (it.id ?: "") to (it.username ?: "?") }
             _uiState.value = EventUiState.Success(members, pending, avatarUrls, adminNames)
+        }
+    }
+
+    fun loadCurrentUserAvatar(userId: String) {
+        if (userId.isEmpty()) return
+        userRepository.getUserById(userId) { user ->
+            _currentUserAvatarUrl.value = user?.profilePictureUrl
         }
     }
 

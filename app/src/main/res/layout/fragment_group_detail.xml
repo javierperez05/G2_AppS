@@ -102,9 +102,7 @@
                 android:layout_marginTop="8dp"
                 android:src="@drawable/ic_circle_profile"
                 android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"
-                app:strokeWidth="2dp"
-                app:strokeColor="@color/app_color" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView" />
 
             <TextView
                 android:id="@+id/tvGroupName"

@@ -63,6 +63,7 @@ import com.example.cosmos.Model.Event.Event
 import com.example.cosmos.databinding.FragmentEventBinding
 import com.example.cosmos.databinding.BottomSheetAlertsBinding
 import com.example.cosmos.ui.Orbit.GroupViewModel
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -131,6 +132,7 @@ class EventFragment : Fragment() {
         currentUserId = activity?.intent?.getStringExtra("USER_ID") ?: ""
         viewModel.loadEvents(currentUserId)
         viewModel.loadIncomingRequests(currentUserId)
+        viewModel.loadCurrentUserAvatar(currentUserId)
     }
 
     override fun onDestroyView() {
@@ -236,6 +238,20 @@ class EventFragment : Fragment() {
                         val pendingCount = (viewModel.uiState.value as? EventUiState.Success)?.pendingEvents?.size ?: 0
                         updateHomeBadge(pendingCount + requests.size)
                         rebuildAlerts()
+                    }
+                }
+
+                launch {
+                    viewModel.currentUserAvatarUrl.collect { url ->
+                        if (!url.isNullOrBlank()) {
+                            Glide.with(binding.ivHomeUserProfile)
+                                .load(url)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_circle_profile)
+                                .into(binding.ivHomeUserProfile)
+                        } else {
+                            binding.ivHomeUserProfile.setImageResource(R.drawable.ic_circle_profile)
+                        }
                     }
                 }
             }

@@ -40,16 +40,14 @@
                 android:paddingTop="40dp"
                 android:paddingBottom="16dp">
 
-                <!-- Avatar con anillo violeta -->
+                <!-- Avatar circular -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivProfileAvatar"
                     android:layout_width="84dp"
                     android:layout_height="84dp"
                     android:src="@drawable/ic_cosmos_critter"
                     android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"
-                    app:strokeWidth="2.5dp"
-                    app:strokeColor="@color/app_color" />
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView" />
 
                 <!-- Stats -->
                 <LinearLayout
