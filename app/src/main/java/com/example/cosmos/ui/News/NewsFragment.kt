@@ -225,12 +225,7 @@ class NewsFragment : Fragment() {
 
         overlay.tvOverlayUsername.text = "@${item.username}"
 
-        if (!item.avatarUrl.isNullOrEmpty()) {
-            Glide.with(this).load(item.avatarUrl).circleCrop()
-                .placeholder(R.drawable.ic_circle_profile).into(overlay.ivOverlayAvatar)
-        } else {
-            overlay.ivOverlayAvatar.setImageResource(R.drawable.ic_circle_profile)
-        }
+        loadOverlayAvatar(overlay.ivOverlayAvatar, item.avatarUrl)
 
         if (item.rate != null) {
             val filled = item.rate.rating.toInt().coerceIn(0, 5)
@@ -246,6 +241,30 @@ class NewsFragment : Fragment() {
             overlay.tvOverlayRating.isVisible = false
             overlay.tvOverlayComment.isVisible = false
             overlay.tvOverlayNoRate.isVisible = true
+        }
+    }
+
+    private fun loadOverlayAvatar(iv: com.google.android.material.imageview.ShapeableImageView, urlOrBase64: String?) {
+        if (urlOrBase64.isNullOrBlank()) {
+            iv.setImageResource(R.drawable.ic_circle_profile)
+            return
+        }
+        val trimmed = urlOrBase64.trim()
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            Glide.with(this).load(trimmed).circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .error(R.drawable.ic_circle_profile)
+                .into(iv)
+            return
+        }
+        try {
+            val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+            Glide.with(this).load(bytes).circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .error(R.drawable.ic_circle_profile)
+                .into(iv)
+        } catch (e: IllegalArgumentException) {
+            iv.setImageResource(R.drawable.ic_circle_profile)
         }
     }
 

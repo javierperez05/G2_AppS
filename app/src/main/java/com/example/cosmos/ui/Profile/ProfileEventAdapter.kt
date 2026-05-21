@@ -34,12 +34,7 @@ class ProfileEventAdapter(
         val fmt = SimpleDateFormat("dd MMM", Locale.getDefault())
         with(holder.binding) {
             // Background image
-            if (!event.imageURL.isNullOrEmpty()) {
-                Glide.with(ivGridBg).load(event.imageURL).centerCrop()
-                    .placeholder(R.drawable.ic_circle_profile).into(ivGridBg)
-            } else {
-                ivGridBg.setImageResource(R.drawable.ic_circle_profile)
-            }
+            loadEventImage(ivGridBg, event.imageURL)
 
             // Status badge
             if (event.finished) {
@@ -53,6 +48,32 @@ class ProfileEventAdapter(
             tvGridEventTitle.text = event.title ?: ""
             tvGridEventDate.text = event.date?.let { fmt.format(it) } ?: ""
             root.setOnClickListener { onEventClick(event) }
+        }
+    }
+
+    private fun loadEventImage(iv: android.widget.ImageView, urlOrBase64: String?) {
+        if (urlOrBase64.isNullOrBlank()) {
+            iv.setImageResource(R.drawable.ic_launcher_cosmos)
+            return
+        }
+        val trimmed = urlOrBase64.trim()
+        // Si es URL, cargar directo
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            Glide.with(iv).load(trimmed).centerCrop()
+                .placeholder(R.drawable.ic_launcher_cosmos)
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(iv)
+            return
+        }
+        // Si no es URL, intentamos decodificar Base64
+        try {
+            val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+            Glide.with(iv).load(bytes).centerCrop()
+                .placeholder(R.drawable.ic_launcher_cosmos)
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(iv)
+        } catch (e: IllegalArgumentException) {
+            iv.setImageResource(R.drawable.ic_launcher_cosmos)
         }
     }
 }

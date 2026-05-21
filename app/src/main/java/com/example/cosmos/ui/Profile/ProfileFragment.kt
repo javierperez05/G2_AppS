@@ -134,9 +134,10 @@ class ProfileFragment : Fragment() {
                             binding.tvProfileOrbitCount.text = state.orbitCount.toString()
                             binding.layoutProfileEmpty.isVisible = state.events.isEmpty()
                             binding.rvProfileEvents.isVisible = state.events.isNotEmpty()
-                            if (state.events.isNotEmpty()) eventAdapter.submitList(state.events)
+                            if (state.events.isNotEmpty()) eventAdapter.submitList(state.events){
+                                loadAvatar(state.user.profilePictureBase64)
+                            }
 
-                            loadAvatar(state.user.profilePictureBase64)
                         }
                     }
                 }

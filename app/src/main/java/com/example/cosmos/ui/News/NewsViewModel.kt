@@ -107,13 +107,21 @@ class NewsViewModel @Inject constructor(
         if (userId.isEmpty()) { _uiState.value = NewsUiState.Error("Usuario no identificado"); return }
         _uiState.value = NewsUiState.Loading
 
-        // 1. Get user's orbits to find all relevant user IDs
-        orbitRepository.getUserGroups(userId) { groups ->
-            val allMemberIds = groups.flatMap { it.memberIds }.toMutableSet()
+        // 1. Get user's orbits + friends to find all relevant user IDs
+        var groups: List<Group>? = null
+        var friends: List<User>? = null
+
+        fun tryLoadPosts() {
+            val g = groups ?: return
+            val f = friends ?: return
+
+            // Collect all member IDs: orbit members + friends + own
+            val allMemberIds = g.flatMap { it.memberIds }.toMutableSet()
+            f.mapNotNull { it.id }.forEach { allMemberIds.add(it) }
             allMemberIds.add(userId)
             val uniqueIds = allMemberIds.toList()
 
-            // 2. Query posts by all orbit member IDs + own
+            // 2. Query posts by all orbit members + friends + own
             postRepository.getPostsByUserIds(uniqueIds) { posts ->
                 if (posts.isEmpty()) {
                     _uiState.value = NewsUiState.Empty
@@ -131,10 +139,25 @@ class NewsViewModel @Inject constructor(
 
                 userRepository.getUsersByIds(postMemberIds) { users ->
                     allMemberNames = users.associate { (it.id ?: "") to (it.username ?: "?") }
-                    val avatarUrls = users.associate { (it.id ?: "") to (it.profilePictureUrl ?: "") }
+                    val avatarUrls = users.associate { user ->
+                        val id = user.id ?: ""
+                        val avatar = user.profilePictureUrl.takeUnless { it.isNullOrBlank() }
+                            ?: user.profilePictureBase64.takeUnless { it.isNullOrBlank() }
+                            ?: ""
+                        id to avatar
+                    }
                     _uiState.value = NewsUiState.Success(posts, allMemberNames, avatarUrls)
                 }
             }
+        }
+
+        orbitRepository.getUserGroups(userId) { result ->
+            groups = result
+            tryLoadPosts()
+        }
+        friendRepository.getFriends(userId) { result ->
+            friends = result
+            tryLoadPosts()
         }
     }
 
@@ -142,7 +165,13 @@ class NewsViewModel @Inject constructor(
         rateRepository.getRates(eventId) { rates ->
             userRepository.getUsersByIds(memberIds) { users ->
                 val names = users.associate { (it.id ?: "") to (it.username ?: "?") }
-                val avatars = users.associate { (it.id ?: "") to (it.profilePictureUrl ?: "") }
+                val avatars = users.associate { user ->
+                    val id = user.id ?: ""
+                    val avatar = user.profilePictureUrl.takeUnless { it.isNullOrBlank() }
+                        ?: user.profilePictureBase64.takeUnless { it.isNullOrBlank() }
+                        ?: ""
+                    id to avatar
+                }
                 _crewState.value = CrewUiState.Ready(eventId, memberIds, names, avatars, rates)
             }
         }

@@ -364,7 +364,7 @@ class EventDetailFragment : Fragment() {
 
         if (!event.imageURL.isNullOrBlank()) {
             binding.ivEventImage.isVisible = true
-            Glide.with(this).load(event.imageURL).centerCrop().into(binding.ivEventImage)
+            loadDetailEventImage(binding.ivEventImage, event.imageURL)
         } else {
             binding.ivEventImage.isVisible = false
         }
@@ -773,5 +773,27 @@ class EventDetailFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun loadDetailEventImage(iv: android.widget.ImageView, urlOrBase64: String?) {
+        if (urlOrBase64.isNullOrBlank()) {
+            iv.setImageResource(R.drawable.ic_launcher_cosmos)
+            return
+        }
+        val trimmed = urlOrBase64.trim()
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            Glide.with(this).load(trimmed).centerCrop()
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(iv)
+            return
+        }
+        try {
+            val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+            Glide.with(this).load(bytes).centerCrop()
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(iv)
+        } catch (e: IllegalArgumentException) {
+            iv.setImageResource(R.drawable.ic_launcher_cosmos)
+        }
     }
 }

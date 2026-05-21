@@ -136,9 +136,12 @@ class EventViewModel @Inject constructor(
             return
         }
         userRepository.getUsersByIds(allMemberIds) { users ->
-            val avatarUrls = users
-                .filter { !it.profilePictureUrl.isNullOrEmpty() }
-                .associate { (it.id ?: "") to (it.profilePictureUrl ?: "") }
+            val avatarUrls = users.mapNotNull { user ->
+                val id = user.id ?: return@mapNotNull null
+                val value = user.profilePictureUrl.takeUnless { it.isNullOrBlank() }
+                    ?: user.profilePictureBase64.takeUnless { it.isNullOrBlank() }
+                value?.let { id to it }
+            }.toMap()
             val adminNames = users.associate { (it.id ?: "") to (it.username ?: "?") }
             _uiState.value = EventUiState.Success(members, pending, avatarUrls, adminNames)
         }
@@ -147,9 +150,12 @@ class EventViewModel @Inject constructor(
     fun loadCurrentUserAvatar(userId: String) {
         if (userId.isEmpty()) return
         userRepository.getUserById(userId) { user ->
-            _currentUserAvatarUrl.value = user?.profilePictureUrl
+            // Si existe URL remota, la usamos. Si no, guardamos la Base64 (si hay).
+            _currentUserAvatarUrl.value = user?.profilePictureUrl ?: user?.profilePictureBase64
         }
     }
+
+
 
     fun loadIncomingRequests(userId: String) {
         if (userId.isEmpty()) return

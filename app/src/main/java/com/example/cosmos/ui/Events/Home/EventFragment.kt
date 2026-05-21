@@ -133,6 +133,7 @@ class EventFragment : Fragment() {
         viewModel.loadEvents(currentUserId)
         viewModel.loadIncomingRequests(currentUserId)
         viewModel.loadCurrentUserAvatar(currentUserId)
+        //load pfp in ui
     }
 
     override fun onDestroyView() {
@@ -242,13 +243,30 @@ class EventFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.currentUserAvatarUrl.collect { url ->
-                        if (!url.isNullOrBlank()) {
-                            Glide.with(binding.ivHomeUserProfile)
-                                .load(url)
-                                .circleCrop()
-                                .placeholder(R.drawable.ic_circle_profile)
-                                .into(binding.ivHomeUserProfile)
+                    viewModel.currentUserAvatarUrl.collect { value ->
+                        if (!value.isNullOrBlank()) {
+                            val trimmed = value.trim()
+                            // Si parece un URL (http/https), cargar directo.
+                            if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+                                Glide.with(binding.ivHomeUserProfile)
+                                    .load(trimmed)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_circle_profile)
+                                    .into(binding.ivHomeUserProfile)
+                            } else {
+                                // Suponemos que es Base64: decodificamos a bytes y los pasamos a Glide.
+                                try {
+                                    val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+                                    Glide.with(binding.ivHomeUserProfile)
+                                        .load(bytes)
+                                        .circleCrop()
+                                        .placeholder(R.drawable.ic_circle_profile)
+                                        .into(binding.ivHomeUserProfile)
+                                } catch (e: IllegalArgumentException) {
+                                    // Si falla la decodificación, fallback al placeholder
+                                    binding.ivHomeUserProfile.setImageResource(R.drawable.ic_circle_profile)
+                                }
+                            }
                         } else {
                             binding.ivHomeUserProfile.setImageResource(R.drawable.ic_circle_profile)
                         }

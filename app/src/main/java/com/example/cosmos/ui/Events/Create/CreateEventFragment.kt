@@ -312,9 +312,7 @@ class CreateEventFragment : Fragment() {
         }
 
         if (!event.imageURL.isNullOrEmpty()) {
-            com.bumptech.glide.Glide.with(binding.btnAddEventImage)
-                .load(event.imageURL).centerCrop()
-                .into(binding.btnAddEventImage)
+            loadCreateEventImage(event.imageURL)
             binding.btnAddEventImage.setPadding(0, 0, 0, 0)
             binding.btnAddEventImage.imageTintList = null
             binding.btnAddEventImage.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
@@ -538,6 +536,27 @@ class CreateEventFragment : Fragment() {
                 type            = EventType.DEFAULT
             )
             viewModel.createEvent(newEvent, selectedImageUri)
+        }
+    }
+
+    private fun loadCreateEventImage(urlOrBase64: String) {
+        val trimmed = urlOrBase64.trim()
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            com.bumptech.glide.Glide.with(binding.btnAddEventImage)
+                .load(trimmed).centerCrop()
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(binding.btnAddEventImage)
+            return
+        }
+        try {
+            val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+            com.bumptech.glide.Glide.with(binding.btnAddEventImage)
+                .load(bytes).centerCrop()
+                .error(R.drawable.ic_launcher_cosmos)
+                .into(binding.btnAddEventImage)
+        } catch (e: IllegalArgumentException) {
+            binding.btnAddEventImage.setImageResource(R.drawable.ic_add_image)
+            binding.btnAddEventImage.imageTintList = null
         }
     }
 }

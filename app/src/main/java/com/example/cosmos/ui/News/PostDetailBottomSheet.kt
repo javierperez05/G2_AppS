@@ -63,12 +63,7 @@ class PostDetailBottomSheet : BottomSheetDialogFragment() {
 
         // ── Header ────────────────────────────────────────────────────────────
         val avatarUrl = avatarUrls[post.userId ?: ""]
-        if (!avatarUrl.isNullOrEmpty()) {
-            Glide.with(binding.ivDetailAvatar).load(avatarUrl).circleCrop()
-                .placeholder(R.drawable.ic_circle_profile).into(binding.ivDetailAvatar)
-        } else {
-            binding.ivDetailAvatar.setImageResource(R.drawable.ic_circle_profile)
-        }
+        loadDetailAvatar(binding.ivDetailAvatar, avatarUrl)
 
         binding.tvDetailUsername.text = "@${post.username ?: ""}"
         binding.tvDetailTimeAgo.text  = getTimeAgo(post.createdAt)
@@ -103,6 +98,32 @@ class PostDetailBottomSheet : BottomSheetDialogFragment() {
             newsViewModel.loadProposeData(
                 (parentFragment as? NewsFragment)?.currentUserId ?: "", post
             )
+        }
+    }
+
+    // ── Load avatar (supports URL and Base64) ──────────────────────────────────
+
+    private fun loadDetailAvatar(iv: com.google.android.material.imageview.ShapeableImageView, urlOrBase64: String?) {
+        if (urlOrBase64.isNullOrBlank()) {
+            iv.setImageResource(R.drawable.ic_circle_profile)
+            return
+        }
+        val trimmed = urlOrBase64.trim()
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            Glide.with(iv).load(trimmed).circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .error(R.drawable.ic_circle_profile)
+                .into(iv)
+            return
+        }
+        try {
+            val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+            Glide.with(iv).load(bytes).circleCrop()
+                .placeholder(R.drawable.ic_circle_profile)
+                .error(R.drawable.ic_circle_profile)
+                .into(iv)
+        } catch (e: IllegalArgumentException) {
+            iv.setImageResource(R.drawable.ic_circle_profile)
         }
     }
 

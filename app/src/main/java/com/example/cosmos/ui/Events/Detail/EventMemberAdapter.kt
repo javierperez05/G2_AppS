@@ -41,12 +41,33 @@ class EventMemberAdapter : ListAdapter<User, EventMemberAdapter.MemberViewHolder
 
         fun bind(user: User) {
             binding.tvMemberUsername.text = user.username ?: "?"
-            Glide.with(binding.ivMemberAvatar)
-                .load(user.profilePictureUrl.takeUnless { it.isNullOrBlank() })
-                .circleCrop()
-                .placeholder(R.drawable.ic_circle_profile)
-                .error(R.drawable.ic_circle_profile)
-                .into(binding.ivMemberAvatar)
+
+            val url = user.profilePictureUrl?.trim()
+            val base64 = user.profilePictureBase64?.trim()
+
+            if (!url.isNullOrBlank()) {
+                Glide.with(binding.ivMemberAvatar)
+                    .load(url)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .error(R.drawable.ic_circle_profile)
+                    .into(binding.ivMemberAvatar)
+            } else if (!base64.isNullOrBlank()) {
+                try {
+                    val bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT)
+                    Glide.with(binding.ivMemberAvatar)
+                        .load(bytes)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_circle_profile)
+                        .error(R.drawable.ic_circle_profile)
+                        .into(binding.ivMemberAvatar)
+                } catch (e: IllegalArgumentException) {
+                    // base64 inválido -> fallback al placeholder
+                    binding.ivMemberAvatar.setImageResource(R.drawable.ic_circle_profile)
+                }
+            } else {
+                binding.ivMemberAvatar.setImageResource(R.drawable.ic_circle_profile)
+            }
         }
     }
 

@@ -35,6 +35,7 @@ import com.example.cosmos.Model.Users.User
 import com.example.cosmos.R
 import com.example.cosmos.databinding.ItemFriendBinding
 
+
 class FriendAdapter(
     private val onAddClick: (User) -> Unit,
     private val onRemoveClick: (User) -> Unit,
@@ -73,16 +74,33 @@ class FriendAdapter(
             binding.tvFriendUsername.text = user.username ?: binding.root.context.getString(R.string.no_name)
             binding.tvFriendEmail.text = user.email ?: ""
 
-            // Avatar con Glide
-            if (!user.profilePictureUrl.isNullOrEmpty()) {
+// Avatar con Glide — soporta URL o Base64
+            val profileUrl = user.profilePictureUrl?.trim()
+            val profileBase64 = user.profilePictureBase64?.trim()
+
+            if (!profileUrl.isNullOrBlank()) {
                 Glide.with(binding.root)
-                    .load(user.profilePictureUrl)
+                    .load(profileUrl)
                     .circleCrop()
                     .placeholder(R.drawable.ic_circle_profile)
+                    .error(R.drawable.ic_circle_profile)
                     .into(binding.ivFriendAvatar)
+            } else if (!profileBase64.isNullOrBlank()) {
+                try {
+                    val bytes = android.util.Base64.decode(profileBase64, android.util.Base64.DEFAULT)
+                    Glide.with(binding.root)
+                        .load(bytes)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_circle_profile)
+                        .error(R.drawable.ic_circle_profile)
+                        .into(binding.ivFriendAvatar)
+                } catch (e: IllegalArgumentException) {
+                    binding.ivFriendAvatar.setImageResource(R.drawable.ic_circle_profile)
+                }
             } else {
                 binding.ivFriendAvatar.setImageResource(R.drawable.ic_circle_profile)
             }
+
 
             val userId = user.id ?: ""
             val isFriend = friendIds.contains(userId)

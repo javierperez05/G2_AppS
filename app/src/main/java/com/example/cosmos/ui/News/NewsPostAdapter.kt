@@ -70,7 +70,8 @@ class NewsPostAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
-            val isMine = post.userId == currentUserId
+            // Unificado: mostrar el mismo layout para posts propios y de otros
+            // (usamos la sección "Other" como única representación visible).
 
             // ── Card click ────────────────────────────────────────────────────
             binding.root.setOnClickListener { onCardClick(post) }
@@ -96,59 +97,27 @@ class NewsPostAdapter(
             // ── Avatar ────────────────────────────────────────────────────────
             val authorAvatar = avatarUrls[post.userId ?: ""]
 
-            if (isMine) {
-                binding.layoutPostMine.isVisible  = true
-                binding.layoutPostOther.isVisible = false
+            // Forzamos un único layout visible
+            binding.layoutPostMine.isVisible  = false
+            binding.layoutPostOther.isVisible = true
 
-                loadAvatar(binding.ivAvatarMine, authorAvatar)
-                binding.tvUsernameMine.text = "@${post.username ?: ""}"
-                binding.tvStarsMine.text    = starsText
-                binding.tvStarsMine.setTextColor(0xFFFFD700.toInt())
-                binding.tvRatingMine.text   = ratingText
+            loadAvatar(binding.ivAvatarOther, authorAvatar)
+            binding.tvUsernameOther.text = "@${post.username ?: ""}"
+            binding.tvStarsOther.text    = starsText
+            binding.tvStarsOther.setTextColor(0xFFFFD700.toInt())
+            binding.tvRatingOther.text   = ratingText
 
-                binding.tvCommentMine.isVisible  = !post.comment.isNullOrBlank()
-                binding.tvCommentOther.isVisible = false
-                binding.tvCommentMine.text = post.comment ?: ""
+            binding.tvCommentOther.isVisible = !post.comment.isNullOrBlank()
+            binding.tvCommentOther.text = post.comment ?: ""
 
-                binding.tvCrewMine.isVisible  = true
-                binding.tvCrewOther.isVisible = false
-                binding.tvCrewMine.text = crewText
-                binding.tvCrewMine.setOnClickListener { onCrewClick(post) }
+            binding.tvCrewOther.isVisible = true
+            binding.tvCrewOther.text = crewText
+            binding.tvCrewOther.setOnClickListener { onCrewClick(post) }
 
-                binding.btnViewEventMine.isVisible  = true
-                binding.btnViewEventOther.isVisible = false
-                binding.btnProponerMine.isVisible  = true
-                binding.btnProponerOther.isVisible = false
-
-                binding.btnViewEventMine.setOnClickListener { onViewEvent(post.eventId ?: "") }
-                binding.btnProponerMine.setOnClickListener  { onProposeClick(post) }
-            } else {
-                binding.layoutPostMine.isVisible  = false
-                binding.layoutPostOther.isVisible = true
-
-                loadAvatar(binding.ivAvatarOther, authorAvatar)
-                binding.tvUsernameOther.text = "@${post.username ?: ""}"
-                binding.tvStarsOther.text    = starsText
-                binding.tvStarsOther.setTextColor(0xFFFFD700.toInt())
-                binding.tvRatingOther.text   = ratingText
-
-                binding.tvCommentOther.isVisible = !post.comment.isNullOrBlank()
-                binding.tvCommentMine.isVisible  = false
-                binding.tvCommentOther.text = post.comment ?: ""
-
-                binding.tvCrewOther.isVisible  = true
-                binding.tvCrewMine.isVisible   = false
-                binding.tvCrewOther.text = crewText
-                binding.tvCrewOther.setOnClickListener { onCrewClick(post) }
-
-                binding.btnViewEventOther.isVisible = true
-                binding.btnViewEventMine.isVisible  = false
-                binding.btnProponerOther.isVisible  = true
-                binding.btnProponerMine.isVisible   = false
-
-                binding.btnViewEventOther.setOnClickListener { onViewEvent(post.eventId ?: "") }
-                binding.btnProponerOther.setOnClickListener  { onProposeClick(post) }
-            }
+            binding.btnViewEventOther.isVisible = true
+            binding.btnProponerOther.isVisible  = true
+            binding.btnViewEventOther.setOnClickListener { onViewEvent(post.eventId ?: "") }
+            binding.btnProponerOther.setOnClickListener  { onProposeClick(post) }
         }
 
         // ── Carousel ──────────────────────────────────────────────────────────
@@ -234,14 +203,33 @@ class NewsPostAdapter(
 
         // ── Helpers ───────────────────────────────────────────────────────────
 
-        private fun loadAvatar(iv: com.google.android.material.imageview.ShapeableImageView, url: String?) {
-            if (!url.isNullOrEmpty()) {
-                Glide.with(iv).load(url).circleCrop()
-                    .placeholder(R.drawable.ic_circle_profile).into(iv)
-            } else {
+        private fun loadAvatar(iv: com.google.android.material.imageview.ShapeableImageView, urlOrBase64: String?) {
+            if (urlOrBase64.isNullOrBlank()) {
+                iv.setImageResource(R.drawable.ic_circle_profile)
+                return
+            }
+            val trimmed = urlOrBase64.trim()
+            // Si parece un URL, cargar directo
+            if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+                Glide.with(iv).load(trimmed).circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .error(R.drawable.ic_circle_profile)
+                    .into(iv)
+                return
+            }
+            // Si no es URL, intentamos decodificar Base64
+            try {
+                val bytes = android.util.Base64.decode(trimmed, android.util.Base64.DEFAULT)
+                Glide.with(iv).load(bytes).circleCrop()
+                    .placeholder(R.drawable.ic_circle_profile)
+                    .error(R.drawable.ic_circle_profile)
+                    .into(iv)
+            } catch (e: IllegalArgumentException) {
+                // Base64 inválido -> fallback
                 iv.setImageResource(R.drawable.ic_circle_profile)
             }
         }
+
 
         private fun getTimeAgo(timestamp: Long): String {
             val ctx     = binding.root.context
